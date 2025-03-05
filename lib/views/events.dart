@@ -430,7 +430,7 @@ class _EventsState extends State<Events> {
                                 int.parse(date_split[1]),
                                 int.parse(date_split[0]),
                               );
-                              DateTime endDate = _selectedDate!.add(const Duration(days: 5));
+                              DateTime endDate = _selectedDate!.add(const Duration(days: 1));
                               return starredBy.contains(currentUserEmail) &&((doc_eventDate.isAfter(_selectedDate!) || doc_eventDate.isAtSameMomentAs(_selectedDate!)) && doc_eventDate.isBefore(endDate));
                             }
                             else {return false;}
@@ -447,8 +447,11 @@ class _EventsState extends State<Events> {
                             int.parse(date_split[1]),
                             int.parse(date_split[0]),
                           );
-                          DateTime endDate = _selectedDate!.add(const Duration(days: 5));
-                          return doc_eventDate.isBefore(_selectedDate!.add(const Duration(days: 5))) &&(doc_eventDate.isAfter(_selectedDate!) || doc_eventDate.isAtSameMomentAs(_selectedDate!));
+                          DateTime endDate = _selectedDate!.add(const Duration(days: 1));
+                          DateTime selectedDateOnly = DateTime(_selectedDate!.year, _selectedDate!.month, _selectedDate!.day);
+                          DateTime docDateOnly = DateTime(doc_eventDate.year, doc_eventDate.month, doc_eventDate.day);
+                          return docDateOnly == selectedDateOnly;
+                          //return doc_eventDate.isBefore(_selectedDate!.add(const Duration(days: 1))) &&(doc_eventDate.isAfter(_selectedDate!) || doc_eventDate.isAtSameMomentAs(_selectedDate!));
                         }).toList();
                       }
 
