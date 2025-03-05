@@ -289,13 +289,62 @@ class AddEventFormState extends State<AddEventForm> {
                     style: TextStyle(fontSize: 20),
                   ),
                   IconButton(
-                      onPressed: () async {
-                        ImagePicker imagepicker =
-                            ImagePicker(); // pick an image
-                        file = await imagepicker.pickImage(
-                            source: ImageSource.gallery);
-                      },
-                      icon: const Icon(Icons.camera_alt)),
+                    onPressed: () async {
+                      ImagePicker imagePicker = ImagePicker();
+
+                      // Pick an image
+                      XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
+
+                      if (file != null) {
+                        print("${file.path} added!");
+
+                        String filename = DateTime.now().millisecondsSinceEpoch.toString();
+                        Reference refDir = FirebaseStorage.instance.ref().child('images');
+                        Reference imgToUpload = refDir.child(filename);
+                        String filePath = file.path;
+
+                        try {
+                          // Show "Uploading" snackbar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Uploading image..."), duration: Duration(seconds: 2)),
+                          );
+
+                          // Upload file
+                          await imgToUpload.putFile(File(filePath));
+
+                          // Retrieve download URL
+                          imageURL = await imgToUpload.getDownloadURL();
+                          print("Image URL: $imageURL");
+
+                          // Show success snackbar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Image Added Successfully")),
+                          );
+
+                        } catch (error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Error adding image")),
+                          );
+                          print("Upload error: $error");
+                        }
+                      } else {
+                        print("No file selected!");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("No image selected")),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.camera_alt),
+                  ),
+
+                  // IconButton(
+                  //     onPressed: () async {
+                  //       ImagePicker imagepicker =
+                  //           ImagePicker(); // pick an image
+                  //       file = await imagepicker.pickImage(
+                  //           source: ImageSource.gallery);
+                  //     },
+                  //     icon: const Icon(Icons.camera_alt)),
                 ],
               ),
               Center(
@@ -304,52 +353,37 @@ class AddEventFormState extends State<AddEventForm> {
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor: MaterialStateColor.resolveWith(
-                          (states) => Color(primaryLight)),
+                              (states) => Color(primaryLight)),
                     ),
-                    onPressed: () {
-                      // Validating form inputs
+                    onPressed: () async {
+                      // Validate date and time conditions first
                       if (eventDate.compareTo(getTodayDateTime()) <= 0) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content:
-                                  Text("Previous date event are not allowed")),
+                              content: Text("Previous date events are not allowed")),
                         );
                         return;
                       }
                       if (toDouble(startTime) > toDouble(endTime)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text(
-                                  "Invalid Time. End time is before start time.")),
+                              content: Text("Invalid Time. End time is before start time.")),
                         );
                         return;
                       }
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        if (file == null) {
-                          print("No file selected!");
-                        } else {
-                          print("${file?.path} added!");
-                          String filename =
-                              DateTime.now().millisecondsSinceEpoch.toString();
-                          Reference refDir =
-                              FirebaseStorage.instance.ref().child('images');
-                          Reference imgToUpload = refDir.child(filename);
-                          String filePath = (file?.path)!;
-                          try {
-                            f() async {
-                              await imgToUpload.putFile(File(filePath));
-                              imageURL = await imgToUpload.getDownloadURL();
-                            }
 
-                            f();
-                          } catch (error) {
-                            print(error);
-                          }
-                        }
+                        // If a file is selected, upload it and get the URL.
+                        print("imageURL_here:");
+                        print(imageURL);
+
+                        // Show confirmation dialog AFTER ensuring imageURL is set.
                         showDialog(
+
                           context: context,
                           builder: (BuildContext context) {
+
                             return AlertDialog(
                               title: const Text('Confirmation'),
                               content: Text(
@@ -358,30 +392,30 @@ class AddEventFormState extends State<AddEventForm> {
                                 TextButton(
                                   child: const Text('Cancel'),
                                   onPressed: () {
-                                    // Close the dialog and do nothing
-                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop(); // Close the dialog.
                                   },
                                 ),
                                 ElevatedButton(
                                   child: const Text('Submit'),
                                   onPressed: () {
+                                    // Use the (now hopefully non-null) imageURL here.
                                     firebaseDatabase.addEventFB(
-                                        eventTitle,
-                                        eventType,
-                                        eventDesc,
-                                        eventVenue,
-                                        "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-                                        tod2str(startTime),
-                                        tod2str(endTime),
-                                        imageURL,
-                                        "admin");
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text("Event Added Sucessfully")),
+                                      eventTitle,
+                                      eventType,
+                                      eventDesc,
+                                      eventVenue,
+                                      "${eventDate.day}/${eventDate.month}/${eventDate.year}",
+                                      tod2str(startTime),
+                                      tod2str(endTime),
+                                      imageURL,
+                                      "admin",
                                     );
 
-                                    Navigator.of(context).pop();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text("Event Added Successfully")),
+                                    );
+                                    Navigator.of(context).pop(); // Close the dialog.
                                   },
                                 ),
                               ],
@@ -392,6 +426,100 @@ class AddEventFormState extends State<AddEventForm> {
                     },
                     child: const Text('Submit'),
                   ),
+
+                  // child: ElevatedButton(
+                  //   style: ButtonStyle(
+                  //     backgroundColor: MaterialStateColor.resolveWith(
+                  //         (states) => Color(primaryLight)),
+                  //   ),
+                  //   onPressed: () {
+                  //     // Validating form inputs
+                  //     if (eventDate.compareTo(getTodayDateTime()) <= 0) {
+                  //       ScaffoldMessenger.of(context).showSnackBar(
+                  //         const SnackBar(
+                  //             content:
+                  //                 Text("Previous date event are not allowed")),
+                  //       );
+                  //       return;
+                  //     }
+                  //     if (toDouble(startTime) > toDouble(endTime)) {
+                  //       ScaffoldMessenger.of(context).showSnackBar(
+                  //         const SnackBar(
+                  //             content: Text(
+                  //                 "Invalid Time. End time is before start time.")),
+                  //       );
+                  //       return;
+                  //     }
+                  //     if (_formKey.currentState!.validate()) {
+                  //       _formKey.currentState!.save();
+                  //       if (file == null) {
+                  //         print("No file selected!");
+                  //       } else {
+                  //         print("${file?.path} added!");
+                  //         String filename =
+                  //             DateTime.now().millisecondsSinceEpoch.toString();
+                  //         Reference refDir =
+                  //             FirebaseStorage.instance.ref().child('images');
+                  //         Reference imgToUpload = refDir.child(filename);
+                  //         String filePath = (file?.path)!;
+                  //         try {
+                  //           f() async {
+                  //             await imgToUpload.putFile(File(filePath));
+                  //             imageURL = await imgToUpload.getDownloadURL();
+                  //             print("asdfghjkl");
+                  //             print(imageURL);
+                  //           }
+                  //
+                  //           f();
+                  //         } catch (error) {
+                  //           print(error);
+                  //         }
+                  //       }
+                  //       showDialog(
+                  //         context: context,
+                  //         builder: (BuildContext context) {
+                  //           return AlertDialog(
+                  //             title: const Text('Confirmation'),
+                  //             content: Text(
+                  //                 "Are you sure you want to add event $eventTitle ?"),
+                  //             actions: <Widget>[
+                  //               TextButton(
+                  //                 child: const Text('Cancel'),
+                  //                 onPressed: () {
+                  //                   // Close the dialog and do nothing
+                  //                   Navigator.of(context).pop();
+                  //                 },
+                  //               ),
+                  //               ElevatedButton(
+                  //                 child: const Text('Submit'),
+                  //                 onPressed: () {
+                  //                   firebaseDatabase.addEventFB(
+                  //                       eventTitle,
+                  //                       eventType,
+                  //                       eventDesc,
+                  //                       eventVenue,
+                  //                       "${eventDate.day}/${eventDate.month}/${eventDate.year}",
+                  //                       tod2str(startTime),
+                  //                       tod2str(endTime),
+                  //                       imageURL,
+                  //                       "admin");
+                  //                   ScaffoldMessenger.of(context).showSnackBar(
+                  //                     const SnackBar(
+                  //                         content:
+                  //                             Text("Event Added Sucessfully")),
+                  //                   );
+                  //
+                  //                   Navigator.of(context).pop();
+                  //                 },
+                  //               ),
+                  //             ],
+                  //           );
+                  //         },
+                  //       );
+                  //     }
+                  //   },
+                  //   child: const Text('Submit'),
+                  // ),
                 ),
               ),
             ],

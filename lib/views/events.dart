@@ -95,51 +95,162 @@ class _EventCardState extends State<EventCard> {
           color: Colors.blueGrey[100], borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () {
+          // Log the URL for debugging.
+          print("Image URL: $img_url");
+
           showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return SimpleDialog(
-                  title: Column(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                contentPadding: EdgeInsets.zero,
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      img_url == null
-                          ? const SizedBox(height: 5)
-                          : Image.network(img_url!,
-                          errorBuilder: (context, error, stackTrace) =>
-                          const SizedBox(height: 20)),
-                      Text(
-                        eventTitle,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 26),
-                      ),
-                      Text(
-                        "Event Type : $eventType",
-                        style: const TextStyle(fontSize: 16),
+                      if (img_url != null && img_url!.isNotEmpty)
+                      // Wrap in Center to ensure finite constraints.
+                        Center(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 200,
+                            child: Image.network(
+                              img_url!,
+                              fit: BoxFit.cover,
+                              // Provide a loading indicator.
+                              loadingBuilder: (BuildContext context, Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                              // Log any errors and show an error widget.
+                              errorBuilder: (BuildContext context, Object error,
+                                  StackTrace? stackTrace) {
+                                print("Error loading image: $error");
+                                return Container(
+                                  color: Colors.redAccent,
+                                  height: 200,
+                                  child: const Center(child: Icon(Icons.error)),
+                                );
+                              },
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              eventTitle,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 26),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Event Type: $eventType",
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Description",
+                              style:
+                              TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(eventDesc),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Venue",
+                              style:
+                              TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(eventVenue),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  contentPadding: const EdgeInsets.all(20),
-                  children: [
-                    const Text("Description",
-                        style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(eventDesc),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text("Venue",
-                        style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(eventVenue),
-                  ],
-                );
-              });
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Close"),
+                  ),
+                ],
+              );
+            },
+          );
         },
+
+
+        // onTap: () {
+        //   showDialog(
+        //       context: context,
+        //       builder: (BuildContext context) {
+        //         return SimpleDialog(
+        //           title: Column(
+        //             children: [
+        //           // Only load the image if the URL is not null or empty.
+        //           (img_url != null && img_url!.isNotEmpty)
+        //               ? Image.network(
+        //               img_url!,
+        //               height: 200,
+        //               width: double.infinity,
+        //               fit: BoxFit.cover,
+        //               // img_url == null
+        //               //     ? const SizedBox(height: 5)
+        //               //     : Image.network(img_url!,
+        //               //     height: 200, // set a fixed height
+        //               //     width: double.infinity,
+        //               //     fit: BoxFit.cover,
+        //                   errorBuilder: (context, error, stackTrace) =>
+        //                   const SizedBox(height: 20))
+        //             : const SizedBox(height: 5),
+        //         const SizedBox(height: 10),
+        //               Text(
+        //                 eventTitle,
+        //                 style: const TextStyle(
+        //                     fontWeight: FontWeight.bold, fontSize: 26),
+        //               ),
+        //               Text(
+        //                 "Event Type : $eventType",
+        //                 style: const TextStyle(fontSize: 16),
+        //               ),
+        //             ],
+        //           ),
+        //           contentPadding: const EdgeInsets.all(20),
+        //           children: [
+        //             const Text("Description",
+        //                 style:
+        //                 TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        //             const SizedBox(
+        //               height: 5,
+        //             ),
+        //             Text(eventDesc),
+        //             const SizedBox(
+        //               height: 15,
+        //             ),
+        //             const Text("Venue",
+        //                 style:
+        //                 TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        //             const SizedBox(
+        //               height: 5,
+        //             ),
+        //             Text(eventVenue),
+        //           ],
+        //         );
+        //       });
+        // },
         child: Row(children: [
           Container(
             padding: EdgeInsets.all(5 * swidth),

@@ -22,62 +22,42 @@ class MessMenuPage extends StatefulWidget {
 class _MessMenuPageState extends State<MessMenuPage>
     with SingleTickerProviderStateMixin {
   final List<String> _daysOfWeek = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday',
+    'Friday', 'Saturday', 'Sunday'
   ];
-  String modifyDate = "5-3-2025";
-  var Modified = null;
+
+
   Map<String, List<MenuItem>> _menu = Menu.menu;
+  String modifyDate = "Fetching...";
+
   @override
   void initState() {
     super.initState();
-    loadMenuAndFetchLastModified(); // Load menu before using it
+    loadMenuAndFetchLastModified();
   }
 
   Future<void> loadMenuAndFetchLastModified() async {
-    //firebaseDatabase.updateMenu("Monday", "Banana", "Dal", "Roti");
-    await Menu.fetchMenu(); // Fetch menu from Firebase
-
+    await Menu.fetchMenu();
     setState(() {
-      _menu = Menu.menu; // Update menu after fetching
+      _menu = Menu.menu;
     });
-    getLastModified(); // Fetch last modified date
+    getLastModified();
   }
-
-  int _selectedDayIndex = 0;
 
   Future<void> getLastModified() async {
     var doc = await FirebaseFirestore.instance.collection('menu').doc("modified").get();
-    Modified = doc.data();
     setState(() {
-      modifyDate = Modified["date"];
-    });
-  }
-
-  void _onDaySelected(int index) {
-    setState(() {
-      _selectedDayIndex = index;
+      modifyDate = doc.data()?["date"] ?? "Unknown Date";
     });
   }
 
   static const List<Tab> myTabs = <Tab>[
-    Tab(text: 'Mon'),
-    Tab(text: 'Tue'),
-    Tab(text: 'Wed'),
-    Tab(text: 'Thu'),
-    Tab(text: 'Fri'),
-    Tab(text: 'Sat'),
-    Tab(text: 'Sun'),
+    Tab(text: 'Mon'), Tab(text: 'Tue'), Tab(text: 'Wed'),
+    Tab(text: 'Thu'), Tab(text: 'Fri'), Tab(text: 'Sat'), Tab(text: 'Sun'),
   ];
 
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       initialIndex: initialDay(),
       length: myTabs.length,
@@ -86,15 +66,12 @@ class _MessMenuPageState extends State<MessMenuPage>
           toolbarHeight: 50,
           elevation: 0,
           backgroundColor: widget.appBarBackgroundColor,
-          title: buildTitleBar("MESS MENU", context),
+          title: _buildTitleBar("MESS MENU", context),
           bottom: const TabBar(
             labelColor: Colors.black,
             labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
             unselectedLabelColor: Colors.white,
-            padding: EdgeInsets.zero,
-            indicatorPadding: EdgeInsets.zero,
-            labelPadding: EdgeInsets.zero,
             indicator: UnderlineTabIndicator(
               borderSide: BorderSide(color: Colors.white, width: 1.5),
               insets: EdgeInsets.symmetric(horizontal: 48),
@@ -103,21 +80,19 @@ class _MessMenuPageState extends State<MessMenuPage>
           ),
         ),
         body: TabBarView(
-          children: [
-            ..._daysOfWeek.map((day) => _buildMenuList(day,modifyDate)),
-          ],
+          children: _daysOfWeek.map((day) => _buildMenuList(day, modifyDate)).toList(),
         ),
         backgroundColor: Colors.white,
       ),
     );
   }
 
-  Widget buildTitleBar(String text, BuildContext context) {
+  Widget _buildTitleBar(String text, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () {},
+          onPressed: () => loadMenuAndFetchLastModified(),
           icon: const Icon(Icons.sync_rounded),
           color: Colors.white,
           iconSize: 28,
@@ -135,14 +110,13 @@ class _MessMenuPageState extends State<MessMenuPage>
     );
   }
 
-
-Widget _buildLastUpdatedWidget(String lastUpdatedDate) {
+  Widget _buildLastUpdatedWidget(String lastUpdatedDate) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10), 
+      margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(10), // Add border-radius
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
@@ -155,9 +129,8 @@ Widget _buildLastUpdatedWidget(String lastUpdatedDate) {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-         const  Icon(Icons.update, color: Colors.blue),
-        //  const  SizedBox(width: 10),
-         const SizedBox(height: 20),
+          const Icon(Icons.update, color: Colors.blue),
+          const SizedBox(width: 10),
           Text(
             'Last Updated: $lastUpdatedDate',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -174,7 +147,7 @@ Widget _buildLastUpdatedWidget(String lastUpdatedDate) {
         _buildLastUpdatedWidget(lastUpdatedDate),
         Expanded(
           child: ListView.builder(
-            itemCount: _menu[day]!.length,
+            itemCount: _menu[day]?.length ?? 0,
             itemBuilder: (context, index) {
               final meal = _menu[day]![index];
 
@@ -205,20 +178,9 @@ Widget _buildLastUpdatedWidget(String lastUpdatedDate) {
                         ),
                       ),
                       leading: const Icon(Icons.food_bank_rounded),
-                      subtitle: Text(
-                        checkTime(meal.name),
-                      ),
-                      initiallyExpanded: meal.name == mealOpen() ? true : false,
-                      children: [
-                        ...parseString(meal.description).map((myMeal) {
-                          return ListTile(
-                            title: Text(
-                              myMeal,
-                              style: TextStyle(color: Color(primaryLight)),
-                            ),
-                          );
-                        })
-                      ],
+                      subtitle: Text(checkTime(meal.name)),
+                      initiallyExpanded: meal.name == mealOpen(),
+                      children: _buildFoodItems(meal.description),
                     ),
                   ),
                 ],
@@ -230,43 +192,31 @@ Widget _buildLastUpdatedWidget(String lastUpdatedDate) {
     );
   }
 
+  List<Widget> _buildFoodItems(String description) {
+    List<String> foodItems = description.split(", ").map((e) => e.trim()).toList();
+    return foodItems.map((item) => ListTile(
+      title: Text(item, style: TextStyle(color: Color(primaryLight))),
+      leading: const Icon(Icons.check_circle, color: Colors.green),
+    )).toList();
+  }
+
   String mealOpen() {
     TimeOfDay now = TimeOfDay.now();
-
-    if ((now.hour > 0 && (now.hour <= 9)) || (now.hour >= 21)) {
-      return "Breakfast";
-    } else if ((now.hour < 14) && (now.hour > 9)) {
-      return "Lunch";
-    } else {
-      return "Dinner";
-    }
+    if (now.hour <= 9 || now.hour >= 21) return "Breakfast";
+    if (now.hour < 14 && now.hour > 9) return "Lunch";
+    return "Dinner";
   }
 
   String checkTime(String name) {
-    if (name == 'Breakfast') {
-      return "7:30 AM to 9:15 AM";
-    } else if (name == 'Lunch') {
-      return "12:30 PM to 2:15 PM";
-    } else {
-      return "7:30 PM to 9:15 PM";
+    switch (name) {
+      case 'Breakfast': return "7:30 AM to 9:15 AM";
+      case 'Lunch': return "12:30 PM to 2:15 PM";
+      default: return "7:30 PM to 9:15 PM";
     }
-  }
-
-  List<String> parseString(String desc) {
-    return desc.split(", ");
   }
 
   int initialDay() {
     DateTime now = DateTime.now();
-
-    if (now.hour <= 22) {
-      return now.weekday - 1;
-    } else {
-      if (now.weekday == 7) {
-        return 0;
-      } else {
-        return now.weekday;
-      }
-    }
+    return now.weekday == 7 ? 0 : now.weekday - 1;
   }
 }
