@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "863715695255",
+    "project_id": "calee-9caee",
+    "storage_bucket": "calee-9caee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863715695255:android:9aaf56a6c36f16325d27d2",
+        "android_client_info": {
+          "package_name": "com.example.iitropar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "863715695255-5av9359jdrhreleoe9gmgqq1fdgf780c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_OKkBRdKn4NZnVbE4hYibD_e92SFCK0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "863715695255-5av9359jdrhreleoe9gmgqq1fdgf780c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
