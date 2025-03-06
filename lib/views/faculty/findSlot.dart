@@ -436,12 +436,14 @@ class _findSlotsState extends State<findSlots> {
       }
     }
 
-    if (Loader.courseToSlot == null) {
-      await Loader.loadSlots();
-    }
-    if (Loader.slotToTime == null) {
-      await Loader.loadTimes();
-    }
+    // if (Loader.courseToSlot == null) {
+    //   await Loader.loadSlots();
+    // }
+    await Loader.loadSlots();
+    // if (Loader.slotToTime == null) {
+    //   await Loader.loadTimes();
+    // }
+    await Loader.loadTimes();
 
     for (int m = 0; m < students.length; m++) {
       var courses = await firebaseDatabase.getCourses(students[m]);
