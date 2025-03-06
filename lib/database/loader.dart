@@ -149,9 +149,10 @@ class Loader {
       course_id[i] = course_id[i].replaceAll(' ', '');
     }
 
-    if (courseToSlot == null) {
-      await loadSlots();
-    }
+    // if (courseToSlot == null) {
+    //   await loadSlots();
+    // }
+    await loadSlots();
     print("loaded Times");
     await loadTimes();
     // if (slotToTime == null) {
