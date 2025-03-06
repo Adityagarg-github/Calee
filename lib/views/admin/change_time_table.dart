@@ -178,91 +178,90 @@ class AddFormState extends State<AddForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Upcoming Time table Changes',
+          const Text('Upcoming Time Table Changes',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           FutureBuilder<bool>(
-              future: getchgs(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container();
-                } else {
-                  return SizedBox(
-                    height: 200,
-                    child: ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: chgs.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          DateTime currentDate = DateTime(DateTime.now().year,
-                              DateTime.now().month, DateTime.now().day);
-                          DateTime d = DateTime(chgs[index].date.year,
-                              chgs[index].date.month, chgs[index].date.day);
-                          print(d.toString());
-                          if (d.compareTo(currentDate) >= 0) {
-                            return Container(
-                              height: 100,
-                              child: Center(
-                                  child: Column(
-                                children: [
-                                  Text(
-                                      'Date: ${formatDateWord(chgs[index].date)},  Day followed : ${chgs[index].day_to_followed}'),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      // Show the confirmation dialog
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text("Confirm"),
-                                            content: Text(
-                                                "Do you really want to not follow ${chgs[index].day_to_followed}'s time table on ${formatDateWord(chgs[index].date)}"),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                child: Text("Cancel"),
-                                                onPressed: () {
-                                                  // Close the dialog
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              TextButton.icon(
-                                                  icon: Icon(Icons.delete),
-                                                  label: Text("Delete"),
-                                                  onPressed: () {
-                                                    firebaseDatabase
-                                                        .deleteChDay(DateFormat(
-                                                                'yyyy-MM-dd')
-                                                            .format(chgs[index]
-                                                                .date));
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                            const SnackBar(
-                                                                content: Text(
-                                                                    "Deleted switched day")));
-                                                    Navigator.of(context).pop();
-                                                    setState(() {});
-                                                  }),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: Icon(Icons.delete),
-                                    label: Text("Delete"),
-                                  ),
-                                ],
-                              )),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        }),
-                  );
+            future: getchgs(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                List<changedDay> upcomingChanges = chgs.where((chg) {
+                  DateTime currentDate = DateTime(DateTime.now().year,
+                      DateTime.now().month, DateTime.now().day);
+                  DateTime chgDate = DateTime(
+                      chg.date.year, chg.date.month, chg.date.day);
+                  return chgDate.compareTo(currentDate) >= 0;
+                }).toList();
+
+                if (upcomingChanges.isEmpty) {
+                  return const Text("No upcoming timetable changes.");
                 }
-              }),
+
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('Date')),
+                      DataColumn(label: Text('Day Followed')),
+                      DataColumn(label: Text('Action')),
+                    ],
+                    rows: upcomingChanges.map((chg) {
+                      return DataRow(cells: [
+                        DataCell(Text(formatDateWord(chg.date))),
+                        DataCell(Text(chg.day_to_followed)),
+                        DataCell(
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Confirm"),
+                                    content: Text(
+                                        "Do you really want to remove ${chg.day_to_followed}'s timetable on ${formatDateWord(chg.date)}?"),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text("Cancel"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton.icon(
+                                        icon: const Icon(Icons.delete),
+                                        label: const Text("Delete"),
+                                        onPressed: () {
+                                          firebaseDatabase.deleteChDay(
+                                              DateFormat('yyyy-MM-dd')
+                                                  .format(chg.date));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  "Deleted switched day")));
+                                          Navigator.of(context).pop();
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ]);
+                    }).toList(),
+                  ),
+                );
+              }
+            },
+          ),
         ],
       ),
     );
   }
+
 
   Widget submitWidget() {
     return Padding(
@@ -285,7 +284,10 @@ class AddFormState extends State<AddForm> {
                 });
               }
             },
-            child: const Text("Submit")),
+          child: const Text(
+            "Submit",
+            style: TextStyle(color: Colors.white), // Set text color to white
+          )),
       ),
     );
   }
