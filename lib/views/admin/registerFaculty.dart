@@ -29,7 +29,7 @@ class _registerFacultyState extends State<registerFaculty> {
           toolbarHeight: 50,
           elevation: 0,
           automaticallyImplyLeading: false,
-          backgroundColor: Color(secondaryLight),
+          //backgroundColor: const Color(0xFF0D47A1),
           title: buildTitleBar("REGISTER FACULTY", context),
         ),
         body: const AddEventForm());
@@ -444,14 +444,23 @@ class AddEventFormState extends State<AddEventForm> {
                                   Image.asset("assets/faculty_register.png"),
                                   const SizedBox(height: 10),
                                   const Text(
-                                      '1.All faculty must have unique email ID'),
+                                    '1. All faculty must have a unique email ID',
+                                    textAlign: TextAlign.left,
+                                  ),
                                   const SizedBox(height: 10),
-                                  const Text('2.Course Code must be valid.'),
+                                  const Text(
+                                    '2. Course Code must be valid.',
+                                    textAlign: TextAlign.left,
+                                  ),
                                   const SizedBox(height: 10),
-                                  const Text('3.Department should be valid'),
+                                  const Text(
+                                    '3. Department should be valid',
+                                    textAlign: TextAlign.left,
+                                  ),
                                 ],
                               ),
                             ),
+
                             actions: <Widget>[
                               Center(
                                 child: ElevatedButton(
@@ -467,10 +476,11 @@ class AddEventFormState extends State<AddEventForm> {
                               Center(
                                 child: ElevatedButton(
                                   style: ButtonStyle(
+                                  //backgroundColor: const ,
                                     backgroundColor:
                                         MaterialStateColor.resolveWith(
                                             (states) => Color(primaryLight)),
-                                  ),
+                                   ),
                                   child: const Text("Download Sample"),
                                   onPressed: () async {
                                     final result = await FilePicker.platform

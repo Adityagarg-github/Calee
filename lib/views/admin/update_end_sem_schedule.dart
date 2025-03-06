@@ -77,7 +77,7 @@ class _updateCoursesState extends State<updateEndSemSchedule> {
           elevation: 0,
           backgroundColor: Color(secondaryLight),
           automaticallyImplyLeading: false,
-          title: buildTitleBar("UPDATE END_SEM SCHEDULE", context),
+          title: buildTitleBar("UPDATE END-SEM SCHEDULE", context),
         ),
         body: Column(children: [
           const SizedBox(height: 50),
@@ -92,6 +92,11 @@ class _updateCoursesState extends State<updateEndSemSchedule> {
           const Text(
             'Ensure that you enter valid course and slot codes',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+          const Text(
+            'Note : Do not include the header files !',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 50),

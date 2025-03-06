@@ -26,7 +26,7 @@ class _addHolidayState extends State<addHoliday> {
         appBar: AppBar(
           toolbarHeight: 50,
           elevation: 0,
-          backgroundColor: Color(secondaryLight),
+          //backgroundColor: const Color(0xFF0D47A1),
           automaticallyImplyLeading: false,
           title: buildTitleBar("ADD HOLIDAY", context),
         ),
@@ -203,8 +203,10 @@ class AddClassFormState extends State<AddClassForm> {
               },
             );
           },
-          child: const Text("Submit"),
-        ),
+          child: const Text(
+            "Submit",
+            style: TextStyle(color: Colors.white), // Set text color to white
+          ),        ),
       ),
     );
   }
@@ -461,11 +463,9 @@ class AddClassFormState extends State<AddClassForm> {
                             padding: const EdgeInsets.all(15.0),
                             child: Image.asset('assets/holidays.png'),
                           ),
-                          const Text(
-                              '1.Date should be of the format -  yyyy/mm/dd. Ex: 2020/12/12'),
-                          const Text('2.Reason should not be empty'),
-                          const Text(
-                              '3. Holidays of previous date are not allowed')
+                          const Text('1. Holidays of previous dates are not allowed'),
+                          const Text('2. Date should be of the format - yyyy/mm/dd. Ex: 2020/12/12'),
+                          const Text('3. Reason should not be empty'),
                         ],
                       ),
                     ),
@@ -497,6 +497,7 @@ class AddClassFormState extends State<AddClassForm> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
             ),
             child: const Text('Upload via CSV'),
           ),
@@ -504,6 +505,7 @@ class AddClassFormState extends State<AddClassForm> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -519,8 +521,10 @@ class AddClassFormState extends State<AddClassForm> {
             backgroundColor:
                 MaterialStateColor.resolveWith((states) => Color(primaryLight)),
           ),
-          child: const Text("Download Sample"),
-          onPressed: () async {
+          child: const Text(
+            "Download Sample",
+            style: TextStyle(color: Colors.white), // Set text color to white
+          ),          onPressed: () async {
             final result = await FilePicker.platform.getDirectoryPath();
             if (result == null) {
               return;

@@ -182,7 +182,13 @@ class AddEventFormState extends State<AddEventForm> {
             backgroundColor:
                 MaterialStateColor.resolveWith((states) => Color(primaryLight)),
           ),
-          child: const SizedBox(width: 120, child: Text('Pick Event Date')),
+            child: const SizedBox(
+              width: 120,
+              child: Text(
+              'Pick Event Date',
+              style: TextStyle(color: Colors.white),
+              ),
+            ),
           onPressed: () {
             showDatePicker(
                     context: context,
@@ -213,7 +219,13 @@ class AddEventFormState extends State<AddEventForm> {
             backgroundColor:
                 MaterialStateColor.resolveWith((states) => Color(primaryLight)),
           ),
-          child: const SizedBox(width: 120, child: Text('Set Start time')),
+          child: const SizedBox(
+              width: 120,
+              child: Text(
+              'Set Start Time',
+              style: TextStyle(color: Colors.white),
+              ),
+          ),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -242,7 +254,13 @@ class AddEventFormState extends State<AddEventForm> {
             backgroundColor:
                 MaterialStateColor.resolveWith((states) => Color(primaryLight)),
           ),
-          child: const SizedBox(width: 120, child: Text('Set End time')),
+          child: const SizedBox(
+            width: 120,
+            child: Text(
+              'Set End Time',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
           onPressed: () {
             showTimePicker(
               context: context,
@@ -424,102 +442,16 @@ class AddEventFormState extends State<AddEventForm> {
                         );
                       }
                     },
-                    child: const Text('Submit'),
+                    child: const SizedBox(
+                      width: 120,
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
 
-                  // child: ElevatedButton(
-                  //   style: ButtonStyle(
-                  //     backgroundColor: MaterialStateColor.resolveWith(
-                  //         (states) => Color(primaryLight)),
-                  //   ),
-                  //   onPressed: () {
-                  //     // Validating form inputs
-                  //     if (eventDate.compareTo(getTodayDateTime()) <= 0) {
-                  //       ScaffoldMessenger.of(context).showSnackBar(
-                  //         const SnackBar(
-                  //             content:
-                  //                 Text("Previous date event are not allowed")),
-                  //       );
-                  //       return;
-                  //     }
-                  //     if (toDouble(startTime) > toDouble(endTime)) {
-                  //       ScaffoldMessenger.of(context).showSnackBar(
-                  //         const SnackBar(
-                  //             content: Text(
-                  //                 "Invalid Time. End time is before start time.")),
-                  //       );
-                  //       return;
-                  //     }
-                  //     if (_formKey.currentState!.validate()) {
-                  //       _formKey.currentState!.save();
-                  //       if (file == null) {
-                  //         print("No file selected!");
-                  //       } else {
-                  //         print("${file?.path} added!");
-                  //         String filename =
-                  //             DateTime.now().millisecondsSinceEpoch.toString();
-                  //         Reference refDir =
-                  //             FirebaseStorage.instance.ref().child('images');
-                  //         Reference imgToUpload = refDir.child(filename);
-                  //         String filePath = (file?.path)!;
-                  //         try {
-                  //           f() async {
-                  //             await imgToUpload.putFile(File(filePath));
-                  //             imageURL = await imgToUpload.getDownloadURL();
-                  //             print("asdfghjkl");
-                  //             print(imageURL);
-                  //           }
-                  //
-                  //           f();
-                  //         } catch (error) {
-                  //           print(error);
-                  //         }
-                  //       }
-                  //       showDialog(
-                  //         context: context,
-                  //         builder: (BuildContext context) {
-                  //           return AlertDialog(
-                  //             title: const Text('Confirmation'),
-                  //             content: Text(
-                  //                 "Are you sure you want to add event $eventTitle ?"),
-                  //             actions: <Widget>[
-                  //               TextButton(
-                  //                 child: const Text('Cancel'),
-                  //                 onPressed: () {
-                  //                   // Close the dialog and do nothing
-                  //                   Navigator.of(context).pop();
-                  //                 },
-                  //               ),
-                  //               ElevatedButton(
-                  //                 child: const Text('Submit'),
-                  //                 onPressed: () {
-                  //                   firebaseDatabase.addEventFB(
-                  //                       eventTitle,
-                  //                       eventType,
-                  //                       eventDesc,
-                  //                       eventVenue,
-                  //                       "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-                  //                       tod2str(startTime),
-                  //                       tod2str(endTime),
-                  //                       imageURL,
-                  //                       "admin");
-                  //                   ScaffoldMessenger.of(context).showSnackBar(
-                  //                     const SnackBar(
-                  //                         content:
-                  //                             Text("Event Added Sucessfully")),
-                  //                   );
-                  //
-                  //                   Navigator.of(context).pop();
-                  //                 },
-                  //               ),
-                  //             ],
-                  //           );
-                  //         },
-                  //       );
-                  //     }
-                  //   },
-                  //   child: const Text('Submit'),
-                  // ),
+
                 ),
               ),
             ],

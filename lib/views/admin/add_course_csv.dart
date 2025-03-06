@@ -122,7 +122,7 @@ class _addCoursecsvState extends State<addCoursecsv> {
           const SizedBox(height: 5),
           const Text(
             'Ensure that you enter valid entryNumber and courseCode',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle( fontSize: 16),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 50),
@@ -131,7 +131,10 @@ class _addCoursecsvState extends State<addCoursecsv> {
               backgroundColor: WidgetStateColor.resolveWith(
                   (states) => Color(primaryLight)),
             ),
-            child: const Text("Upload File"),
+            child: const Text(
+              "Upload File",
+              style: TextStyle(color: Colors.white), // Set text color to white
+            ),
             onPressed: () {
               _pickFile(ScaffoldMessenger.of(context));
             },
@@ -142,7 +145,10 @@ class _addCoursecsvState extends State<addCoursecsv> {
               backgroundColor: WidgetStateColor.resolveWith(
                   (states) => Color(primaryLight)),
             ),
-            child: const Text("Download Sample"),
+            child: const Text(
+              "Download Sample",
+              style: TextStyle(color: Colors.white), // Set text color to white
+            ),
             onPressed: () async {
               final result = await FilePicker.platform.getDirectoryPath();
               if (result == null) {

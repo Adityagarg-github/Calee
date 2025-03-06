@@ -115,7 +115,7 @@ class _addEventcsvState extends State<addEventcsv> {
         appBar: AppBar(
           toolbarHeight: 50,
           elevation: 0,
-          backgroundColor: Color(secondaryLight),
+            //backgroundColor: const Color(0xFF0D47A1),
           automaticallyImplyLeading: false,
           title: buildTitleBar("ADD EVENT - CSV", context),
         ),
@@ -130,15 +130,16 @@ class _addEventcsvState extends State<addEventcsv> {
           ),
           const SizedBox(height: 5),
           const Text('Time should be of the form HH:MM',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              style: TextStyle( fontSize: 14)),
           const SizedBox(height: 20),
           const Text('Date should be of the format DD/MM/YYYY',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              style: TextStyle(fontSize: 15)),
           const SizedBox(height: 50),
           ElevatedButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateColor.resolveWith(
-                  (states) => Color(primaryLight)),
+                      (states) => Color(primaryLight)),
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
             ),
             child: const Text("Upload FIle"),
             onPressed: () {
@@ -151,7 +152,10 @@ class _addEventcsvState extends State<addEventcsv> {
               backgroundColor: MaterialStateColor.resolveWith(
                   (states) => Color(primaryLight)),
             ),
-            child: const Text("Download Sample"),
+            child: const Text(
+              "Download Sample",
+              style: TextStyle(color: Colors.white), // Set text color to white
+            ),
             onPressed: () async {
               final result = await FilePicker.platform.getDirectoryPath();
               if (result == null) {

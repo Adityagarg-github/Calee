@@ -70,8 +70,8 @@ class _NewSemesterState extends State<NewSemester> {
           automaticallyImplyLeading: false,
           toolbarHeight: 50,
           elevation: 0,
-          backgroundColor: Color(secondaryLight),
-          title: buildTitleBar("Semester Details", context),
+          //backgroundColor: const Color(0xFF0D47A1),
+          title: buildTitleBar("SEMESTER DETAILS", context),
         ),
         body: SingleChildScrollView(
           child: Column(

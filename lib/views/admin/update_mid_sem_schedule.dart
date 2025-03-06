@@ -94,6 +94,11 @@ class _updateCoursesState extends State<updateMidSemSchedule> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             textAlign: TextAlign.center,
           ),
+          const Text(
+            'Note : Do not include the headers',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 50),
           ElevatedButton(
             style: ButtonStyle(

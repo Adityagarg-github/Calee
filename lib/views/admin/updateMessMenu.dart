@@ -47,38 +47,53 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Update Mess Menu")),
+      appBar: AppBar(
+        title: Text("UPDATE MESS MENU", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+        centerTitle: true, // Centers the title
+      ),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center, // Center-align content
           children: [
             Text("Select Day:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            DropdownButton<String>(
-              value: selectedDay,
-              items: days.map((day) {
-                return DropdownMenuItem(value: day, child: Text(day));
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedDay = value!;
-                });
-              },
+            SizedBox(height: 8),
+            Center(
+              child: DropdownButton<String>(
+                value: selectedDay,
+                items: days.map((day) {
+                  return DropdownMenuItem(
+                    value: day,
+                    child: Text(toBeginningOfSentenceCase(day) ?? day, style: TextStyle(fontSize: 16)),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedDay = value!;
+                  });
+                },
+              ),
             ),
 
             SizedBox(height: 16),
 
             Text("Select Meal:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            DropdownButton<String>(
-              value: selectedMeal,
-              items: meals.map((meal) {
-                return DropdownMenuItem(value: meal, child: Text(meal));
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedMeal = value!;
-                });
-              },
+            SizedBox(height: 8),
+            Center(
+              child: DropdownButton<String>(
+                value: selectedMeal,
+                items: meals.map((meal) {
+                  return DropdownMenuItem(
+                    value: meal,
+                    child: Text(toBeginningOfSentenceCase(meal) ?? meal, style: TextStyle(fontSize: 16)),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedMeal = value!;
+                  });
+                },
+              ),
             ),
 
             SizedBox(height: 16),
@@ -89,6 +104,7 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
                 labelText: "Enter New Menu Items",
                 border: OutlineInputBorder(),
               ),
+              textAlign: TextAlign.center, // Centers the input text
               maxLines: 3,
             ),
 
@@ -96,9 +112,9 @@ class _UpdateMessMenuState extends State<UpdateMessMenu> {
 
             ElevatedButton(
               onPressed: updateMenu,
-              child: Text("Update Menu"),
+              child: Text("UPDATE MENU", style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.black,
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
               ),
             ),
