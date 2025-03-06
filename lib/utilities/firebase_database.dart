@@ -570,6 +570,7 @@ class firebaseDatabase {
         .collection("Groups")
         .doc(groupName);
     Map<String, dynamic> group = {
+      "groupName": groupName,
       "associatedClub": clubName,
       "groupDesc": groupDesc,
       "groupType": groupType,

@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:iitropar/database/event.dart';
 
+
+
 class addClubGroup extends StatefulWidget {
   const addClubGroup({super.key, required this.clubName});
   final String clubName;

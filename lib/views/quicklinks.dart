@@ -53,11 +53,11 @@ class _QuickLinksState extends State<QuickLinks> {
     },
     'Our Team': {
       'Dr Puneet Goyal(Mentor)': 'https://sites.google.com/view/goyalpuneet/',
-      'Jugal Chapatwala(Backend Developer)':
+      'Aditya Garg':
       'https://www.linkedin.com/in/jugal-chapatwala-636143179/',
-      'Gautam Sethia(Backend Developer)': 'https://www.linkedin.com/in/gautamsethia7/',
-      'Jatin Gupta(Frontend Developer)': 'https://www.linkedin.com/in/jatingupta1792/',
-      'Prakhar Saxena(Frontend Developer)': 'https://www.linkedin.com/in/prakhar-saxena-148a10209/'
+      'Aayan Soni': 'https://www.linkedin.com/in/gautamsethia7/',
+      'Akash': 'https://www.linkedin.com/in/jatingupta1792/',
+      'Aniket Kumar Sahil': 'https://www.linkedin.com/in/prakhar-saxena-148a10209/'
     }
   };
 
