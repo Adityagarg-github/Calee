@@ -368,12 +368,16 @@ class _EventCardState extends State<EventCard> {
   }
 
   Future<void> handleStarred(bool isStarred,String eventId) async {
+    print("handlestarred");
+    print(eventId);
 
     DocumentReference starredCollection = FirebaseFirestore.instance
         .collection("Event.nonrecurring")
         .doc(eventId);
+    print(isStarred);
 
     try {
+      print(FirebaseAuth.instance.currentUser!.email!);
       if (isStarred) {
         await starredCollection.update({
           "starredBy": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.email!]),
@@ -507,6 +511,8 @@ class _EventsState extends State<Events> {
               trailing: Switch(
                 value: _showStarredEvents,
                 onChanged: (newValue) {
+                  print(newValue);
+                  print("toggle");
                   setState(() {
                     _showStarredEvents = newValue;
                   });
@@ -528,6 +534,7 @@ class _EventsState extends State<Events> {
                     if (snapshot.hasData) {
                       List<QueryDocumentSnapshot> filteredDocs =[];
                       if(_showStarredEvents==true){
+                        print("showstarred=true");
                         filteredDocs = snapshot.data!.docs.where((doc) {
                           var data = doc.data() as Map<String, dynamic>?;
                           if (data != null && data.containsKey('starredBy')) {
@@ -541,8 +548,14 @@ class _EventsState extends State<Events> {
                                 int.parse(date_split[1]),
                                 int.parse(date_split[0]),
                               );
+                              // print(_selectedDate);
+                              // print(doc_eventDate);
                               DateTime endDate = _selectedDate!.add(const Duration(days: 1));
-                              return starredBy.contains(currentUserEmail) &&((doc_eventDate.isAfter(_selectedDate!) || doc_eventDate.isAtSameMomentAs(_selectedDate!)) && doc_eventDate.isBefore(endDate));
+                              DateTime beginDate=_selectedDate!.add(const Duration(days: -1));
+                              //print(endDate);
+                              //print(starredBy.contains(currentUserEmail) &&((doc_eventDate.isBefore(_selectedDate!) || doc_eventDate.isAtSameMomentAs(_selectedDate!)) && doc_eventDate.isBefore(endDate) && doc_eventDate.isAfter(beginDate)));
+                              //return starredBy.contains(currentUserEmail) &&((doc_eventDate.isAfter(_selectedDate!) || doc_eventDate.isAtSameMomentAs(_selectedDate!)) && doc_eventDate.isBefore(endDate));
+                              return starredBy.contains(currentUserEmail) &&((doc_eventDate.isBefore(_selectedDate!) || doc_eventDate.isAtSameMomentAs(_selectedDate!)) && doc_eventDate.isBefore(endDate) && doc_eventDate.isAfter(beginDate));
                             }
                             else {return false;}
                           }

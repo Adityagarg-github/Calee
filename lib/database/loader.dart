@@ -233,9 +233,10 @@ class Loader {
     final FirebaseStorage storage = FirebaseStorage.instance;
     final Reference ref = storage.ref().child('MidSemTable.csv');
 
-    if (courseToSlot == null) {
-      await loadSlots();
-    }
+    // if (courseToSlot == null) {
+    //   await loadSlots();
+    // }
+    await loadSlots();
     try{
       print("midsem");
       // Try to download the CSV file as a byte stream

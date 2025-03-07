@@ -883,7 +883,62 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            print("refresh button pressed");
+            LoadingScreen.setTask(() async {
+              try {
+                print("ejw");
+                if ((await Ids.resolveUser()).compareTo('student') == 0) {
+                  var cl = await firebaseDatabase.getCourses(
+                      FirebaseAuth.instance.currentUser!.email!.split('@')[0]);
+                  print(cl);
+
+                  await Loader.saveCourses(cl);
+
+                  // await Loader.loadMidSem(
+                  //   const TimeOfDay(hour: 9, minute: 30),
+                  //   const TimeOfDay(hour: 12, minute: 30),
+                  //   const TimeOfDay(hour: 14, minute: 30),
+                  //   const TimeOfDay(hour: 17, minute: 30),
+                  //   cl,
+                  // );
+                  EventDB().clearEndSem(cl);
+                  await Loader.loadMidSem(
+                    const TimeOfDay(hour: 9, minute: 30),
+                    const TimeOfDay(hour: 12, minute: 30),
+                    const TimeOfDay(hour: 14, minute: 30),
+                    const TimeOfDay(hour: 17, minute: 30),
+                    cl,
+                  );
+                  await Loader.loadEndSem(
+                    const TimeOfDay(hour: 9, minute: 30),
+                    const TimeOfDay(hour: 12, minute: 30),
+                    const TimeOfDay(hour: 14, minute: 30),
+                    const TimeOfDay(hour: 17, minute: 30),
+                    cl,
+                  );
+
+                } else if ((await Ids.resolveUser()).compareTo('faculty') == 0) {
+                  var fd = await firebaseDatabase.getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+                  List<String> cl = List.from(fd.courses);
+                  await Loader.saveCourses(cl);
+                }
+              } finally {}
+              return true;
+            });
+
+            LoadingScreen.setPrompt('Fetching fresh data ...');
+
+            LoadingScreen.setBuilder((context) => const EventCalendarScreen(appBarBackgroundColor: Colors.blue));
+
+            Navigator.pop(context);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: ((context) => LoadingScreen.build(context))));
+
+            // setState(() {
+
+            // });
+          },
           icon: const Icon(Icons.sync_rounded),
           color: Colors.white, // Change to your preferred color
           iconSize: 28,
