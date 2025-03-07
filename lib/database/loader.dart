@@ -102,13 +102,18 @@ class Loader {
       if (csvData != null) {
         // Decode CSV data into a String
         final String decodedData = utf8.decode(csvData);
+        print(decodedData);
         // Parse CSV string into a list of lists
-        List<List<dynamic>> slotTimes = const CsvToListConverter(eol:'\n').convert(decodedData);
+        List<List<dynamic>> slotTimes = const CsvToListConverter().convert(decodedData);
         var len = slotTimes.length;
         print("Time Table");
-        print(slotTimes);
+        debugPrint(slotTimes[0].toString(), wrapWidth: 1024);
+        print(slotTimes[0].length);
 
-        slotToTime = {};
+
+
+
+        slotToTime= {};
 
         List<String> timings = slotTimes[0].cast<String>();
         for (int i = 1; i < timings.length; i++) {
@@ -121,16 +126,23 @@ class Loader {
 
         for (int i = 1; i < len; i++) {
           int sz = slotTimes[i].length;
+          print(sz);
+          print("size");
           String weekday = slotTimes[i][0];
           weekday = weekday.toLowerCase();
 
           for (int j = 1; j < sz; j++) {
             String slot = slotTimes[i][j].replaceAll(' ', '');
+            print(slot);
             if (slotToTime![slot] == null) {
               slotToTime![slot] = List.empty(growable: true);
             }
             slotToTime![slot]!.add('$weekday|${timings[j]}');
           }
+        }
+        print("slottotime");
+        if (slotToTime != null && slotToTime!.containsKey("T-PCE-1")) {
+          print("contains");
         }
       }
     } catch (e) {
