@@ -34,6 +34,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
 
   CircleAvatar getUserImage(double radius) {
     ImageProvider image;
+    //image = const AssetImage('assets/user.png');
     if (FirebaseAuth.instance.currentUser != null &&
         FirebaseAuth.instance.currentUser!.photoURL != null) {
       image =
