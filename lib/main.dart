@@ -37,15 +37,16 @@ Future<void> initializeNotifications() async {
 Future<void> setAlarmForEvent(Event event) async {
   tz.initializeTimeZones();
 
-  // Get current UTC time (truncate milliseconds/microseconds)
-  final nowUtc = DateTime.now().toUtc();
-  final truncatedNowUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day, nowUtc.hour, nowUtc.minute, nowUtc.second);
+  // Get current IST time
+  final istLocation = tz.getLocation('Asia/Kolkata');
+  final nowIst = tz.TZDateTime.now(istLocation);
+  final truncatedNowIst = DateTime(nowIst.year, nowIst.month, nowIst.day, nowIst.hour, nowIst.minute, nowIst.second);
 
-  // Convert event start time (IST) to UTC by subtracting 5:30 hours
+  // Convert event start time (IST) using the same date as current IST date
   final eventStartIst = DateTime(
-    truncatedNowUtc.year,
-    truncatedNowUtc.month,
-    truncatedNowUtc.day,
+    truncatedNowIst.year,
+    truncatedNowIst.month,
+    truncatedNowIst.day,
     event.stime.hour,
     event.stime.minute,
   );
@@ -57,6 +58,8 @@ Future<void> setAlarmForEvent(Event event) async {
       eventStartUtc.hour, eventStartUtc.minute, eventStartUtc.second
   );
 
+  final nowUtc = DateTime.now().toUtc();
+  final truncatedNowUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day, nowUtc.hour, nowUtc.minute, nowUtc.second);
   // Ensure at least 60 seconds buffer
   final minFutureTime = truncatedNowUtc.add(const Duration(seconds: 60));
 
