@@ -1,14 +1,15 @@
-buildscript{
-    repositories{
+buildscript {
+    repositories {
         google()
         jcenter()
     }
 
-    dependencies{
+    dependencies {
         classpath 'com.android.tools.build:gradle:8.8.0'
         classpath 'com.google.gms:google-services:4.3.2'
     }
 }
+
 allprojects {
     repositories {
         google()
