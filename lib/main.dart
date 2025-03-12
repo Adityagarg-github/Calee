@@ -14,9 +14,9 @@ import 'package:permission_handler/permission_handler.dart';
 
 void requestExactAlarmPermission() async {
   if (await Permission.scheduleExactAlarm.request().isGranted) {
-    print("✅ Permission granted");
+    print("Permission granted");
   } else {
-    print("❌ Permission denied");
+    print("Permission denied");
   }
 }
 
@@ -65,15 +65,15 @@ Future<void> setAlarmForEvent(Event event) async {
   await Future.sync(() => print("🔹 Min Future Time: $minFutureTime"));
 
   if (truncatedEventStartUtc.isBefore(minFutureTime)) {
-    await Future.sync(() => print("❌ Skipping alarm for past event: ${event.title}"));
+    await Future.sync(() => print("Skipping alarm for past event: ${event.title}"));
     return;
   }
 
   // Convert to TZDateTime in UTC
   final tzEventStartUtc = tz.TZDateTime.from(truncatedEventStartUtc, tz.getLocation('UTC'))
-      .add(const Duration(hours: 5, minutes: 20)); // ✅ Added 5:20 hours 10 min early
+      .add(const Duration(hours: 5, minutes: 20)); // Added 5:20 hours 10 min early
 
-  print("✅ Scheduling alarm for ${event.title} at $tzEventStartUtc");
+  print("Scheduling alarm for ${event.title} at $tzEventStartUtc");
 
   final androidPlatformChannelSpecifics = const AndroidNotificationDetails(
     'alarm_channel',
@@ -94,7 +94,7 @@ Future<void> setAlarmForEvent(Event event) async {
     uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
   );
 
-  print("✅ Alarm set successfully: ${event.title} at ${tzEventStartUtc.toUtc()} (UTC)");
+  print("Alarm set successfully: ${event.title} at ${tzEventStartUtc.toUtc()} (UTC)");
 }
 
 
