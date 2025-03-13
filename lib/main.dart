@@ -5,10 +5,12 @@ import 'package:iitropar/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'firebase_options.dart';
+import 'package:alarm/alarm.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Alarm.init();
   await Firebase.initializeApp(
     name: 'calee-app',
     options: DefaultFirebaseOptions.currentPlatform,
@@ -26,6 +28,21 @@ void main() async {
   }
   RootPage.signin(signin);
   runApp(const App());
+}
+
+
+// Function to handle alarm triggers
+void _onAlarmTrigger(AlarmSettings alarmSettings) {
+  print("Alarm Triggered at: ${alarmSettings.dateTime}");
+  // You can show a dialog, push a screen, or trigger a notification
+  showAlarmNotification(alarmSettings);
+}
+
+// Function to show a notification when alarm rings
+void showAlarmNotification(AlarmSettings alarmSettings) {
+  // You can use local_notifications package for actual notifications
+  print("Reminder: ${alarmSettings.notificationTitle}");
+  print("Alarm Triggered at: ${alarmSettings.dateTime}");
 }
 
 class App extends StatelessWidget {

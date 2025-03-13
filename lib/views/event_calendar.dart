@@ -10,6 +10,8 @@ import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 
 import '../database/loader.dart';
+import 'package:alarm/alarm.dart';
+
 
 class EventCalendarScreen extends StatefulWidget {
   final Color appBarBackgroundColor;
@@ -164,7 +166,17 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   void _insertSingularEvent(Event e, DateTime date) async {
     await edb.addSingularEvent(e, date);
-    updateEvents(date);
+    String dateKey = DateFormat('yyyy-MM-dd').format(date);
+
+    if (!mySelectedEvents.containsKey(dateKey)) {
+      mySelectedEvents[dateKey] = [];
+    }
+
+    mySelectedEvents[dateKey]!.add(e);
+
+    setState(() {}); // Refresh UI to show new event
+
+    //updateEvents(date);
   }
 
   void _insertRecurringEvent(
@@ -177,6 +189,46 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     await edb.delete(e);
     loadEvents(_selectedDate);
   }
+  //class _EventCalendarScreenState extends State<EventCalendarScreen> {
+
+  // Add _setAlarm function below existing methods
+  void _setAlarm(Event event) async {
+  DateTime eventDateTime = DateTime(
+  2025,//_selectedDate.year,
+  3,//_selectedDate.month,
+  14,//_selectedDate.day,
+  18,//event.stime.hour,
+  57,//event.stime.minute,
+  );
+
+  DateTime alarmTime = eventDateTime.subtract(Duration(minutes: 1));
+
+  // Prevent setting alarms for past events
+  if (alarmTime.isBefore(DateTime.now())) {
+  ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(content: Text("Cannot set alarm for a past event.")),
+  );
+  return;
+  }
+
+  final alarmSettings = AlarmSettings(
+  id: event.id.hashCode, // Unique ID
+  dateTime: alarmTime,
+  assetAudioPath: 'assets/alarm.mp3', // Optional custom sound
+  loopAudio: false,
+  vibrate: true,
+  fadeDuration: 3.0,
+  notificationTitle: "Reminder: ${event.title}",
+  notificationBody: "Your event starts at ${event.stime.format(context)}.",
+  );
+
+  await Alarm.set(alarmSettings: alarmSettings);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(content: Text("Alarm set for ${event.title} at ${alarmTime.hour}:${alarmTime.minute}")),
+  );
+  }
+  //}
 
   String formatTimeOfDay(TimeOfDay tod) {
     final now = DateTime.now();
@@ -187,14 +239,31 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
+  // List<Event> _listOfDayEvents(DateTime datetime) {
+  //   var l = mySelectedEvents[DateFormat('yyyy-MM-dd').format(datetime)];
+  //
+  //   if (l != null) {
+  //     l.sort((a, b) => a.compareTo(b));
+  //     return l;
+  //   }
+  //   return List.empty();
+  // }
   List<Event> _listOfDayEvents(DateTime datetime) {
-    var l = mySelectedEvents[DateFormat('yyyy-MM-dd').format(datetime)];
-    if (l != null) {
-      l.sort((a, b) => a.compareTo(b));
-      return l;
+    String dateKey = DateFormat('yyyy-MM-dd').format(datetime);
+
+    if (!mySelectedEvents.containsKey(dateKey) || mySelectedEvents[dateKey] == null) {
+      return []; // Ensure an empty list is returned instead of null
     }
-    return List.empty();
+
+    List<Event> l = List.from(mySelectedEvents[dateKey]!);
+
+    // Ensure sorting doesn't crash
+    l.sort((a, b) => a.stime.hour.compareTo(b.stime.hour));
+
+    return l;
   }
+
+
 
   bool isHoliday(DateTime day) {
     if (day.weekday >= 6) {
@@ -758,6 +827,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                               Expanded(
                                 child: Container(),
                               ),
+                              //Alarm setup
+                              IconButton(
+                                icon: Icon(Icons.alarm_add, color: Colors.green),
+                                onPressed: () => _setAlarm(myEvents),
+                              ),
+
                               getDeleteButton(myEvents),
                             ],
                           ),
