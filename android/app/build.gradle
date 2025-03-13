@@ -24,13 +24,13 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace 'com.example.iitropar'
-    compileSdkVersion 34  // ✅ Set explicit SDK version
+    compileSdkVersion 35  // Set explicit SDK version
     ndkVersion "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17  // ✅ Updated to Java 17
+        sourceCompatibility JavaVersion.VERSION_17  // Updated to Java 17
         targetCompatibility JavaVersion.VERSION_17
-        coreLibraryDesugaringEnabled true  // ✅ Fix desugaring issue
+        coreLibraryDesugaringEnabled true  // Fix desugaring issue
     }
 
     kotlinOptions {
@@ -45,7 +45,7 @@ android {
         applicationId "com.example.iitropar"
         minSdkVersion 22
         multiDexEnabled true
-        targetSdkVersion 34  // ✅ Set explicit target SDK version
+        targetSdkVersion 35  //  Set explicit target SDK version
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -76,6 +76,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta01'
     implementation 'androidx.multidex:multidex:2.0.1'
 
-    // ✅ Core Library Desugaring (Required for `flutter_local_notifications`)
+    // Core Library Desugaring (Required for `flutter_local_notifications`)
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 }
