@@ -192,16 +192,26 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   //class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   // Add _setAlarm function below existing methods
+  // void _setAlarm(Event event) async {
+  // DateTime eventDateTime = DateTime(
+  // 2025,//_selectedDate.year,
+  // 3,//_selectedDate.month,
+  // 14,//_selectedDate.day,
+  // 18,//event.stime.hour,
+  // 57,//event.stime.minute,
+  // );
+
   void _setAlarm(Event event) async {
-  DateTime eventDateTime = DateTime(
-  2025,//_selectedDate.year,
-  3,//_selectedDate.month,
-  14,//_selectedDate.day,
-  18,//event.stime.hour,
-  57,//event.stime.minute,
-  );
+    DateTime eventDateTime = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      event.stime.hour,
+      event.stime.minute,
+    );
 
   DateTime alarmTime = eventDateTime.subtract(Duration(minutes: 1));
+  //DateTime alarmTime = DateTime.now().add(Duration(minutes: 2));
 
   // Prevent setting alarms for past events
   if (alarmTime.isBefore(DateTime.now())) {
@@ -223,12 +233,28 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   );
 
   await Alarm.set(alarmSettings: alarmSettings);
+  String formattedDate = "${alarmTime.day}-${alarmTime.month}-${alarmTime.year}";
 
   ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(content: Text("Alarm set for ${event.title} at ${alarmTime.hour}:${alarmTime.minute}")),
+    SnackBar(content: Text("Alarm set for ${event.title} on $formattedDate at ${alarmTime.hour}:${alarmTime.minute}")),
   );
   }
-  //}
+
+  void _cancelAlarm(Event event) async {
+    int alarmId = event.id.hashCode; // Use the same unique ID when setting the alarm
+
+    bool isDeleted = await Alarm.stop(alarmId); // Stops and deletes the alarm
+
+    if (isDeleted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Alarm for '${event.title}' has been canceled.")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No active alarm found for '${event.title}'.")),
+      );
+    }
+  }
 
   String formatTimeOfDay(TimeOfDay tod) {
     final now = DateTime.now();
@@ -828,12 +854,26 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                                 child: Container(),
                               ),
                               //Alarm setup
-                              IconButton(
-                                icon: Icon(Icons.alarm_add, color: Colors.green),
-                                onPressed: () => _setAlarm(myEvents),
-                              ),
+                          // Alarm Add Icon
+                          Flexible(
+                            child: IconButton(
+                              icon: Icon(Icons.alarm_add, color: Colors.green),
+                              onPressed: () => _setAlarm(myEvents),
+                            ),
+                          ),
 
-                              getDeleteButton(myEvents),
+                          // Alarm Off Icon
+                          Flexible(
+                            child: IconButton(
+                              icon: Icon(Icons.alarm_off, color: Colors.red),
+                              onPressed: () => _cancelAlarm(myEvents),
+                            ),
+                          ),
+
+                          // Delete Button
+                          Flexible(
+                            child: getDeleteButton(myEvents),
+                          ),
                             ],
                           ),
                         ),
