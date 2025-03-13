@@ -1,10 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.iitropar">
 
-    <!-- Permissions for alarms -->
+    <!-- Required Permissions -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
@@ -27,6 +28,8 @@
         android:label="Calee"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- Foreground Notification Service -->
         <service android:name="com.dexterous.flutterlocalnotifications.ForegroundService"/>
 
         <activity
@@ -49,7 +52,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Flutter plugin metadata -->
+        <!-- Flutter Plugin Metadata -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
@@ -57,8 +60,11 @@
         <!-- Alarm Receiver (Required for Exact Alarms) -->
         <receiver
             android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
-            android:exported="false"
-            android:permission="android.permission.SCHEDULE_EXACT_ALARM">
+            android:exported="false">
+        </receiver>
+
+        <!-- Boot Receiver (Ensures Alarms Persist After Reboot) -->
+        <receiver android:name=".BootReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <category android:name="android.intent.category.DEFAULT"/>

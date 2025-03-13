@@ -14,9 +14,17 @@ import 'package:permission_handler/permission_handler.dart';
 
 void requestExactAlarmPermission() async {
   if (await Permission.scheduleExactAlarm.request().isGranted) {
-    print("Permission granted");
+    print("✅ Permission granted");
   } else {
-    print("Permission denied");
+    print("❌ Permission denied");
+  }
+}
+
+void requestNotificationPermission() async {
+  if (await Permission.notification.request().isGranted) {
+    print("✅ Notification permission granted");
+  } else {
+    print("❌ Notification permission denied");
   }
 }
 
@@ -37,12 +45,16 @@ Future<void> initializeNotifications() async {
 Future<void> setAlarmForEvent(Event event) async {
   tz.initializeTimeZones();
 
+  // Get current UTC time (truncate milliseconds/microseconds)
+  final nowUtc = DateTime.now().toUtc();
+  final truncatedNowUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day, nowUtc.hour, nowUtc.minute, nowUtc.second);
+
   // Get current IST time
   final istLocation = tz.getLocation('Asia/Kolkata');
   final nowIst = tz.TZDateTime.now(istLocation);
   final truncatedNowIst = DateTime(nowIst.year, nowIst.month, nowIst.day, nowIst.hour, nowIst.minute, nowIst.second);
 
-  // Convert event start time (IST) using the same date as current IST date
+  // Convert event start time (IST) to UTC by subtracting 5:30 hours
   final eventStartIst = DateTime(
     truncatedNowIst.year,
     truncatedNowIst.month,
@@ -58,8 +70,6 @@ Future<void> setAlarmForEvent(Event event) async {
       eventStartUtc.hour, eventStartUtc.minute, eventStartUtc.second
   );
 
-  final nowUtc = DateTime.now().toUtc();
-  final truncatedNowUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day, nowUtc.hour, nowUtc.minute, nowUtc.second);
   // Ensure at least 60 seconds buffer
   final minFutureTime = truncatedNowUtc.add(const Duration(seconds: 60));
 
@@ -68,15 +78,15 @@ Future<void> setAlarmForEvent(Event event) async {
   await Future.sync(() => print("🔹 Min Future Time: $minFutureTime"));
 
   if (truncatedEventStartUtc.isBefore(minFutureTime)) {
-    await Future.sync(() => print("Skipping alarm for past event: ${event.title}"));
+    await Future.sync(() => print("❌ Skipping alarm for past event: ${event.title}"));
     return;
   }
 
   // Convert to TZDateTime in UTC
   final tzEventStartUtc = tz.TZDateTime.from(truncatedEventStartUtc, tz.getLocation('UTC'))
-      .add(const Duration(hours: 5, minutes: 20)); // Added 5:20 hours 10 min early
+      .add(const Duration(hours: 5, minutes: 30)); // ✅ Added 5:20 hours 10 min early
 
-  print("Scheduling alarm for ${event.title} at $tzEventStartUtc");
+  print("✅ Scheduling alarm for ${event.title} at $tzEventStartUtc");
 
   final androidPlatformChannelSpecifics = const AndroidNotificationDetails(
     'alarm_channel',
@@ -97,7 +107,7 @@ Future<void> setAlarmForEvent(Event event) async {
     uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
   );
 
-  print("Alarm set successfully: ${event.title} at ${tzEventStartUtc.toUtc()} (UTC)");
+  print("✅ Alarm set successfully: ${event.title} at ${tzEventStartUtc.toUtc()} (UTC)");
 }
 
 
@@ -122,6 +132,7 @@ void main() async {
   }
 
   RootPage.signin(signin);
+  requestNotificationPermission();
   requestExactAlarmPermission();
   await initializeNotifications(); // Initialize notifications
   //await setHardcodedAlarm(); // Automatically set alarm on app start
