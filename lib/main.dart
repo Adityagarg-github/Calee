@@ -7,6 +7,9 @@ import 'package:iitropar/database/local_db.dart';
 import 'firebase_options.dart';
 import 'package:alarm/alarm.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:iitropar/views/PBTabView.dart';
+import 'package:iitropar/views/signin.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,13 +22,24 @@ void main() async {
     androidProvider: AndroidProvider.playIntegrity,
   );
   await EventDB.startInstance();
-  bool signin = false;
-  if (EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
-    signin = true;
-  } else if (FirebaseAuth.instance.currentUser != null) {
-    signin = true;
+
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    user = await FirebaseAuth.instance.authStateChanges().first;
+  }
+
+  bool signin = (EventDB.firstRun() || user == null);;
+  if (!signin) {
     await Ids.resolveUser();
   }
+
+  // bool signin = false;
+  // if (EventDB.firstRun() || FirebaseAuth.instance.currentUser == null) {
+  //   signin = true;
+  // } else if (FirebaseAuth.instance.currentUser != null) {
+  //   signin = true;
+  //   await Ids.resolveUser();
+  // }
   RootPage.signin(signin);
   runApp(const App());
 }
