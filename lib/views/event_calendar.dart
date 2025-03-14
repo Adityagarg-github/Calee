@@ -262,6 +262,159 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   // 57,//event.stime.minute,
   // );
 
+  void _showEventDetailsDialog(Event event) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15), // Rounded corners
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Center(
+                  child: Text(
+                    event.title,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Date & Time
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Text(DateFormat('dd-MM-yyyy').format(_selectedDate),
+                        style: TextStyle(fontSize: 16)),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    const Icon(Icons.access_time, color: Colors.orange),
+                    const SizedBox(width: 8),
+                    Text("${event.startTime()} - ${event.endTime()}",
+                        style: TextStyle(fontSize: 16)),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                // Venue & Host
+                if (event.venue.isNotEmpty)
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, color: Colors.red),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(event.venue, style: TextStyle(fontSize: 16))),
+                    ],
+                  ),
+                if (event.host.isNotEmpty)
+                  Row(
+                    children: [
+                      const Icon(Icons.person, color: Colors.green),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text("Host: ${event.host}", style: TextStyle(fontSize: 16))),
+                    ],
+                  ),
+
+                const SizedBox(height: 10),
+
+                // Description
+                Text(
+                  "📝 Description",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  margin: const EdgeInsets.only(top: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    event.desc.isNotEmpty ? event.desc : "No description available.",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Set Alarm
+                    TextButton.icon(
+                      icon: const Icon(Icons.alarm_add, color: Colors.green),
+                      label: const Text("Set Alarm"),
+                      onPressed: () {
+                        _setAlarm(event);
+                        Navigator.pop(context);
+                      },
+                    ),
+                    // Cancel Alarm
+                    TextButton.icon(
+                      icon: const Icon(Icons.alarm_off, color: Colors.red),
+                      label: const Text("Cancel Alarm"),
+                      onPressed: () {
+                        _cancelAlarm(event);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+
+                // Delete Button (Only for creator)
+                if (FirebaseAuth.instance.currentUser != null &&
+                    (FirebaseAuth.instance.currentUser!.email == event.creator || event.creator == 'guest'))
+                  Center(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      icon: const Icon(Icons.delete),
+                      label: const Text("Delete Event"),
+                      onPressed: () {
+                        _deleteEntireEvent(event);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+
+                const SizedBox(height: 10),
+
+                // Close Button
+                Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Close", style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+
+
   void _setAlarm(Event event) async {
     DateTime eventDateTime = DateTime(
       _selectedDate.year,
@@ -815,127 +968,38 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               child: ListView(
                 children: [
                   ..._listOfDayEvents(whatDatetocall(_selectedDate)).map((myEvents) {
-                    final width = MediaQuery.of(context).size.width;
                     return Column(
                       children: [
-                        Container(
-                          height: 50,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 1 / 5.5 * width,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      myEvents.startTime(),
-                                      style: TextStyle(
-                                        color: Color(primaryLight),
-                                        fontSize: 14,
+                        InkWell(
+                          onTap: () {
+                            _showEventDetailsDialog(myEvents);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        myEvents.title,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Color(primaryLight),
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      myEvents.endTime(),
-                                      style: TextStyle(
-                                        color: Color(primaryLight).withOpacity(0.6),
-                                        fontSize: 14,
+                                      Text(
+                                        myEvents.startTime() + " - " + myEvents.endTime(),
+                                        style: TextStyle(color: Color(primaryLight).withOpacity(0.6)),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const VerticalDivider(
-                                thickness: 4,
-                                width: 0,
-                                color: Colors.blue,
-                              ),
-                              SizedBox(
-                                width: 0.5 / 5.5 * width,
-                              ),
-                              SizedBox(
-                                width: 3 / 5.5 * width,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            myEvents.title,
-                                            style: TextStyle(
-                                              color: Color(primaryLight),
-                                              fontSize: 16,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Text(
-                                          myEvents.venue,
-                                          style: TextStyle(
-                                            color: Color(primaryLight).withOpacity(0.6),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            myEvents.desc,
-                                            style: TextStyle(
-                                              color: Color(primaryLight)
-                                                  .withOpacity(0.6),
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                10), // Adjust the fixed distance as needed
-                                        Expanded(
-                                          child: Text(
-                                            myEvents.host,
-                                            style: TextStyle(
-                                              color: Color(primaryLight)
-                                                  .withOpacity(0.6),
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(),
-                              ),
-                              //Alarm setup
-                          // Alarm Add Icon
-                          Flexible(
-                            child: IconButton(
-                              icon: Icon(Icons.alarm_add, color: Colors.green),
-                              onPressed: () => _setAlarm(myEvents),
+                                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey), // Indicator
+                              ],
                             ),
-                          ),
-
-                          // Alarm Off Icon
-                          Flexible(
-                            child: IconButton(
-                              icon: Icon(Icons.alarm_off, color: Colors.red),
-                              onPressed: () => _cancelAlarm(myEvents),
-                            ),
-                          ),
-
-                          // Delete Button
-                          Flexible(
-                            child: getDeleteButton(myEvents),
-                          ),
-                            ],
                           ),
                         ),
                         Divider(
@@ -946,17 +1010,10 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       ],
                     );
                   }),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    holidayResaon ?? '',
-                    style: const TextStyle(color: Colors.red),
-                    textAlign: TextAlign.center,
-                  ),
                 ],
               ),
             ),
+
           ],
         ),
         floatingActionButton: FloatingActionButton(
