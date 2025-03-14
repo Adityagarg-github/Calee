@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "863715695255",
-    "project_id": "calee-9caee",
-    "storage_bucket": "calee-9caee.firebasestorage.app"
+    "project_number": "59565125134",
+    "project_id": "calee-a6757",
+    "storage_bucket": "calee-a6757.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:863715695255:android:9aaf56a6c36f16325d27d2",
+        "mobilesdk_app_id": "1:59565125134:android:90614dd9f6c6a1bfe1d65f",
         "android_client_info": {
           "package_name": "com.example.iitropar"
         }
       },
       "oauth_client": [
         {
-          "client_id": "863715695255-5av9359jdrhreleoe9gmgqq1fdgf780c.apps.googleusercontent.com",
+          "client_id": "59565125134-2d4rbp47g9vrahbp1oc3pg701rufkmi0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.iitropar",
+            "certificate_hash": "ce1950ac5885c46becce11165d96728d54afe34d"
+          }
+        },
+        {
+          "client_id": "59565125134-j7riu2rv9pnn9oigqc9jk8im1li472kp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC_OKkBRdKn4NZnVbE4hYibD_e92SFCK0s"
+          "current_key": "AIzaSyAy7sknRs--hLl3kyQSVFUzFyBxuEnG4s4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "863715695255-5av9359jdrhreleoe9gmgqq1fdgf780c.apps.googleusercontent.com",
+              "client_id": "59565125134-j7riu2rv9pnn9oigqc9jk8im1li472kp.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
