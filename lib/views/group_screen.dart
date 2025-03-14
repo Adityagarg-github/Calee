@@ -145,7 +145,8 @@ class _GroupScreenState extends State<GroupScreen> {
                 onPressed: () async {
                   final CollectionReference groupsCollection = FirebaseFirestore.instance.collection('Groups');
                   groupsCollection.doc(widget.groupName).collection('Users').doc(user!.email).delete();
-                  Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context)=> Groups()), (route)=>false,);
+                  Navigator.pop(context, true);
+                  //Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context)=> Groups()), (route)=>false,);
                   // _showConfirmationDialog(context, widget.groupName);
                 },
                 style: ElevatedButton.styleFrom(

@@ -533,8 +533,9 @@ class LoadingScreen {
     _msg = message;
   }
 
-  static void setTask(Future<bool> Function() task) {
+  static Future<bool> setTask(Future<bool> Function() task) async {
     _task = task;
+    return await task(); // Ensure it returns a Future<bool>
   }
 
   static void setBuilder(Widget Function(BuildContext context) builder) {
@@ -618,8 +619,8 @@ Future<void> _showConfirmationDialog(BuildContext context) async {
         content: const Text('Are you sure you want to logout?'),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
-              LoadingScreen.setTask(_signout);
+            onPressed: () async {
+              await LoadingScreen.setTask(_signout);
               LoadingScreen.setPrompt('Signing Out');
               LoadingScreen.setBuilder((context) => const RootPage());
               RootPage.signin(true);

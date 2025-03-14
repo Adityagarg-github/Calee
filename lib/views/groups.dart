@@ -16,6 +16,13 @@ class _GroupsState extends State<Groups> {
   List<Map<String, String>> availableGroups = [];
   List<Map<String, String>> joinedGroups = [];
 
+  Future<void> refreshGroups() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final snapshot = await FirebaseFirestore.instance.collection('Groups').get();
+    await _processDocuments(snapshot.docs, user);
+    setState(() {}); // Refresh the UI
+  }
+
   @override
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
@@ -102,16 +109,20 @@ class _GroupsState extends State<Groups> {
             leading: const Icon(Icons.group),
             children: groups.map((group) {
               return InkWell(
-                onTap: () {
+                onTap: () async {
                   if (category == "Groups Available") {
                     _showConfirmationDialog(context, group['groupName'] ?? "<Group Name>");
                   } else {
-                    Navigator.push(
+                    bool? leftGroup = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => GroupScreen(groupName: group['groupName'] ?? "<Group Name>"),
                       ),
                     );
+
+                    if (leftGroup == true) {
+                      await refreshGroups(); // ✅ Refresh the group list after leaving
+                    }
                   }
                 },
                 child: ListTile(
@@ -181,12 +192,12 @@ class _GroupsState extends State<Groups> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Groups()),
-            );
-          },
+          onPressed: refreshGroups,
+            // Navigator.pushReplacement(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => Groups()),
+            // );
+          // },
           icon: const Icon(Icons.sync_rounded),
           color: Colors.white, // Change to your preferred color
           iconSize: 28,
