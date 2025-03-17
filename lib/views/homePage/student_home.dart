@@ -138,9 +138,9 @@ class _StudentHomeState extends AbstractHomeState {
       setState(() {
         todayevents = loadedTodayEvents;
       });
-      for (Event event in todayevents) {
-        await setAlarmForEvent(event);
-      }
+      // for (Event event in todayevents) {
+      //   await setAlarmForEvent(event);
+      // }
     } catch (e) {
       print('Error loading events: $e');
     }
