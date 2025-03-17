@@ -58,14 +58,19 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     AdminCard(
-                        context, const NewSemester(), "Start New Semester"),
+                        context, const NewSemester(), "Start New Semester",
+                    imagePath: 'assets/admin_start_new_semester_icon.png'),
                     AdminCard(
-                        context, const registerFaculty(), "Register Faculty"),
+                        context, const registerFaculty(), "Register Faculty",
+                        imagePath: 'assets/admin_register_faculty_icon.png'),
                     AdminCard(context, const FacultyList(),
-                        "Manage Faculty & Courses"),
+                        "Manage Faculty & Courses",
+                    imagePath: 'assets/admin_manage_faculty_and_courses_icon.png'),
                     AdminCard(context, const addCoursecsv(),
-                        "Add Student Record (CSV)"),
-                    AdminCard(context, const registerClub(), "Register Club"),
+                        "Add Student Record (CSV)",
+                    imagePath: 'assets/admin_add_student_record_csv_icon.png'),
+                    AdminCard(context, const registerClub(), "Register Club",
+                    imagePath: 'assets/admin_register_club_icon.png'),
                   ],
                 ),
               ),
@@ -81,15 +86,23 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    AdminCard(context, const addHoliday(), "Declare Holiday"),
+                    AdminCard(context, const addHoliday(), "Declare Holiday",
+                    imagePath: 'assets/admin_declare_holiday_icon.png'),
                     AdminCard(
-                        context, const changeTimetable(), "Change time table"),
+                        context, const changeTimetable(), "Change time table",
+                    imagePath: 'assets/admin_change_time_table_icon.png'),
                     AdminCard(
-                        context, const updateTimetablecsv(), "Update time table"),
+                        context, const updateTimetablecsv(), "Update time table",
+                    imagePath: 'assets/admin_update_time_table_icon.png'),
                     AdminCard(
-                        context, const updateCourses(), "Update courses"),
-                    AdminCard(context, const updateMidSemSchedule(), "Update Mid-Sem Schedule"),
-                    AdminCard(context, const updateEndSemSchedule(), "Update End-Sem Schedule")
+                        context, const updateCourses(), "Update courses",
+                    imagePath: 'assets/admin_update_courses_icon.png'),
+                    AdminCard(context, const updateMidSemSchedule(),
+                        "Update Mid-Sem Schedule",
+                    imagePath: 'assets/admin_update_mid_sem_schedule_icon.png'),
+                    AdminCard(context, const updateEndSemSchedule(),
+                        "Update End-Sem Schedule",
+                    imagePath: 'assets/admin_update_end_sem_schedule_icon.png')
                   ],
                 ),
               ),
@@ -106,9 +119,11 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    AdminCard(context, const AddEvent(), "Add Event"),
+                    AdminCard(context, const AddEvent(), "Add Event",
+                    imagePath: 'assets/admin_add_event_icon.png'),
                     AdminCard(
-                        context, const addEventcsv(), "Add Event Using CSV"),
+                        context, const addEventcsv(), "Add Event Using CSV",
+                    imagePath: 'assets/admin_add_event_using_csv_icon.png'),
                   ],
                 ),
               ),
@@ -124,7 +139,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    AdminCard(context, const UpdateMessMenu(), "Update Mess Menu"),
+                    AdminCard(context, const UpdateMessMenu(),
+                        "Update Mess Menu",
+                    imagePath: 'assets/admin_update_mess_menu_icon.png'),
                   ],
                 ),
               ),
