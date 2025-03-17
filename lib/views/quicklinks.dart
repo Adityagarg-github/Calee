@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
+import 'package:adaptive_theme/adaptive_theme.dart'; // ✅ Added AdaptiveTheme package
 
 class QuickLinks extends StatefulWidget {
   final Color appBarBackgroundColor;
@@ -22,8 +23,7 @@ class _QuickLinksState extends State<QuickLinks> {
       'Departments': 'https://www.iitrpr.ac.in/departments-centers',
       'Course Booklet':
       'https://www.iitrpr.ac.in/sites/default/files/COURSE%20BOOKLET%20FOR%20UG%202018-19.pdf',
-      'Handbook':
-      'https://www.iitrpr.ac.in/handbook-information',
+      'Handbook': 'https://www.iitrpr.ac.in/handbook-information',
     },
     'Facilities': {
       'Medical Centre': 'https://www.iitrpr.ac.in/medical-center/',
@@ -53,11 +53,11 @@ class _QuickLinksState extends State<QuickLinks> {
     },
     'Our Team': {
       'Dr Puneet Goyal(Mentor)': 'https://sites.google.com/view/goyalpuneet/',
-      'Aditya Garg':
-      'https://www.linkedin.com/in/jugal-chapatwala-636143179/',
+      'Aditya Garg': 'https://www.linkedin.com/in/jugal-chapatwala-636143179/',
       'Aayan Soni': 'https://www.linkedin.com/in/gautamsethia7/',
       'Akash': 'https://www.linkedin.com/in/jatingupta1792/',
-      'Aniket Kumar Sahil': 'https://www.linkedin.com/in/prakhar-saxena-148a10209/'
+      'Aniket Kumar Sahil':
+      'https://www.linkedin.com/in/prakhar-saxena-148a10209/'
     }
   };
 
@@ -69,6 +69,19 @@ class _QuickLinksState extends State<QuickLinks> {
         elevation: 0,
         backgroundColor: widget.appBarBackgroundColor,
         title: buildTitleBar("QUICK LINKS", context),
+        actions: [
+          // ✅ Added Dark Mode Toggle Switch in AppBar
+          Switch(
+            value: AdaptiveTheme.of(context).mode.isDark,
+            onChanged: (value) {
+              if (value) {
+                AdaptiveTheme.of(context).setDark();
+              } else {
+                AdaptiveTheme.of(context).setLight();
+              }
+            },
+          ),
+        ],
       ),
       backgroundColor: Color(secondaryLight),
       body: ListView.builder(
@@ -143,7 +156,7 @@ class _QuickLinksState extends State<QuickLinks> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch $url';
     }
   }
 }
