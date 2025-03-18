@@ -44,7 +44,7 @@ class _GroupScreenState extends State<GroupScreen> {
       appBar: AppBar(
         toolbarHeight: 50,
         elevation: 0,
-        backgroundColor: Colors.blue, // Change to your preferred color
+        backgroundColor: Theme.of(context).colorScheme.secondary, // Change to your preferred color
         title: Text(widget.groupName, style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
@@ -90,20 +90,24 @@ class _GroupScreenState extends State<GroupScreen> {
                     return eventTitle.contains(_searchQuery);
                   }).toList();
 
-                  return Column(
-                    children: filteredEvents.map((event) {
-                      final eventData = event.data() as Map<String, dynamic>;
-                      return EventCard(
-                        eventName: eventData['eventTitle'],
-                        eventDate: eventData['eventDate'],
-                        eventVenue: eventData['eventVenue'],
-                        startTime: eventData['startTime'],
-                        endTime: eventData['endTime'],
-                        eventDesc: eventData['eventDesc'],
-                        groupName: widget.groupName,
-                      );
-                    }).toList(),
+                  return Container(
+                    color: Theme.of(context).colorScheme.surface, // ✅ Set background color here
+                    child: Column(
+                      children: filteredEvents.map((event) {
+                        final eventData = event.data() as Map<String, dynamic>;
+                        return EventCard(
+                          eventName: eventData['eventTitle'],
+                          eventDate: eventData['eventDate'],
+                          eventVenue: eventData['eventVenue'],
+                          startTime: eventData['startTime'],
+                          endTime: eventData['endTime'],
+                          eventDesc: eventData['eventDesc'],
+                          groupName: widget.groupName,
+                        );
+                      }).toList(),
+                    ),
                   );
+
                 },
               ),
               const SizedBox(height: 20),

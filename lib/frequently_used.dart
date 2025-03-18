@@ -489,47 +489,30 @@ class Menu {
   }
 }
 
-Widget AdminCard(BuildContext context, Widget route, String text,
-    {IconData? icon, String? imagePath}) {
+Widget AdminCard(BuildContext context, Widget route, String text) {
   return CupertinoButton(
     child: Container(
       height: 120,
       width: 120,
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor, // Match background color
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[
+            Color(primaryLight),
+            // Colors.amber,
+            Colors.black.withOpacity(0.69)
+          ],
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Display image if available, else show icon
-          if (imagePath != null)
-            Image.asset(
-              imagePath,
-              height: 40,
-              width: 40,
-              fit: BoxFit.contain,
-            )
-          else if (icon != null)
-            Icon(
-              icon,
-              size: 40,
-              color: Colors.white,
-            ),
-
-          const SizedBox(height: 8),
-
-          // Display text under the icon/image
-          Text(
-            text,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+        child: Text(
+          text,
+          style: const TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
+        ),
       ),
     ),
     onPressed: () {
@@ -537,7 +520,6 @@ Widget AdminCard(BuildContext context, Widget route, String text,
     },
   );
 }
-
 
 class LoadingScreen {
   static Future<bool> Function()? _task;

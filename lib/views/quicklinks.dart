@@ -63,12 +63,13 @@ class _QuickLinksState extends State<QuickLinks> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // ✅ Get current theme
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
         elevation: 0,
         backgroundColor: widget.appBarBackgroundColor,
-        title: buildTitleBar("QUICK LINKS", context),
+        title: buildTitleBar("QUICK LINKS", context, theme),
         actions: [
           // ✅ Added Dark Mode Toggle Switch in AppBar
           Switch(
@@ -83,7 +84,7 @@ class _QuickLinksState extends State<QuickLinks> {
           ),
         ],
       ),
-      backgroundColor: Color(secondaryLight),
+      backgroundColor: theme.scaffoldBackgroundColor, // Adaptive Background
       body: ListView.builder(
         itemCount: quickLinks.length,
         itemBuilder: (context, index) {
@@ -92,20 +93,20 @@ class _QuickLinksState extends State<QuickLinks> {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Card(
-              color: Colors.grey[200],
+              color: theme.cardColor, // Adaptive Card color
               elevation: 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
               child: ExpansionTile(
-                backgroundColor: Colors.grey[200],
+                backgroundColor: theme.cardColor, // Adaptive Background for Tile
                 initiallyExpanded: index == 0,
-                leading: const Icon(Icons.link),
+                leading: Icon(Icons.link, color: theme.iconTheme.color), // Adaptive Icon color
                 title: Text(
                   category,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Color(primaryLight),
+                    color: theme.textTheme.bodyLarge!.color, // Adaptive Text color
                   ),
                 ),
                 children: [
@@ -113,7 +114,9 @@ class _QuickLinksState extends State<QuickLinks> {
                     ListTile(
                       title: Text(
                         linkName,
-                        style: TextStyle(color: Color(primaryLight)),
+                          style: TextStyle(
+                          color: theme.textTheme.bodyLarge!.color,
+                          ),// Adaptive Text color
                       ),
                       onTap: () async {
                         String url = links[linkName]!;
@@ -129,7 +132,7 @@ class _QuickLinksState extends State<QuickLinks> {
     );
   }
 
-  Row buildTitleBar(String text, BuildContext context) {
+  Row buildTitleBar(String text, BuildContext context, final theme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -141,9 +144,9 @@ class _QuickLinksState extends State<QuickLinks> {
         ),
         Text(
           text,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
             fontWeight: FontWeight.bold,
+            color: Colors.white, // Adaptive Text color
             letterSpacing: 1.5,
           ),
         ),

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
+
 
 //to do build a function to access all the events
 class Events extends StatefulWidget {
@@ -93,6 +95,7 @@ class _EventCardState extends State<EventCard> {
       margin: EdgeInsets.all(15 * swidth),
       decoration: BoxDecoration(
           color: Colors.blueGrey[100], borderRadius: BorderRadius.circular(10)),
+        //color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(11)),
       child: InkWell(
         onTap: () {
           // Log the URL for debugging.
@@ -192,65 +195,6 @@ class _EventCardState extends State<EventCard> {
           );
         },
 
-
-        // onTap: () {
-        //   showDialog(
-        //       context: context,
-        //       builder: (BuildContext context) {
-        //         return SimpleDialog(
-        //           title: Column(
-        //             children: [
-        //           // Only load the image if the URL is not null or empty.
-        //           (img_url != null && img_url!.isNotEmpty)
-        //               ? Image.network(
-        //               img_url!,
-        //               height: 200,
-        //               width: double.infinity,
-        //               fit: BoxFit.cover,
-        //               // img_url == null
-        //               //     ? const SizedBox(height: 5)
-        //               //     : Image.network(img_url!,
-        //               //     height: 200, // set a fixed height
-        //               //     width: double.infinity,
-        //               //     fit: BoxFit.cover,
-        //                   errorBuilder: (context, error, stackTrace) =>
-        //                   const SizedBox(height: 20))
-        //             : const SizedBox(height: 5),
-        //         const SizedBox(height: 10),
-        //               Text(
-        //                 eventTitle,
-        //                 style: const TextStyle(
-        //                     fontWeight: FontWeight.bold, fontSize: 26),
-        //               ),
-        //               Text(
-        //                 "Event Type : $eventType",
-        //                 style: const TextStyle(fontSize: 16),
-        //               ),
-        //             ],
-        //           ),
-        //           contentPadding: const EdgeInsets.all(20),
-        //           children: [
-        //             const Text("Description",
-        //                 style:
-        //                 TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        //             const SizedBox(
-        //               height: 5,
-        //             ),
-        //             Text(eventDesc),
-        //             const SizedBox(
-        //               height: 15,
-        //             ),
-        //             const Text("Venue",
-        //                 style:
-        //                 TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        //             const SizedBox(
-        //               height: 5,
-        //             ),
-        //             Text(eventVenue),
-        //           ],
-        //         );
-        //       });
-        // },
         child: Row(children: [
           Container(
             padding: EdgeInsets.all(5 * swidth),
@@ -324,6 +268,7 @@ class _EventCardState extends State<EventCard> {
           Container(
             padding: EdgeInsets.all(5 * swidth),
             decoration: BoxDecoration(
+              //color: Theme.of(context).colorScheme.onSurface,
               color: Colors.greenAccent[100],
               borderRadius: BorderRadius.circular(10),
             ),
@@ -498,14 +443,14 @@ class _EventsState extends State<Events> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               subtitle: Text(
                 "Toggle to show only starred events",
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSecondary,
                 ),
               ),
               trailing: Switch(
@@ -649,7 +594,7 @@ class _EventsState extends State<Events> {
             ),
           ],
         ),
-        backgroundColor: Colors.blueGrey[50],
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         bottomNavigationBar: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -704,7 +649,7 @@ class _EventsState extends State<Events> {
       icon: const Icon(
         Icons.sync_rounded,
       ),
-      color: Color(primaryLight),
+      color: Colors.white,
       iconSize: 28,
     );
   }

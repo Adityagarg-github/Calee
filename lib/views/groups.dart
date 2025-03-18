@@ -34,7 +34,7 @@ class _GroupsState extends State<Groups> {
         backgroundColor: Colors.blue, // Change to your preferred color
         title: buildTitleBar("GROUPS", context),
       ),
-      backgroundColor: Color(secondaryLight),
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -100,12 +100,16 @@ class _GroupsState extends State<Groups> {
         const SizedBox(height: 20),
         Card(
           elevation: 4,
+          //color: Colors.black, // Ensure background is same as theme
+          //border: Border.all(color: Colors.transparent), // Removes border
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
           child: ExpansionTile(
             initiallyExpanded: category == 'Groups Joined' ? true : false,
+            backgroundColor: Theme.of(context).colorScheme.background,
             title: Text(category, style: const TextStyle(fontWeight: FontWeight.bold)),
+            collapsedBackgroundColor: Theme.of(context).colorScheme.background, // Remove unwanted background color
             leading: const Icon(Icons.group),
             children: groups.map((group) {
               return InkWell(
@@ -121,7 +125,7 @@ class _GroupsState extends State<Groups> {
                     );
 
                     if (leftGroup == true) {
-                      await refreshGroups(); // ✅ Refresh the group list after leaving
+                      await refreshGroups(); // Refresh the group list after leaving
                     }
                   }
                 },
