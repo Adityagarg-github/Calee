@@ -53,7 +53,7 @@ class _MainLandingPageState extends State<MainLandingPage> {
         const MessMenuPage(appBarBackgroundColor: Color(0xFF0D47A1)),
         const QuickLinks(appBarBackgroundColor: Color(0xFF0D47A1)),
       ];
-    } else if (Ids.role == "faculty" || Ids.role == "club") {
+    } else if (Ids.role == "faculty") {
       return [
         const HomePage(),
         const EventCalendarScreen(appBarBackgroundColor: Color(0xFFAD1457)),
@@ -61,7 +61,16 @@ class _MainLandingPageState extends State<MainLandingPage> {
         const MessMenuPage(appBarBackgroundColor: Color(0xFFAD1457)),
         const QuickLinks(appBarBackgroundColor: Color(0xFFAD1457)),
       ];
-    } else {
+    } else if (Ids.role == "club") {
+      return [
+        const HomePage(),
+        const EventCalendarScreen(appBarBackgroundColor: Color(0xFF32A83C)),
+        const Events(appBarBackgroundColor: Color(0xFF32A83C)),
+        const MessMenuPage(appBarBackgroundColor: Color(0xFF32A83C)),
+        const QuickLinks(appBarBackgroundColor: Color(0xFF32A83C))
+      ];
+    }
+    else {
       return [
         const HomePage(),
         const EventCalendarScreen(appBarBackgroundColor: Color(0xFF42A5F5)),
@@ -87,7 +96,7 @@ class _MainLandingPageState extends State<MainLandingPage> {
         icon: Icon(Icons.event),
         label: 'Events',
       ),
-      if (Ids.role != "faculty" && Ids.role != "admin")
+      if (Ids.role != "admin" && Ids.role != "faculty" && Ids.role != "club")
         const BottomNavigationBarItem(
           icon: Icon(Icons.group),
           label: 'Groups',
