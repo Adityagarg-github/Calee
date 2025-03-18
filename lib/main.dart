@@ -76,28 +76,27 @@ class App extends StatelessWidget {
 // Light Theme
 final ThemeData _lightTheme = ThemeData(
   brightness: Brightness.light,
-  primarySwatch: Colors.amber, // Elegant gold tone
-  scaffoldBackgroundColor: Color(0xFFFAF3E0), // Soft warm beige
+  scaffoldBackgroundColor: Color(0xFFF2F2F2), // Soft neutral gray
   fontFamily: 'Montserrat',
   colorScheme: ColorScheme.light(
-    primary: Color(0xFFD4A373), // Warm gold-brown
-    secondary: Color(0xFFA67C52), // Rich coffee brown
-    background: Color(0xFFFAF3E0), // Light creamy beige
+    primary: Color(0xFF666666), // Neutral dark gray for contrast
+    secondary: Color(0xFFD1D1D1), // Muted secondary elements
+    background: Color(0xFFF2F2F2), // Light gray background
     surface: Colors.white, // Cards and modals
 
-    onPrimary: Colors.white, // White text/icons on primary
-    onSecondary: Colors.white, // White text/icons on secondary
-    onBackground: Color(0xFF3E2723), // Deep brown for contrast
-    onSurface: Colors.black87, // Dark text/icons on surfaces
-    error: Color(0xFFB71C1C), // Deep crimson for errors
+    onPrimary: Colors.white, // Text/icons on primary elements
+    onSecondary: Colors.black87, // Dark text/icons on secondary elements
+    onBackground: Colors.black87, // Darker text for readability
+    onSurface: Colors.black, // Strong contrast for UI elements
+    error: Color(0xFFD64550), // Professional red for errors
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: Color(0xFFD4A373), // Warm gold AppBar
-    foregroundColor: Colors.white, // White text/icons
-    elevation: 3,
+    backgroundColor: Colors.transparent, // Keeps navbar color visible
+    elevation: 0,
+    iconTheme: IconThemeData(color: Colors.black87), // Ensures icon visibility
   ),
   cardColor: Colors.white, // Clean white cards
-  shadowColor: Colors.brown.withOpacity(0.2), // Subtle warm shadows
+  shadowColor: Colors.grey.withOpacity(0.2), // Subtle shadows
 );
 
 
@@ -105,29 +104,29 @@ final ThemeData _lightTheme = ThemeData(
 // Dark Theme
 final ThemeData _darkTheme = ThemeData(
   brightness: Brightness.dark,
-  scaffoldBackgroundColor: Color(0xFF0A0A0A), // True black background
-  primarySwatch: Colors.cyan, // Cool neon cyan accents
+  scaffoldBackgroundColor: Color(0xFF121212), // Dark charcoal gray
   fontFamily: 'Montserrat',
   colorScheme: ColorScheme.dark(
-    primary: Color(0xFF00ADB5), // Electric cyan highlights
-    secondary: Color(0xFF222831), // Dark graphite gray
-    background: Color(0xFF0A0A0A), // True black background
-    surface: Color(0xFF161616), // Almost black for cards & modals
+    primary: Color(0xFFBBBBBB), // Soft off-white for better contrast
+    secondary: Color(0xFF242424), // Dark secondary elements
+    background: Color(0xFF121212), // True dark gray
+    surface: Color(0xFF1E1E1E), // Slightly lighter gray for cards
 
-    onPrimary: Colors.black, // Text/icons on primary
-    onSecondary: Colors.white, // Text/icons on secondary
-    onBackground: Colors.white, // Bright white text for contrast
-    onSurface: Colors.white70, // Slightly dimmed white for surfaces
-    error: Color(0xFFCF6679), // Vibrant pinkish-red for errors
+    onPrimary: Colors.black, // Dark text/icons on light primary elements
+    onSecondary: Colors.white, // White text/icons for contrast
+    onBackground: Colors.white, // White text for readability
+    onSurface: Colors.white70, // Soft white for smooth UI
+    error: Color(0xFFFF5252), // Vibrant red for errors
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: Color(0xFF161616), // Deep black AppBar
-    foregroundColor: Colors.white, // White text/icons
-    elevation: 2,
+    backgroundColor: Colors.transparent, // Keeps navbar color visible
+    elevation: 0,
+    iconTheme: IconThemeData(color: Colors.white), // Ensures icon visibility
   ),
-  cardColor: Color(0xFF161616), // Dark mode cards
-  shadowColor: Colors.black.withOpacity(0.6), // Darker shadows for depth
+  cardColor: Color(0xFF1E1E1E), // Dark but not black cards
+  shadowColor: Colors.black.withOpacity(0.3), // Deeper shadow effects
 );
+
 
 
 
