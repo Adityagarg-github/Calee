@@ -34,7 +34,6 @@ abstract class AbstractHomeState extends State<AbstractHome> {
 
   CircleAvatar getUserImage(double radius) {
     ImageProvider image;
-    //image = const AssetImage('assets/user.png');
     if (FirebaseAuth.instance.currentUser != null &&
         FirebaseAuth.instance.currentUser!.photoURL != null) {
       image =
@@ -81,7 +80,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
     return Text('How are you doing today? ',
         textAlign: TextAlign.right,
         style: TextStyle(
-          color: Color(primaryLight), // Set text color to blue
+          color: Theme.of(context).colorScheme.primary, // Set text color to blue
           fontSize: 18, // Set text size to 24// Set text font to bold
         ));
   }
@@ -93,7 +92,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
     final textSize = screenSize.width * 0.8;
 
     return Scaffold(
-      backgroundColor: Color(secondaryLight),
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: AppBar(
         toolbarHeight: 50,
         elevation: 0,
@@ -116,7 +115,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color:
-                                  Color(primaryLight), // Set text color to blue
+                              Theme.of(context).colorScheme.primary, // Set text color to blue
                               fontSize: 22, // Set text size to 24
                               fontWeight:
                                   FontWeight.bold, // Set text font to bold
@@ -167,7 +166,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
 
   TextStyle appbarTitleStyle() {
     return TextStyle(
-        color: Color(primaryLight),
+        color: Theme.of(context).colorScheme.primary,
         // fontSize: 24,
         fontWeight: FontWeight.bold,
         letterSpacing: 1.5);

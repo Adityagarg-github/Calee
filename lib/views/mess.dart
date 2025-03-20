@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:adaptive_theme/adaptive_theme.dart'; // ✅ Import AdaptiveTheme
+import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/frequently_used.dart';
-import 'package:iitropar/utilities/colors.dart';
 import '../database/loader.dart';
 
 class MessMenuPage extends StatefulWidget {
@@ -19,14 +18,8 @@ class MessMenuPage extends StatefulWidget {
   State<MessMenuPage> createState() => _MessMenuPageState();
 }
 
-class _MessMenuPageState extends State<MessMenuPage>
-    with SingleTickerProviderStateMixin {
-  final List<String> _daysOfWeek = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-    'Friday', 'Saturday', 'Sunday'
-  ];
-
-
+class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderStateMixin {
+  final List<String> _daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   Map<String, List<MenuItem>> _menu = Menu.menu;
   String modifyDate = "Fetching...";
 
@@ -58,6 +51,8 @@ class _MessMenuPageState extends State<MessMenuPage>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // ✅ Get current theme
+
     return DefaultTabController(
       initialIndex: initialDay(),
       length: myTabs.length,
@@ -65,16 +60,16 @@ class _MessMenuPageState extends State<MessMenuPage>
         appBar: AppBar(
           toolbarHeight: 50,
           elevation: 0,
-          backgroundColor: widget.appBarBackgroundColor,
+          backgroundColor: widget.appBarBackgroundColor, // ✅ Matches navbar color dynamically
           title: _buildTitleBar("MESS MENU", context),
-          bottom: const TabBar(
-            labelColor: Colors.black,
-            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-            unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
-            unselectedLabelColor: Colors.white,
+          bottom: TabBar(
+            labelColor: theme.colorScheme.onSurface, // ✅ Adaptive tab text color
+            unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6), // ✅ Faded text for unselected tabs
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
             indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: Colors.white, width: 1.5),
-              insets: EdgeInsets.symmetric(horizontal: 48),
+              borderSide: BorderSide(color: theme.colorScheme.onSurface, width: 1.5),
+              insets: const EdgeInsets.symmetric(horizontal: 48),
             ),
             tabs: myTabs,
           ),
@@ -82,7 +77,7 @@ class _MessMenuPageState extends State<MessMenuPage>
         body: TabBarView(
           children: _daysOfWeek.map((day) => _buildMenuList(day, modifyDate)).toList(),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor, // ✅ Adaptive background color
       ),
     );
   }
@@ -105,21 +100,34 @@ class _MessMenuPageState extends State<MessMenuPage>
             letterSpacing: 1.5,
           ),
         ),
-        signoutButtonWidget(context),
+        Row(
+          children: [
+            IconButton(
+              icon: Icon(
+                AdaptiveTheme.of(context).mode.isDark ? Icons.light_mode : Icons.dark_mode,
+                color: Colors.transparent,
+              ),
+              onPressed: () {
+              },
+            ),
+            signoutButtonWidget(context),
+          ],
+        ),
       ],
     );
   }
 
   Widget _buildLastUpdatedWidget(String lastUpdatedDate) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: theme.cardColor, // ✅ Adaptive card color
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: theme.shadowColor.withOpacity(0.3), // ✅ Adaptive shadow color
             blurRadius: 5,
             spreadRadius: 1,
             offset: const Offset(0, 2),
@@ -129,11 +137,15 @@ class _MessMenuPageState extends State<MessMenuPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.update, color: Colors.blue),
+          Icon(Icons.update, color: theme.colorScheme.primary), // ✅ Adaptive icon color
           const SizedBox(width: 10),
           Text(
             'Last Updated: $lastUpdatedDate',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: theme.textTheme.bodyLarge!.color, // ✅ Adaptive text color
+            ),
           ),
         ],
       ),
@@ -141,6 +153,7 @@ class _MessMenuPageState extends State<MessMenuPage>
   }
 
   Widget _buildMenuList(String day, String lastUpdatedDate) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -159,11 +172,11 @@ class _MessMenuPageState extends State<MessMenuPage>
                     curve: Curves.easeInOut,
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: theme.cardColor, // ✅ Adaptive card color
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
+                          color: theme.shadowColor.withOpacity(0.3), // ✅ Adaptive shadow
                           blurRadius: 5,
                           spreadRadius: 1,
                           offset: const Offset(0, 2),
@@ -173,11 +186,12 @@ class _MessMenuPageState extends State<MessMenuPage>
                     child: ExpansionTile(
                       title: Text(
                         meal.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          color: theme.textTheme.bodyLarge!.color, // ✅ Adaptive text color
                         ),
                       ),
-                      leading: const Icon(Icons.food_bank_rounded),
+                      leading: Icon(Icons.food_bank_rounded, color: theme.iconTheme.color), // ✅ Adaptive icon
                       subtitle: Text(checkTime(meal.name)),
                       initiallyExpanded: meal.name == mealOpen(),
                       children: _buildFoodItems(meal.description),
@@ -193,10 +207,10 @@ class _MessMenuPageState extends State<MessMenuPage>
   }
 
   List<Widget> _buildFoodItems(String description) {
-    List<String> foodItems = description.split(", ").map((e) => e.trim()).toList();
-    return foodItems.map((item) => ListTile(
-      title: Text(item, style: TextStyle(color: Color(primaryLight))),
-      leading: const Icon(Icons.check_circle, color: Colors.green),
+    final theme = Theme.of(context);
+    return description.split(", ").map((item) => ListTile(
+      title: Text(item, style: TextStyle(color: theme.textTheme.bodyLarge!.color)), // ✅ Adaptive text
+      leading: Icon(Icons.check_circle, color: Colors.green), // ✅ Adaptive icon color
     )).toList();
   }
 
@@ -219,4 +233,5 @@ class _MessMenuPageState extends State<MessMenuPage>
     DateTime now = DateTime.now();
     return now.weekday == 7 ? 0 : now.weekday - 1;
   }
+  //int initialDay() => DateTime.now().weekday == 7 ? 0 : DateTime.now().weekday - 1;
 }

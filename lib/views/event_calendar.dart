@@ -139,7 +139,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         return IconButton(
           onPressed: () => _deleteEntireEvent(m),
           icon: const Icon(Icons.delete),
-          color: Color(primaryLight).withOpacity(0.8),
+          color: (Theme.of(context).colorScheme.primary).withOpacity(0.8),
         );
       }
     }
@@ -890,7 +890,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
           elevation: 0,
         ),
         // drawer: const NavDrawer(),
-        backgroundColor: Color(secondaryLight),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         body: Column(
           children: [
             SizedBox(
@@ -931,7 +931,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 currentDay: DateTime.now(),
                 calendarStyle: CalendarStyle(
                     selectedDecoration: BoxDecoration(
-                        color: Color(primaryLight), shape: BoxShape.circle),
+                        color: Color(0xFF333333), shape: BoxShape.circle),
                     todayDecoration: const BoxDecoration(
                         color: Color(0xffAAAAAA), shape: BoxShape.circle)),
                 calendarBuilders: CalendarBuilders(
@@ -987,12 +987,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
-                                          color: Color(primaryLight),
+                                          color:  Theme.of(context).textTheme.bodyLarge!.color,
                                         ),
                                       ),
                                       Text(
                                         myEvents.startTime() + " - " + myEvents.endTime(),
-                                        style: TextStyle(color: Color(primaryLight).withOpacity(0.6)),
+                                        style: TextStyle(color: Theme.of(context).colorScheme.primary.withOpacity(0.6)),
                                       ),
                                     ],
                                   ),
@@ -1051,7 +1051,8 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               },
             );
           },
-          backgroundColor: Color(primaryLight),
+          // backgroundColor: Color(primaryLight), #changedbitxh
+            backgroundColor: Theme.of(context).colorScheme.primary,
           child: const Icon(Icons.add, color: Colors.white),
         ));
   }

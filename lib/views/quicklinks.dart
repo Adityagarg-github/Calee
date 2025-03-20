@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
+import 'package:adaptive_theme/adaptive_theme.dart'; // ✅ Added AdaptiveTheme package
+import 'package:flutter/services.dart';  // Add this import
+
 
 class QuickLinks extends StatefulWidget {
   final Color appBarBackgroundColor;
@@ -22,8 +25,7 @@ class _QuickLinksState extends State<QuickLinks> {
       'Departments': 'https://www.iitrpr.ac.in/departments-centers',
       'Course Booklet':
       'https://www.iitrpr.ac.in/sites/default/files/COURSE%20BOOKLET%20FOR%20UG%202018-19.pdf',
-      'Handbook':
-      'https://www.iitrpr.ac.in/handbook-information',
+      'Handbook': 'https://www.iitrpr.ac.in/handbook-information',
     },
     'Facilities': {
       'Medical Centre': 'https://www.iitrpr.ac.in/medical-center/',
@@ -53,24 +55,64 @@ class _QuickLinksState extends State<QuickLinks> {
     },
     'Our Team': {
       'Dr Puneet Goyal(Mentor)': 'https://sites.google.com/view/goyalpuneet/',
-      'Aditya Garg':
-      'https://www.linkedin.com/in/jugal-chapatwala-636143179/',
+      'Aditya Garg': 'https://www.linkedin.com/in/jugal-chapatwala-636143179/',
       'Aayan Soni': 'https://www.linkedin.com/in/gautamsethia7/',
       'Akash': 'https://www.linkedin.com/in/jatingupta1792/',
-      'Aniket Kumar Sahil': 'https://www.linkedin.com/in/prakhar-saxena-148a10209/'
+      'Aniket Kumar Sahil':
+      'https://www.linkedin.com/in/prakhar-saxena-148a10209/'
     }
   };
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // ✅ Get current theme
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
         elevation: 0,
         backgroundColor: widget.appBarBackgroundColor,
-        title: buildTitleBar("QUICK LINKS", context),
+        title: buildTitleBar("QUICK LINKS", context, theme),
+        actions: [
+          // ✅ Added Dark Mode Toggle Switch in AppBar
+          Switch(
+            value: AdaptiveTheme.of(context).mode.isDark,
+            onChanged: (value) {
+              // Show dialog when toggling theme
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Please restart the app"),
+                    content: Text(
+                        "The theme has been changed. Please restart the app for changes to take effect."),
+                    actions: [
+                      TextButton(
+                        child: Text("Ok"),
+                        onPressed: () {
+                          // Change theme and close the app
+                          if (value) {
+                            AdaptiveTheme.of(context).setDark();
+                          } else {
+                            AdaptiveTheme.of(context).setLight();
+                          }
+
+                          // Close the dialog and app
+                          Navigator.of(context).pop();
+                          Future.delayed(Duration(milliseconds: 200), () {
+                            SystemNavigator.pop(); // Close the app
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          )
+
+        ],
       ),
-      backgroundColor: Color(secondaryLight),
+      backgroundColor: theme.scaffoldBackgroundColor, // Adaptive Background
       body: ListView.builder(
         itemCount: quickLinks.length,
         itemBuilder: (context, index) {
@@ -79,20 +121,20 @@ class _QuickLinksState extends State<QuickLinks> {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Card(
-              color: Colors.grey[200],
+              color: theme.cardColor, // Adaptive Card color
               elevation: 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
               child: ExpansionTile(
-                backgroundColor: Colors.grey[200],
+                backgroundColor: theme.cardColor, // Adaptive Background for Tile
                 initiallyExpanded: index == 0,
-                leading: const Icon(Icons.link),
+                leading: Icon(Icons.link, color: theme.iconTheme.color), // Adaptive Icon color
                 title: Text(
                   category,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Color(primaryLight),
+                    color: theme.textTheme.bodyLarge!.color, // Adaptive Text color
                   ),
                 ),
                 children: [
@@ -100,7 +142,9 @@ class _QuickLinksState extends State<QuickLinks> {
                     ListTile(
                       title: Text(
                         linkName,
-                        style: TextStyle(color: Color(primaryLight)),
+                        style: TextStyle(
+                          color: theme.textTheme.bodyLarge!.color,
+                        ),// Adaptive Text color
                       ),
                       onTap: () async {
                         String url = links[linkName]!;
@@ -116,7 +160,7 @@ class _QuickLinksState extends State<QuickLinks> {
     );
   }
 
-  Row buildTitleBar(String text, BuildContext context) {
+  Row buildTitleBar(String text, BuildContext context, final theme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -128,9 +172,9 @@ class _QuickLinksState extends State<QuickLinks> {
         ),
         Text(
           text,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
             fontWeight: FontWeight.bold,
+            color: Colors.white, // Adaptive Text color
             letterSpacing: 1.5,
           ),
         ),
@@ -143,7 +187,7 @@ class _QuickLinksState extends State<QuickLinks> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch $url';
     }
   }
 }

@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:iitropar/main.dart';
 
 double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
@@ -138,9 +137,6 @@ class _StudentHomeState extends AbstractHomeState {
       setState(() {
         todayevents = loadedTodayEvents;
       });
-      // for (Event event in todayevents) {
-      //   await setAlarmForEvent(event);
-      // }
     } catch (e) {
       print('Error loading events: $e');
     }
@@ -166,7 +162,7 @@ class _StudentHomeState extends AbstractHomeState {
           child: Text(
             "Today's Events",
             style: TextStyle(
-              color: Color(primaryLight),
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -185,7 +181,7 @@ class _StudentHomeState extends AbstractHomeState {
           child: Text(
             "Tomorrow's Events",
             style: TextStyle(
-              color: Color(primaryLight),
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -344,7 +340,7 @@ class _StudentHomeState extends AbstractHomeState {
       child: Text(
         "What's happening today?",
         style: TextStyle(
-          color: Color(primaryLight),
+          color: Theme.of(context).colorScheme.primary,
           fontSize: 22,
           fontWeight: FontWeight.bold,
         ),
