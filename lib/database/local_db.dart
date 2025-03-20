@@ -187,37 +187,37 @@ class EventDB {
   }
 
   Future<List<Event>> fetchEvents(DateTime d, [String? of]) async {
-    var se = _fetchSingularEvents(d);
-    var re = _fetchRecurringEvents(d);
-    List<Event> l1 = await se;
-    List<Event> l2 = await re;
-    l1.addAll(l2);
+    // var se = _fetchSingularEvents(d);
+    // var re = _fetchRecurringEvents(d);
+    // List<Event> l1 = await se;
+    // List<Event> l2 = await re;
+    // l1.addAll(l2);
     // Fetch singular and recurring events concurrently
-    // var results = await Future.wait([_fetchSingularEvents(d), _fetchRecurringEvents(d)]);
-    // List<Event> allEvents = results[0]..addAll(results[1]);
-    //
-    // // Remove duplicates based on title, start time, and end time
-    // final Map<String, Event> uniqueEvents = {};
-    // for (var event in allEvents) {
-    //   String key = "${event.title}-${event.stime}-${event.etime}";
-    //   uniqueEvents[key] = event; // If duplicate, it overwrites the previous one
-    // }
-    //
-    // List<Event> finalList = uniqueEvents.values.toList();
+    var results = await Future.wait([_fetchSingularEvents(d), _fetchRecurringEvents(d)]);
+    List<Event> allEvents = results[0]..addAll(results[1]);
+
+    // Remove duplicates based on title, start time, and end time
+    final Map<String, Event> uniqueEvents = {};
+    for (var event in allEvents) {
+      String key = "${event.title}-${event.stime}-${event.etime}-${event.desc}";
+      uniqueEvents[key] = event; // If duplicate, it overwrites the previous one
+    }
+
+    List<Event> finalList = uniqueEvents.values.toList();
 
     // Filter by creator if `of` is provided
     if (of != null) {
-      var n = List<Event>.empty(growable: true);
-      for (var e in l1) {
-        if (e.creator.compareTo(of) == 0) {
-          n.add(e);
-        }
-      }
-      l1 = n;
-      //finalList = finalList.where((e) => e.creator == of).toList();
+      // var n = List<Event>.empty(growable: true);
+      // for (var e in l1) {
+      //   if (e.creator.compareTo(of) == 0) {
+      //     n.add(e);
+      //   }
+      // }
+      // l1 = n;
+      finalList = finalList.where((e) => e.creator == of).toList();
     }
-    return l1;
-    //return finalList;
+    // return l1;
+    return finalList;
   }
 
 
