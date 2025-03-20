@@ -105,10 +105,9 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
             IconButton(
               icon: Icon(
                 AdaptiveTheme.of(context).mode.isDark ? Icons.light_mode : Icons.dark_mode,
-                color: Colors.transparent, // ✅ Icon adapts to theme mode
+                color: Colors.transparent,
               ),
               onPressed: () {
-                AdaptiveTheme.of(context).toggleThemeMode();
               },
             ),
             signoutButtonWidget(context),

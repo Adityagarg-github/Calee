@@ -62,6 +62,7 @@ class App extends StatelessWidget {
       dark: _darkTheme,    // ✅ Updated Dark Theme
       initial: savedThemeMode ?? AdaptiveThemeMode.system,
       builder: (theme, darkTheme) => MaterialApp(
+        key: ValueKey(savedThemeMode),  //  Forces rebuild on theme change
         title: 'IIT Ropar App',
         debugShowCheckedModeBanner: false,
         theme: theme,

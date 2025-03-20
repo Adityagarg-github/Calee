@@ -3,6 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
 import 'package:adaptive_theme/adaptive_theme.dart'; // ✅ Added AdaptiveTheme package
+import 'package:flutter/services.dart';  // Add this import
+
 
 class QuickLinks extends StatefulWidget {
   final Color appBarBackgroundColor;
@@ -75,13 +77,39 @@ class _QuickLinksState extends State<QuickLinks> {
           Switch(
             value: AdaptiveTheme.of(context).mode.isDark,
             onChanged: (value) {
-              if (value) {
-                AdaptiveTheme.of(context).setDark();
-              } else {
-                AdaptiveTheme.of(context).setLight();
-              }
+              // Show dialog when toggling theme
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Please restart the app"),
+                    content: Text(
+                        "The theme has been changed. Please restart the app for changes to take effect."),
+                    actions: [
+                      TextButton(
+                        child: Text("Ok"),
+                        onPressed: () {
+                          // Change theme and close the app
+                          if (value) {
+                            AdaptiveTheme.of(context).setDark();
+                          } else {
+                            AdaptiveTheme.of(context).setLight();
+                          }
+
+                          // Close the dialog and app
+                          Navigator.of(context).pop();
+                          Future.delayed(Duration(milliseconds: 200), () {
+                            SystemNavigator.pop(); // Close the app
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
-          ),
+          )
+
         ],
       ),
       backgroundColor: theme.scaffoldBackgroundColor, // Adaptive Background
@@ -114,9 +142,9 @@ class _QuickLinksState extends State<QuickLinks> {
                     ListTile(
                       title: Text(
                         linkName,
-                          style: TextStyle(
+                        style: TextStyle(
                           color: theme.textTheme.bodyLarge!.color,
-                          ),// Adaptive Text color
+                        ),// Adaptive Text color
                       ),
                       onTap: () async {
                         String url = links[linkName]!;

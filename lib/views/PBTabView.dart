@@ -8,8 +8,9 @@ import 'package:iitropar/views/homePage/home_page.dart';
 import 'package:iitropar/views/mess.dart';
 import 'package:iitropar/views/quicklinks.dart';
 import 'package:iitropar/views/groups.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+//import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'homePage/admin_page.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 
 class MainLandingPage extends StatefulWidget {
   const MainLandingPage({super.key});
@@ -41,8 +42,12 @@ class _MainLandingPageState extends State<MainLandingPage> {
   }
 
   void _onItemTapped(int index) {
-    _pageController.jumpToPage(index);
+    setState(() {
+      _selectedIndex = index;
+      _pageController.jumpToPage(index);
+    });
   }
+
 
   List<Widget> _buildScreens() {
     if (Ids.role == "admin") {
@@ -123,11 +128,13 @@ class _MainLandingPageState extends State<MainLandingPage> {
     return Scaffold(
       backgroundColor: Color(secondaryLight),
       body: PageView(
+        key: ValueKey(AdaptiveTheme.of(context).mode), // Ensures rebuild
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: _buildScreens(),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        key: ValueKey(AdaptiveTheme.of(context).mode), // Ensures rebuild
         items: _navbarItems(),
         currentIndex: _selectedIndex,
         unselectedItemColor: Colors.grey,
