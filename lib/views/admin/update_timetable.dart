@@ -25,7 +25,9 @@ class _updateTimetablecsvState extends State<updateTimetablecsv> {
 
   Future<void> uploadCSVToFirebase(File file, String fileName) async {
     Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
-    UploadTask uploadTask = storageReference.putFile(file);
+    SettableMetadata metadata = SettableMetadata(contentType: "text/csv");
+
+    UploadTask uploadTask = storageReference.putFile(file, metadata);
     await uploadTask;
     // Get current timestamp
     Timestamp timestamp = Timestamp.now();
