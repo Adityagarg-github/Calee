@@ -77,7 +77,7 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
         body: TabBarView(
           children: _daysOfWeek.map((day) => _buildMenuList(day, modifyDate)).toList(),
         ),
-        backgroundColor: theme.scaffoldBackgroundColor, // ✅ Adaptive background color
+        backgroundColor: Theme.of(context).colorScheme.secondary, // ✅ Adaptive background color
       ),
     );
   }

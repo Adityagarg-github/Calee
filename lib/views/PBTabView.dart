@@ -157,7 +157,7 @@ class _MainLandingPageState extends State<MainLandingPage> {
     } else if (Ids.role == "club") {
       return Colors.green;
     } else {
-      return Colors.blue;
+      return Color(0xFF42A5F5);
     }
   }
 

@@ -112,7 +112,7 @@ class _QuickLinksState extends State<QuickLinks> {
 
         ],
       ),
-      backgroundColor: theme.scaffoldBackgroundColor, // Adaptive Background
+      backgroundColor: Theme.of(context).colorScheme.secondary, // Adaptive Background
       body: ListView.builder(
         itemCount: quickLinks.length,
         itemBuilder: (context, index) {

@@ -31,7 +31,7 @@ class _GroupsState extends State<Groups> {
       appBar: AppBar(
         toolbarHeight: 50,
         elevation: 0,
-        backgroundColor: Colors.blue, // Change to your preferred color
+        backgroundColor: Color(0xFF42A5F5), // Change to your preferred color
         title: buildTitleBar("GROUPS", context),
       ),
       backgroundColor: Theme.of(context).colorScheme.secondary,
