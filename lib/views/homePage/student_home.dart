@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:iitropar/database/event.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:iitropar/utilities/firebase_database.dart';
+
 
 double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
@@ -120,6 +122,15 @@ Widget divider() {
 }
 
 class _StudentHomeState extends AbstractHomeState {
+
+  List<holidays> listofHolidays = [];
+  Map<String, String> mapofHolidays = {};
+  bool holidaysLoaded = false;
+  List<changedDay> listofCD = [];
+  Map<String, int> mapofCD = {};
+  bool CDLoaded = false;
+
+
   List<Event> tomorrowevents = [];
   List<Event> todayevents = [];
   bool showRightArrow = true;
@@ -127,13 +138,111 @@ class _StudentHomeState extends AbstractHomeState {
   @override
   void initState() {
     super.initState();
-    loadEventstoday();
+    //getHols();
+    initializeData();
+
+    // getHols();
+    // getCD();
+    // loadEventstoday();
+    // loadEventstomorrow();
+  }
+
+  void initializeData() async {
+    await getHols(); // Ensure holidays are fetched first
+    await getCD(); // Fetch changed days after holidays
+    loadEventstoday(); // Now load events with a non-empty mapOfHolidays
     loadEventstomorrow();
   }
+
+  Future<bool> getHols() async {
+    listofHolidays = await firebaseDatabase.getHolidayFB();
+
+    for (int i = 0; i < listofHolidays.length; i++) {
+      mapofHolidays[DateFormat('yyyy-MM-dd').format(listofHolidays[i].date)] =
+          listofHolidays[i].desc;
+    }
+
+    print(mapofHolidays);
+    setState(() {
+      holidaysLoaded = true;
+    });
+    return true;
+  }
+
+  Future<bool> getCD() async {
+    listofCD = await firebaseDatabase.getChangedDays();
+    // print(listofCD[0].day_to_followed);
+    for (int i = 0; i < listofCD.length; i++) {
+      switch (listofCD[i].day_to_followed) {
+        case "Monday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 0;
+          break;
+        case "Tuesday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 1;
+          break;
+        case "Wednesday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 2;
+          break;
+        case "Thursday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 3;
+          break;
+        case "Friday":
+          mapofCD[DateFormat('yyyy-MM-dd').format(listofCD[i].date)] = 4;
+          break;
+        default:
+      }
+    }
+    setState(() {
+      CDLoaded = true;
+    });
+    print(mapofCD);
+    return true;
+  }
+
+
+  DateTime whatDatetocall(DateTime datetime) {
+    if (CDLoaded) {
+      if (mapofCD[DateFormat("yyyy-MM-dd").format(datetime)] != null) {
+        int wkday = datetime.weekday - 1;
+        int dtf = mapofCD[DateFormat("yyyy-MM-dd").format(datetime)]!;
+        if (dtf > wkday) {
+          return datetime.add(Duration(days: dtf - wkday));
+        } else {
+          return datetime.subtract(Duration(days: wkday - dtf));
+        }
+      }
+    }
+    if (holidaysLoaded) {
+      print("it is a holiday");
+      if (mapofHolidays[dateString(datetime)] != null) {
+        print("In the distant future");
+        return datetime.add(const Duration(days: 1000));
+      }
+    }
+    print("not a holiday");
+    return datetime;
+  }
+
+
   Future<void> loadEventstoday() async {
     try {
       List<Event> loadedTodayEvents =
           await EventDB().fetchEvents(DateTime.now());
+      print("list of holidays");
+      print(mapofHolidays);
+      DateTime x = whatDatetocall(DateTime.now());
+      print("whatdate");
+      print(x);
+      print("x printed");
+      //if(x != DateTime.now()){
+        List<Event> l = await EventDB().fetchEvents(x);
+        loadedTodayEvents.removeWhere((event) => event.desc == "Class" || event.desc == "Tutorial");
+        //String newdate = DateFormat('yyyy-MM-dd').format(cdate);
+
+        l.removeWhere((event) => event.desc != "Class" && event.desc != "Tutorial");
+        loadedTodayEvents.addAll(l);
+      //}
+
       setState(() {
         todayevents = loadedTodayEvents;
       });
@@ -146,6 +255,15 @@ class _StudentHomeState extends AbstractHomeState {
     try {
       List<Event> loadedTomorrowEvents =
           await EventDB().fetchEvents(DateTime.now().add(const Duration(days: 1)));
+      DateTime x = whatDatetocall(DateTime.now().add(const Duration(days: 1)));
+      //if(x != DateTime.now()){
+        List<Event> l = await EventDB().fetchEvents(x);
+        loadedTomorrowEvents.removeWhere((event) => event.desc == "Class" || event.desc == "Tutorial");
+        //String newdate = DateFormat('yyyy-MM-dd').format(cdate);
+
+        l.removeWhere((event) => event.desc != "Class" && event.desc != "Tutorial");
+        loadedTomorrowEvents.addAll(l);
+      //}
       setState(() {
         tomorrowevents = loadedTomorrowEvents;
       });

@@ -522,8 +522,8 @@ Widget AdminCard(BuildContext context, Widget route, String text,
           // Display text under the icon/image
           Text(
             text,
-            style: const TextStyle(
-              color: Colors.black,
+            style:  TextStyle(
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

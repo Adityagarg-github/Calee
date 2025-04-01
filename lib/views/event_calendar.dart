@@ -343,7 +343,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   ),
                   child: Text(
                     event.desc.isNotEmpty ? event.desc : "No description available.",
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,),
                   ),
                 ),
 
@@ -488,21 +490,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   //   }
   //   return List.empty();
   // }
-  List<Event> _listOfDayEvents(DateTime datetime) {
-    String dateKey = DateFormat('yyyy-MM-dd').format(datetime);
-
-    if (!mySelectedEvents.containsKey(dateKey) || mySelectedEvents[dateKey] == null) {
-      return []; // Ensure an empty list is returned instead of null
-    }
-
-    List<Event> l = List.from(mySelectedEvents[dateKey]!);
-
-    // Ensure sorting doesn't crash
-    l.sort((a, b) => a.stime.hour.compareTo(b.stime.hour));
-
-    return l;
-  }
-
 
 
   bool isHoliday(DateTime day) {
@@ -519,6 +506,40 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
     return false;
   }
+
+
+  List<Event> _listOfDayEvents(DateTime datetime) {
+    String dateKey = DateFormat('yyyy-MM-dd').format(datetime);
+
+    if (!mySelectedEvents.containsKey(dateKey) || mySelectedEvents[dateKey] == null) {
+      return []; // Ensure an empty list is returned instead of null
+    }
+
+    List<Event> l = List.from(mySelectedEvents[dateKey]!);
+
+    DateTime cdate = whatDatetocall(datetime);
+    if(cdate != datetime){
+      l.removeWhere((event) => event.desc == "Class" || event.desc == "Tutorial");
+      String newdate = DateFormat('yyyy-MM-dd').format(cdate);
+      // if(isHoliday(cdate)){
+      //
+      // }
+      if (!mySelectedEvents.containsKey(newdate) || mySelectedEvents[newdate] == null) {
+        l.sort((a, b) => a.stime.hour.compareTo(b.stime.hour));
+        return l;
+      }
+      List<Event> l2 = List.from(mySelectedEvents[newdate] ?? []);
+      l2.removeWhere((event) => event.desc != "Class" && event.desc != "Tutorial");
+      l.addAll(l2);
+    }
+
+    // Ensure sorting doesn't crash
+    l.sort((a, b) => a.stime.hour.compareTo(b.stime.hour));
+
+    return l;
+  }
+
+
 
   DateTime whatDatetocall(DateTime datetime) {
     if (CDLoaded) {
@@ -922,7 +943,8 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   loadEvents(focusedDay);
                 },
                 eventLoader: (datetime) {
-                  return _listOfDayEvents(whatDatetocall(datetime));
+                  //return _listOfDayEvents(whatDatetocall(datetime));
+                  return _listOfDayEvents(datetime);
                 },
                 holidayPredicate: (day) {
                   return isHoliday(day);
@@ -950,7 +972,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   holidayBuilder: (context, day, focusedDay) {
                     return Center(
                       child: Text("${day.day}",
-                          style: TextStyle(color: Color(holidayColor))),
+                          style: TextStyle(color: Colors.red)),
                     );
                   },
                 ),
@@ -967,7 +989,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             Expanded(
               child: ListView(
                 children: [
-                  ..._listOfDayEvents(whatDatetocall(_selectedDate)).map((myEvents) {
+                  ..._listOfDayEvents(_selectedDate).map((myEvents) {
                     return Column(
                       children: [
                         InkWell(
@@ -985,7 +1007,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                                       Text(
                                         myEvents.title,
                                         style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                           color:  Theme.of(context).textTheme.bodyLarge!.color,
                                         ),
@@ -1010,6 +1032,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       ],
                     );
                   }),
+                  const SizedBox(
+                    height: 19,
+                  ),
+                  Text(
+                    holidayResaon ?? '',
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),
