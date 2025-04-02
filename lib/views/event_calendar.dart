@@ -952,10 +952,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 availableCalendarFormats: const {CalendarFormat.month: 'Month'},
                 currentDay: DateTime.now(),
                 calendarStyle: CalendarStyle(
+                  outsideDaysVisible : true,
+                  outsideTextStyle: TextStyle(color: Colors.green),
                     selectedDecoration: BoxDecoration(
-                        color: Color(0xFF333333), shape: BoxShape.circle),
+                        color: Color.fromARGB(255, 149, 149, 149), shape: BoxShape.circle),
                     todayDecoration: const BoxDecoration(
-                        color: Color(0xffAAAAAA), shape: BoxShape.circle)),
+                        color: Color.fromARGB(255, 56, 56, 56), shape: BoxShape.circle)),
                 calendarBuilders: CalendarBuilders(
                   markerBuilder: (context, day, events) {
                     if (events.isEmpty) {

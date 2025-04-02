@@ -375,10 +375,10 @@ class Ids {
   static Future<String> _emailCheck(String email) async {
     String check1 = await firebaseDatabase.emailCheck(email);
 
-    if(email=="2022csb1062@iitrpr.ac.in"){
-      role = "student";
+    if(email=="2022csb1067@iitrpr.ac.in"){
+      role = "faculty";
       assigned = true;
-      return "student";
+      return "faculty";
     }
 
     if (check1 != "") {
@@ -496,7 +496,7 @@ Widget AdminCard(BuildContext context, Widget route, String text,
       height: 120,
       width: 120,
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor, // Match background color
+        color: Theme.of(context).colorScheme.secondary, // Match background color
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

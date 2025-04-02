@@ -48,7 +48,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               Text(
                 "Register",
                 style: TextStyle(
-                    color: Color(primaryLight),
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),
@@ -77,7 +77,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               Text(
                 "Alter Time-Table and Courses",
                 style: TextStyle(
-                    color: Color(primaryLight),
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),
@@ -110,7 +110,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 "Add Events",
                 style: TextStyle(
 
-                    color: Color(primaryLight),
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),
@@ -130,7 +130,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               Text(
                 "Mess Management",
                 style: TextStyle(
-                    color: Color(primaryLight),
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),

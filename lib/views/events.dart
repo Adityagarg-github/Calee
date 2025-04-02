@@ -211,7 +211,10 @@ class _EventCardState extends State<EventCard> {
                   height: 15,
                   child: FittedBox(
                     child: Text(
-                      date,
+                      date,style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black, // Ensures black text
+                    ),
                     ),
                   ),
                 ),
@@ -223,7 +226,7 @@ class _EventCardState extends State<EventCard> {
                   child: FittedBox(
                     child: Text(
                       startTime,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color : Colors.black),
                     ),
                   ),
                 )
@@ -246,7 +249,7 @@ class _EventCardState extends State<EventCard> {
                   child: FittedBox(
                     child: Text(
                       eventTitle,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color : Colors.black,),
                     ),
                   ),
                 ),
@@ -257,6 +260,9 @@ class _EventCardState extends State<EventCard> {
                     child: Text(
                       eventDesc,
                       overflow: TextOverflow.ellipsis,
+                      style : const TextStyle(
+                        color : Colors.black,
+                      ),
                       maxLines: 2,
                     )),
               ],
@@ -277,7 +283,7 @@ class _EventCardState extends State<EventCard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 15, child: FittedBox(child: Text(eventType))),
+                SizedBox(height: 15, child: FittedBox(child: Text(eventType,style: const TextStyle(color: Colors.black)))),
                 const SizedBox(
                   height: 5,
                 ),
@@ -286,7 +292,7 @@ class _EventCardState extends State<EventCard> {
                   child: FittedBox(
                       child: Text(
                         endTime,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold, color : Colors.black,),
                       )),
                 )
               ],
@@ -304,7 +310,7 @@ class _EventCardState extends State<EventCard> {
             },
             child: Icon(
               _isStarred ? Icons.star : Icons.star_border,
-              color: _isStarred ? Colors.purple : null,
+              color: _isStarred ? Colors.purple : Colors.black,
             ),
           ),
         ]),

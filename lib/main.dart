@@ -60,7 +60,7 @@ class App extends StatelessWidget {
     return AdaptiveTheme(
       light: _lightTheme,  // ✅ Updated Light Theme
       dark: _darkTheme,    // ✅ Updated Dark Theme
-      initial: savedThemeMode ?? AdaptiveThemeMode.system,
+      initial: savedThemeMode ?? AdaptiveThemeMode.light,
       builder: (theme, darkTheme) => MaterialApp(
         key: ValueKey(savedThemeMode),  //  Forces rebuild on theme change
         title: 'IIT Ropar App',
@@ -113,7 +113,7 @@ final ThemeData _darkTheme = ThemeData(
     background: Color(0xFF121212), // True dark gray
     surface: Color(0xFF1E1E1E), // Slightly lighter gray for cards
 
-    onPrimary: Colors.black, // Dark text/icons on light primary elements
+    onPrimary: const Color.fromARGB(255, 67, 67, 67), // Dark text/icons on light primary elements
     onSecondary: Colors.white, // White text/icons for contrast
     onBackground: Colors.white, // White text for readability
     onSurface: Colors.white70, // Soft white for smooth UI

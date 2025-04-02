@@ -61,7 +61,7 @@ class _FacultyHomeState extends AbstractHomeState {
             child: Text(
               "Your Courses",
               style: TextStyle(
-                  color: Color(primaryLight),
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold),
             ),
@@ -127,7 +127,8 @@ class _FacultyHomeState extends AbstractHomeState {
         width: double.infinity,
         padding: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: Colors.grey[200],
+          //color: Colors.grey[200],
+          color: Theme.of(context).colorScheme.background,
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Column(
