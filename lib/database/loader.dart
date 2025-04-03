@@ -28,6 +28,10 @@ class Loader {
   static Map<String, String>? courseToProff;
   static Map<String, List<String>>? slotToTime;
 
+  static Map<String, String>? courseToClassVenue; // Maps course to class venue
+  static Map<String, String>? courseToTutorialVenue; // Maps course to tutorial venue
+
+
   static Future<void> loadSlots() async {
     void listFiles() async {
       final ListResult result = await FirebaseStorage.instance.ref().listAll();
@@ -37,7 +41,7 @@ class Loader {
     }
 
 
-    print("hello");
+    //print("hello");
     final FirebaseStorage storage = FirebaseStorage.instance;
     final Reference ref = storage.ref().child('CourseSlots.csv');
 
@@ -89,6 +93,50 @@ class Loader {
     }
     catch (e) {
       print('Error loading CSV file: $e');
+    }
+  }
+
+
+  static Future<void> loadVenues() async {
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    final Reference ref = storage.ref().child('Venue.csv');
+
+    try {
+      // Try to download the CSV file as a byte stream
+      final Uint8List? csvData = await ref.getData();
+      if (csvData != null) {
+        // Decode CSV data into a String
+        final String decodedData = utf8.decode(csvData);
+        print(decodedData);
+
+        // Parse CSV string into a list of lists
+        List<List<dynamic>> venueData = const CsvToListConverter().convert(decodedData);
+        int len = venueData.length;
+
+        print("Venue Table:");
+        debugPrint(venueData[0].toString(), wrapWidth: 1024);
+
+        courseToClassVenue = {}; // Initialize map for class venues
+        courseToTutorialVenue = {}; // Initialize map for tutorial venues
+
+        for (int i = 1; i < len; i++) {
+          if (venueData[i].length >= 3) {
+            String course = venueData[i][0].toString().trim();
+            String classVenue = venueData[i][1].toString().trim();
+            String tutorialVenue = venueData[i][2].toString().trim();
+
+            courseToClassVenue![course] = classVenue;
+            courseToTutorialVenue![course] = tutorialVenue;
+          }
+        }
+
+        print("Course to Class Venue Mapping:");
+        print(courseToClassVenue);
+        print("Course to Tutorial Venue Mapping:");
+        print(courseToTutorialVenue);
+      }
+    } catch (e) {
+      print('Error loading Venue CSV file: $e');
     }
   }
 
@@ -167,6 +215,7 @@ class Loader {
     await loadSlots();
     print("loaded Times");
     await loadTimes();
+    await loadVenues();
     // if (slotToTime == null) {
     //   await loadTimes();
     // }
@@ -209,13 +258,21 @@ class Loader {
 
           String stime = l[1];
           String etime = l[2];
+
+          String venue = "";
+          if (desc == "Class") {
+            venue = (courseToClassVenue ?? {})[title] ?? "Unknown Venue";
+          } else if (desc == "Tutorial") {
+            venue = (courseToTutorialVenue ?? {})[title] ?? "Unknown Venue";
+          }
+
           Event e = Event(
             title: title,
             desc: desc,
             stime: str2tod(stime),
             etime: str2tod(etime),
             creator: 'course',
-            venue: 'M6, LHC',
+            venue: venue,
             host: host
           );
           try {
