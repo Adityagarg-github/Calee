@@ -375,11 +375,11 @@ class Ids {
   static Future<String> _emailCheck(String email) async {
     String check1 = await firebaseDatabase.emailCheck(email);
 
-    if(email=="2022csb1067@iitrpr.ac.in"){
-      role = "faculty";
-      assigned = true;
-      return "faculty";
-    }
+    // if(email=="2022csb1067@iitrpr.ac.in"){
+    //   role = "faculty";
+    //   assigned = true;
+    //   return "faculty";
+    // }
 
     if (check1 != "") {
       role = check1;
