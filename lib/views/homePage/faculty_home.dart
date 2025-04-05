@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:iitropar/views/faculty/findSlot.dart';
 import 'package:iitropar/frequently_used.dart';
+//import 'package:iitropar/firebase_database.dart';
 import 'package:iitropar/views/faculty/scheduleCourse.dart';
 import 'package:iitropar/views/faculty/showClasses.dart';
 import '../../utilities/colors.dart';
 import 'home_page.dart';
 import 'package:iitropar/views/faculty/studentsEnrolled.dart';
+import 'package:iitropar/views/faculty/create_group_screen.dart';
+
 
 class FacultyHome extends AbstractHome {
   const FacultyHome({Key? key})
@@ -247,6 +250,43 @@ class _FacultyHomeState extends AbstractHomeState {
                   SizedBox(height: 8.0),
                   Text(
                     'See added extra classes',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    l.add(
+      const SizedBox(
+        height: 5,
+      ),
+    );
+
+    l.add(
+      Center(
+        child: Card(
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateGroupScreen(),
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.group_add),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Create Group',
                     style: TextStyle(fontSize: 16.0),
                   ),
                 ],
