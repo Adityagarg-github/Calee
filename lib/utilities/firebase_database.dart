@@ -677,4 +677,31 @@ class firebaseDatabase {
     }
     return fullMenu;
   }
+
+  static Future<void> addGroupToStudentCourse({
+    required String roll,
+    required String courseCode,
+    required String groupName,
+  }) async {
+    final docRef = FirebaseFirestore.instance
+        .collection('student_courses')
+        .doc(roll)
+        .collection(courseCode)
+        .doc('group');
+    await docRef.set({'name': groupName});
+
+    final docRef2 = FirebaseFirestore.instance
+        .collection('coursecode')        // Top-level collection
+        .doc(courseCode)                 // Document named after the course
+        .collection(groupName)          // Collection for the group name
+        .doc('lab_info');               // Document to store lab scheduling info
+
+    await docRef2.set({
+      'day': null,
+      'start_time': null,
+      'end_time': null,
+    });
+
+  }
+
 }

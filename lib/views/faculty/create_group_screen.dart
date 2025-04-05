@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'dart:convert';
 import 'package:iitropar/views/faculty/seeSlots.dart';
+import 'package:iitropar/views/faculty/makegrps.dart';
 
 
 import 'package:flutter/material.dart';
@@ -84,9 +85,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
                   return GestureDetector(
                     onTap: () {
-                      setState(() {
-                        selectedCourse = course;
-                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              StudentsList(course: course),
+                        ),
+                      );
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 4),

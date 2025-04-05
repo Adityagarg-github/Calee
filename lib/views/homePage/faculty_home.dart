@@ -9,6 +9,7 @@ import '../../utilities/colors.dart';
 import 'home_page.dart';
 import 'package:iitropar/views/faculty/studentsEnrolled.dart';
 import 'package:iitropar/views/faculty/create_group_screen.dart';
+import 'package:iitropar/views/faculty/createLabs.dart';
 
 
 class FacultyHome extends AbstractHome {
@@ -287,6 +288,42 @@ class _FacultyHomeState extends AbstractHomeState {
                   SizedBox(height: 8.0),
                   Text(
                     'Create Group',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    l.add(
+      const SizedBox(
+        height: 5,
+      ),
+    );
+
+    l.add(
+      Center(
+        child: Card(
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => createLabs(),
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.science),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Manage Labs',
                     style: TextStyle(fontSize: 16.0),
                   ),
                 ],
