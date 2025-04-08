@@ -683,25 +683,54 @@ class firebaseDatabase {
     required String courseCode,
     required String groupName,
   }) async {
-    final docRef = FirebaseFirestore.instance
+    final firestore = FirebaseFirestore.instance;
+
+    // 1. Set group for the student in student_courses/{roll}/{courseCode}/group
+    final studentGroupRef = firestore
         .collection('student_courses')
         .doc(roll)
         .collection(courseCode)
         .doc('group');
-    await docRef.set({'name': groupName});
 
-    final docRef2 = FirebaseFirestore.instance
-        .collection('coursecode')        // Top-level collection
-        .doc(courseCode)                 // Document named after the course
-        .collection(groupName)          // Collection for the group name
-        .doc('lab_info');               // Document to store lab scheduling info
+    await studentGroupRef.set({'name': groupName});
 
-    await docRef2.set({
+    // 2. Create lab_info doc if it doesn't exist in coursecode/{courseCode}/{groupName}/lab_info
+    final labInfoRef = firestore
+        .collection('coursecode')
+        .doc(courseCode)
+        .collection(groupName)
+        .doc('lab_info');
+
+    await labInfoRef.set({
       'day': null,
       'start_time': null,
       'end_time': null,
+      'venue': null,
     });
 
+    // 3. Update the group metadata list under coursecode/{courseCode}/meta/groups
+    final metaGroupRef = firestore
+        .collection('coursecode')
+        .doc(courseCode)
+        .collection('meta')
+        .doc('groups');
+
+    await firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(metaGroupRef);
+      if (!snapshot.exists) {
+        transaction.set(metaGroupRef, {'groups': [groupName]});
+      } else {
+        final data = snapshot.data();
+        List<dynamic> currentGroups = data?['groups'] ?? [];
+
+        if (!currentGroups.contains(groupName)) {
+          currentGroups.add(groupName);
+          transaction.update(metaGroupRef, {'groups': currentGroups});
+        }
+      }
+    });
   }
 
+
 }
+
