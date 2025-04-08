@@ -468,6 +468,18 @@ class firebaseDatabase {
     return true;
   }
 
+
+  static Future<semesterDur> getSemDur() async {
+    DocumentReference docRef =
+    FirebaseFirestore.instance.collection("semester").doc("duration");
+    DocumentSnapshot ds = await docRef.get();
+    List<DateTime> dts = [];
+    semesterDur sd = semesterDur();
+    sd.startDate = stringDate(ds['startDate']);
+    sd.endDate = stringDate(ds['endDate']);
+    return sd;
+  }
+
   static Future<List<ExtraClass>> getExtraClass(String courseID) async {
     List<ExtraClass> ec = [];
     var snapshots = await FirebaseFirestore.instance
@@ -494,6 +506,94 @@ class firebaseDatabase {
     }
     return ec;
   }
+
+  static Future<List<ExtraClass>> getLabs(String courseID) async {
+    List<ExtraClass> ec = [];
+
+    // Weekday string → int (Sunday = 0, Monday = 1, ..., Saturday = 6)
+    int weekdayFromString(String day) {
+      const days = {
+        "sunday": 0,
+        "monday": 1,
+        "tuesday": 2,
+        "wednesday": 3,
+        "thursday": 4,
+        "friday": 5,
+        "saturday": 6,
+      };
+      return days[day.toLowerCase()] ?? -1;
+    }
+
+    try {
+      // Step 1: Fetch semester start and end
+
+
+      // Step 2: Get groups
+      var snapshot = await FirebaseFirestore.instance
+          .collection("coursecode")
+          .doc(courseID)
+          .collection("meta")
+          .doc("groups")
+          .get();
+
+      if (!snapshot.exists) return ec;
+
+      semesterDur sd = await getSemDur();
+      DateTime semStart = sd.startDate!;
+      DateTime semEnd = sd.endDate!;
+
+      List<String> groups = List<String>.from(snapshot.data()?['groups'] ?? []);
+
+      // Step 3: Loop through groups and fetch lab info
+      for (String groupName in groups) {
+        var labInfoSnapshot = await FirebaseFirestore.instance
+            .collection("coursecode")
+            .doc(courseID)
+            .collection(groupName)
+            .doc("lab_info")
+            .get();
+
+        if (labInfoSnapshot.exists) {
+          var data = labInfoSnapshot.data();
+
+          String? dayStr = data?['day'];
+          String? startStr = data?['start_time'];
+          String? endStr = data?['end_time'];
+          String? venue = data?['venue'];
+
+          int targetWeekday = dayStr != null ? weekdayFromString(dayStr) : -1;
+
+          if (targetWeekday >= 0 && startStr != null && endStr != null && venue != null) {
+            TimeOfDay startTime = StringTime(startStr);
+            TimeOfDay endTime = StringTime(endStr);
+
+            // Step 4: Generate all matching weekdays between semStart and semEnd
+            DateTime current = semStart;
+            while (current.isBefore(semEnd) || current.isAtSameMomentAs(semEnd)) {
+              if (current.weekday % 7 == targetWeekday) {
+                ec.add(ExtraClass(
+                  courseID: courseID,
+                  date: current,
+                  startTime: startTime,
+                  endTime: endTime,
+                  description: "Lab Session - $groupName",
+                  venue: venue,
+                ));
+                current = current.add(Duration(days: 7));
+              }
+              else {
+                current = current.add(Duration(days: 1));
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print("Error fetching recurring lab info: $e");
+    }
+    return ec;
+  }
+
 
   static void deleteClass(ExtraClass c) {
     DocumentReference docRef = FirebaseFirestore.instance
@@ -537,16 +637,6 @@ class firebaseDatabase {
     docRef.set(dur);
   }
 
-  static Future<semesterDur> getSemDur() async {
-    DocumentReference docRef =
-    FirebaseFirestore.instance.collection("semester").doc("duration");
-    DocumentSnapshot ds = await docRef.get();
-    List<DateTime> dts = [];
-    semesterDur sd = semesterDur();
-    sd.startDate = stringDate(ds['startDate']);
-    sd.endDate = stringDate(ds['endDate']);
-    return sd;
-  }
 
   static Future<Map<String, String>> getNameMapping() async {
     QuerySnapshot querySnapshot =
