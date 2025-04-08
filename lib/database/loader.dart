@@ -11,6 +11,9 @@ import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
 import 'package:intl/intl.dart';
 import 'event.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class Loader {
   static String convertTo24(String time, String segment) {
@@ -21,7 +24,8 @@ class Loader {
     } else if (hour == 12) {
       hour = 0;
     }
-    return '${hour.toString().padLeft(2, "0")}:${min.toString().padLeft(2, "0")}';
+    return '${hour.toString().padLeft(2, "0")}:${min.toString().padLeft(
+        2, "0")}';
   }
 
   static Map<String, String>? courseToSlot;
@@ -29,7 +33,8 @@ class Loader {
   static Map<String, List<String>>? slotToTime;
 
   static Map<String, String>? courseToClassVenue; // Maps course to class venue
-  static Map<String, String>? courseToTutorialVenue; // Maps course to tutorial venue
+  static Map<String,
+      String>? courseToTutorialVenue; // Maps course to tutorial venue
 
 
   static Future<void> loadSlots() async {
@@ -50,7 +55,8 @@ class Loader {
       (print(csvData?.length));
       print(csvData);
       if (csvData != null && csvData.isNotEmpty) {
-        print("Raw CSV Data (first 100 bytes): ${csvData.sublist(0, csvData.length)}");
+        print("Raw CSV Data (first 100 bytes): ${csvData.sublist(
+            0, csvData.length)}");
       } else {
         print("CSV Data is empty or null");
       }
@@ -70,9 +76,9 @@ class Loader {
         // for (int i = 0; i < decodedData.length; i += 500) {
         //   print(decodedData.substring(i, i + 500 > decodedData.length ? decodedData.length : i + 500));
         // }
-          //print(decodedData);
+        //print(decodedData);
         // Parse CSV string into a list of lists
-        List<List<dynamic>> courseSlots = const CsvToListConverter( eol: "\n",
+        List<List<dynamic>> courseSlots = const CsvToListConverter(eol: "\n",
           fieldDelimiter: ",",).convert(
             decodedData);
         // print(courseSlots);
@@ -110,7 +116,8 @@ class Loader {
         print(decodedData);
 
         // Parse CSV string into a list of lists
-        List<List<dynamic>> venueData = const CsvToListConverter().convert(decodedData);
+        List<List<dynamic>> venueData = const CsvToListConverter().convert(
+            decodedData);
         int len = venueData.length;
 
         print("Venue Table:");
@@ -152,23 +159,23 @@ class Loader {
         final String decodedData = utf8.decode(csvData);
         print(decodedData);
         // Parse CSV string into a list of lists
-        List<List<dynamic>> slotTimes = const CsvToListConverter().convert(decodedData);
+        List<List<dynamic>> slotTimes = const CsvToListConverter().convert(
+            decodedData);
         var len = slotTimes.length;
         print("Time Table");
         debugPrint(slotTimes[0].toString(), wrapWidth: 1024);
         print(slotTimes[0].length);
 
 
-
-
-        slotToTime= {};
+        slotToTime = {};
 
         List<String> timings = slotTimes[0].cast<String>();
         for (int i = 1; i < timings.length; i++) {
           List<String> tokens = timings[i].split(' ');
           if (tokens.length != 4) continue;
           timings[i] =
-              '${convertTo24(tokens[0], tokens[3])}|${convertTo24(tokens[2], tokens[3])}'
+              '${convertTo24(tokens[0], tokens[3])}|${convertTo24(
+                  tokens[2], tokens[3])}'
                   .toLowerCase();
         }
 
@@ -201,7 +208,7 @@ class Loader {
   static Future<bool> saveCourses(List<String> course_id) async {
     print("yeah");
     print(course_id);
-    
+
     EventDB().deleteOf("course");
 
     //  Preprocess
@@ -267,13 +274,13 @@ class Loader {
           }
 
           Event e = Event(
-            title: title,
-            desc: desc,
-            stime: str2tod(stime),
-            etime: str2tod(etime),
-            creator: 'course',
-            venue: venue,
-            host: host
+              title: title,
+              desc: desc,
+              stime: str2tod(stime),
+              etime: str2tod(etime),
+              creator: 'course',
+              venue: venue,
+              host: host
           );
           try {
             await EventDB().addRecurringEvent(
@@ -292,13 +299,11 @@ class Loader {
     return true;
   }
 
-  static Future<void> loadMidSem(
-    TimeOfDay morningSlot_start,
-    TimeOfDay morningSlot_end,
-    TimeOfDay eveningSlot_start,
-    TimeOfDay eveningSlot_end,
-    List<String> courses,
-  ) async {
+  static Future<void> loadMidSem(TimeOfDay morningSlot_start,
+      TimeOfDay morningSlot_end,
+      TimeOfDay eveningSlot_start,
+      TimeOfDay eveningSlot_end,
+      List<String> courses,) async {
     final FirebaseStorage storage = FirebaseStorage.instance;
     final Reference ref = storage.ref().child('MidSemTable.csv');
 
@@ -306,7 +311,7 @@ class Loader {
     //   await loadSlots();
     // }
     await loadSlots();
-    try{
+    try {
       print("midsem");
       // Try to download the CSV file as a byte stream
       final Uint8List? csvData = await ref.getData();
@@ -331,19 +336,23 @@ class Loader {
           List<String> courses1 = exams[i][1].split('|');
           print("courses1");
           print(courses1);
-          for(int j=0;j<courses1.length;j++){
-            slotToDay[courses1[j]]="${dateString(startDate)}|${tod2str(morningSlot_start)}|${tod2str(morningSlot_end)}";
+          for (int j = 0; j < courses1.length; j++) {
+            slotToDay[courses1[j]] =
+            "${dateString(startDate)}|${tod2str(morningSlot_start)}|${tod2str(
+                morningSlot_end)}";
           }
 
           List<String> courses2 = exams[i][2].split('|');
-          for(int j=0;j<courses2.length;j++){
-            slotToDay[courses2[j]]="${dateString(startDate)}|${tod2str(eveningSlot_start)}|${tod2str(eveningSlot_end)}";
+          for (int j = 0; j < courses2.length; j++) {
+            slotToDay[courses2[j]] =
+            "${dateString(startDate)}|${tod2str(eveningSlot_start)}|${tod2str(
+                eveningSlot_end)}";
           }
         }
         print(slotToDay);
 
         for (int i = 0; i < courses.length; i++) {
-          if(!slotToDay.containsKey(courses[i]))continue;
+          if (!slotToDay.containsKey(courses[i])) continue;
           var l = slotToDay[courses[i]]!.split('|');
           var e = Event(
               title: 'Mid-Semester Examinations',
@@ -356,24 +365,21 @@ class Loader {
           EventDB().addSingularEvent(e, stringDate(l[0]));
         }
       }
-    }catch(e){
-    }
+    } catch (e) {}
   }
 
-  static Future<void> loadEndSem(
-    TimeOfDay morningSlot_start,
-    TimeOfDay morningSlot_end,
-    TimeOfDay eveningSlot_start,
-    TimeOfDay eveningSlot_end,
-    List<String> courses,
-  ) async {
+  static Future<void> loadEndSem(TimeOfDay morningSlot_start,
+      TimeOfDay morningSlot_end,
+      TimeOfDay eveningSlot_start,
+      TimeOfDay eveningSlot_end,
+      List<String> courses,) async {
     final FirebaseStorage storage = FirebaseStorage.instance;
     final Reference ref = storage.ref().child('EndSemTable.csv');
 
     if (courseToSlot == null) {
       await loadSlots();
     }
-    try{
+    try {
       // Try to download the CSV file as a byte stream
       final Uint8List? csvData = await ref.getData();
       if (csvData != null) {
@@ -390,19 +396,23 @@ class Loader {
           }
           DateTime startDate = DateFormat('dd-MM-yyyy').parse(exams[i][0]);
           List<String> courses1 = exams[i][1].split('|');
-          for(int j=0;j<courses1.length;j++){
-            slotToDay[courses1[j]]="${dateString(startDate)}|${tod2str(morningSlot_start)}|${tod2str(morningSlot_end)}";
+          for (int j = 0; j < courses1.length; j++) {
+            slotToDay[courses1[j]] =
+            "${dateString(startDate)}|${tod2str(morningSlot_start)}|${tod2str(
+                morningSlot_end)}";
           }
 
           List<String> courses2 = exams[i][2].split('|');
-          for(int j=0;j<courses2.length;j++){
-            slotToDay[courses2[j]]="${dateString(startDate)}|${tod2str(eveningSlot_start)}|${tod2str(eveningSlot_end)}";
+          for (int j = 0; j < courses2.length; j++) {
+            slotToDay[courses2[j]] =
+            "${dateString(startDate)}|${tod2str(eveningSlot_start)}|${tod2str(
+                eveningSlot_end)}";
           }
         }
         print("endsem");
         print(slotToDay);
         for (int i = 0; i < courses.length; i++) {
-          if(!slotToDay.containsKey(courses[i]))continue;
+          if (!slotToDay.containsKey(courses[i])) continue;
           var l = slotToDay[courses[i]]!.split('|');
           var e = Event(
               title: 'End-Semester Examinations',
@@ -413,8 +423,7 @@ class Loader {
           EventDB().addSingularEvent(e, stringDate(l[0]));
         }
       }
-    }catch(e){
-    }
+    } catch (e) {}
   }
 
   static Future<List<ExtraClass>> loadExtraClasses(String course) async {
@@ -428,11 +437,61 @@ class Loader {
   }
 
 
+//   static Future<void> saveExtraClasses(String course_id) async {
+//     List<ExtraClass> extraclasses =
+//         await firebaseDatabase.getExtraClass(course_id);
+//
+//     List<ExtraClass> labs = await firebaseDatabase.getLabs(course_id);
+//     extraclasses.addAll(labs); // Append labs to extras
+//
+//
+//     for (ExtraClass c in extraclasses) {
+//       Event e = Event(
+//         title: c.courseID,
+//         desc: c.description,
+//         stime: c.startTime,
+//         etime: c.endTime,
+//         venue: c.venue,
+//         host: courseToProff![c.courseID].toString(),
+//         creator: 'course',
+//       );
+//       await EventDB().addSingularEvent(e, c.date);
+//     }
+//   }
+// }
+
+
   static Future<void> saveExtraClasses(String course_id) async {
     List<ExtraClass> extraclasses =
-        await firebaseDatabase.getExtraClass(course_id);
+    await firebaseDatabase.getExtraClass(course_id);
+
+    String role = Ids.role;
+    String entryNumber = FirebaseAuth.instance.currentUser!.email!.split(
+        '@')[0];
+    String? groupName;
+
+    if (role == 'student') {
+      final groupDoc = await FirebaseFirestore.instance
+          .collection('student_courses')
+          .doc(entryNumber) // roll number
+          .collection(course_id) // courseCode
+          .doc('group') // document named 'group'
+          .get();
+
+      if (groupDoc.exists && groupDoc.data() != null) {
+        groupName = groupDoc.data()!['name'] as String?;
+      }
+
+      print("groupname");
+      print(groupName);
+    }
+
 
     List<ExtraClass> labs = await firebaseDatabase.getLabs(course_id);
+    if (role == 'student' && groupName != null) {
+      labs = labs.where((lab) => lab.description.trim().endsWith(groupName!))
+          .toList();
+    }
     extraclasses.addAll(labs); // Append labs to extras
 
 
@@ -449,4 +508,5 @@ class Loader {
       await EventDB().addSingularEvent(e, c.date);
     }
   }
+
 }
