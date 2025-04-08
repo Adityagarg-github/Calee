@@ -10,80 +10,92 @@ import 'package:iitropar/utilities/firebase_database.dart';
 import '../../database/loader.dart';
 
 abstract class AbstractHome extends StatefulWidget {
-  final Color appBarBackgroundColor; // New property for AppBar background color
-
-  const AbstractHome({
-    Key? key,
-    required this.appBarBackgroundColor, // Constructor parameter for AppBar background color
-  }) : super(key: key);
+  final Color appBarBackgroundColor;
+  const AbstractHome({Key? key, required this.appBarBackgroundColor}) : super(key: key);
 }
 
-abstract class AbstractHomeState extends State<AbstractHome> {
+abstract class AbstractHomeState<T extends AbstractHome> extends State<T> {
   faculty f = faculty("name", "dep", "email", Set());
-  void getDetails() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      f = await firebaseDatabase
-          .getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
-    }
-    if (mounted) setState(() {});
-  }
 
   AbstractHomeState() {
-    getDetails();
+    _initDetails();
   }
 
-  CircleAvatar getUserImage(double radius) {
-    ImageProvider image;
-    if (FirebaseAuth.instance.currentUser != null &&
-        FirebaseAuth.instance.currentUser!.photoURL != null) {
-      image =
-          NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString());
-    } else {
-      image = const AssetImage('assets/user.png');
+  void _initDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      f = await firebaseDatabase.getFacultyDetail(FirebaseAuth.instance.currentUser!.email!);
+      if (mounted) setState(() {});
     }
-    return CircleAvatar(
-      backgroundImage: image,
-      radius: radius,
+  }
+
+  Widget getUserImage(double radius) {
+    final user = FirebaseAuth.instance.currentUser;
+    final image = (user?.photoURL != null)
+        ? NetworkImage(user!.photoURL!)
+        : const AssetImage('assets/user.png');
+
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.6), // Soft border
+          width: 2.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: CircleAvatar(
+        backgroundImage: image as ImageProvider,
+        radius: radius,
+        backgroundColor: Theme.of(context).colorScheme.surface, // Clean background
+      ),
     );
   }
 
+
   String getUserName() {
-    if (Ids.role.compareTo("faculty") == 0) {
-      return "Welcome! ${f.name}";
-    }
-    if (FirebaseAuth.instance.currentUser == null) return "Hey! Guest User";
-    if(Ids.role.compareTo("club") == 0){
-      return "${FirebaseAuth.instance.currentUser!.displayName.toString()}";
-    }
-    return "Hey! ${FirebaseAuth.instance.currentUser!.displayName.toString()}";
+    final user = FirebaseAuth.instance.currentUser;
+    if (Ids.role == "faculty") return "Welcome! ${f.name}";
+    if (Ids.role == "club") return user?.displayName ?? "Welcome!";
+    return "Hey! ${user?.displayName ?? "User"}";
   }
+
 
   List<Widget> buttons();
 
   Widget getText() {
-    if (Ids.role.compareTo("faculty") == 0) {
-      return Text(f.department,
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            color: Color(primaryLight), // Set text color to blue
-            fontSize: 18, // Set text size to 24// Set text font to bold
-          ));
+    final color = Theme.of(context).colorScheme.primary;
+
+    String text;
+    if (Ids.role == "faculty") {
+      text = f.department;
+    } else if (Ids.role == "club") {
+      text = '';
+    } else {
+      text = 'How are you doing today?';
     }
-    if(Ids.role.compareTo("club") == 0){
-      return Text('',
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            color: Color(primaryLight), // Set text color to blue
-            fontSize: 18, // Set text size to 24// Set text font to bold
-          ));
-    }
-    return Text('How are you doing today? ',
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 16), // Adjust this to control how far from the right
+      child: Text(
+        text,
         textAlign: TextAlign.right,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.primary, // Set text color to blue
-          fontSize: 18, // Set text size to 24// Set text font to bold
-        ));
+          color: color,
+          fontSize: 17,
+          fontWeight: FontWeight.w500,
+          height: 1.7,
+        ),
+      ),
+    );
+
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +116,13 @@ abstract class AbstractHomeState extends State<AbstractHome> {
           const SizedBox(height: 10),
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(children: [
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
                 getUserImage(iconSize / 2 - 8),
-                Column(
+                    const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
@@ -125,6 +141,7 @@ abstract class AbstractHomeState extends State<AbstractHome> {
                       child: getText(),
                     )
                   ],
+                ),
                 ),
               ])), // Set text alignment to center
           Divider(

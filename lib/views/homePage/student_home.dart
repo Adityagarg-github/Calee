@@ -7,6 +7,8 @@ import 'package:iitropar/database/event.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
+import 'package:intl/intl.dart';
+
 
 
 double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
@@ -271,128 +273,161 @@ class _StudentHomeState extends AbstractHomeState {
       print('Error loading events: $e');
     }
   }
+  //import 'package:intl/intl.dart';
 
   Widget todayEvents() {
+    String todayDate = DateFormat('EEEE, MMM d').format(DateTime.now());
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            "Today's Events",
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        _sectionHeader("Today's Events", todayDate),
         gettodayEvents(),
       ],
     );
   }
 
   Widget tomorrowEvents() {
+    String tomorrowDate =
+    DateFormat('EEEE, MMM d').format(DateTime.now().add(Duration(days: 1)));
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            "Tomorrow's Events",
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        _sectionHeader("Tomorrow's Events", tomorrowDate),
         gettomorrowEvents(),
       ],
     );
   }
 
+  Widget _sectionHeader(String title, String date) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Center(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: colorScheme.surface, // Adapts for both themes
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: colorScheme.primary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              date,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface.withOpacity(0.7),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+
+
   Widget eventWidget(Event myEvents) {
+    // Determine prefix from description
+    String descPrefix = '';
+    if (myEvents.desc.toLowerCase().startsWith('lab')) {
+      descPrefix = 'P';
+    } else if (myEvents.desc.toLowerCase().startsWith('tutorial')) {
+      descPrefix = 'T';
+    } else if (myEvents.desc.toLowerCase().startsWith('class')) {
+      descPrefix = 'L';
+    }
+
+    String titleText = descPrefix.isNotEmpty
+        ? '${myEvents.title} - $descPrefix'
+        : myEvents.title;
+
+    String timeText =
+        '${myEvents.stime.format(context)} - ${myEvents.etime.format(context)}';
+
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ExpansionTile(
-        leading: Icon(
-          Icons.book,
-          color: Color(primaryLight),
-        ),
-        title: Text(
-          myEvents.title,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        leading: Icon(Icons.event, color: Color(primaryLight)),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Left: Title and time
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    titleText,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    timeText,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Right: Venue
+            Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Text(
+                myEvents.venue,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    const Text(
-                      "Description: ",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        myEvents.desc,
-                        style: const TextStyle(color: Colors.grey),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Time: ",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '${myEvents.stime.format(context)} - ${myEvents.etime.format(context)}',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Venue: ",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      myEvents.venue,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "Host: ",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      myEvents.host,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
+                _eventRow("Description", myEvents.desc),
+                _eventRow("Time", timeText),
+                _eventRow("Venue", myEvents.venue),
+                _eventRow("Host", myEvents.host),
               ],
             ),
           ),
@@ -400,6 +435,33 @@ class _StudentHomeState extends AbstractHomeState {
       ),
     );
   }
+
+
+// Helper widget for a clean row
+  Widget _eventRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "$label: ",
+            style: const TextStyle(
+              color: Colors.blue,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget gettodayEvents() {
     if (todayevents.isEmpty) {
