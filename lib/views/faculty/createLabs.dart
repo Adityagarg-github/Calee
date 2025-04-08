@@ -13,8 +13,11 @@ class createLabs extends StatefulWidget {
 class _createLabsState extends State<createLabs> {
   List<String> courseList = [];
   List<String> groupList = [];
+  final List<String> days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
   String? selectedCourse;
   String? selectedGroup;
+  String? selectedDay;
   TimeOfDay? startTime;
   TimeOfDay? endTime;
   final TextEditingController venueController = TextEditingController();
@@ -80,6 +83,7 @@ class _createLabsState extends State<createLabs> {
   Future<void> _submitLab() async {
     if (selectedCourse == null ||
         selectedGroup == null ||
+        selectedDay == null ||
         startTime == null ||
         endTime == null ||
         venueController.text.trim().isEmpty) {
@@ -96,7 +100,7 @@ class _createLabsState extends State<createLabs> {
         .doc('lab_info');
 
     await labRef.set({
-      'day': DateTime.now().weekday,
+      'day': selectedDay,
       'start_time': startTime!.format(context),
       'end_time': endTime!.format(context),
       'venue': venueController.text.trim(),
@@ -107,6 +111,7 @@ class _createLabsState extends State<createLabs> {
     );
 
     setState(() {
+      selectedDay = null;
       startTime = null;
       endTime = null;
       venueController.clear();
@@ -161,18 +166,33 @@ class _createLabsState extends State<createLabs> {
               },
             ),
             const SizedBox(height: 10),
+            DropdownButton<String>(
+              hint: const Text("Select Day"),
+              value: selectedDay,
+              isExpanded: true,
+              items: days.map((day) {
+                return DropdownMenuItem(
+                  value: day,
+                  child: Text(day),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedDay = value;
+                });
+              },
+            ),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
                   onPressed: () => _pickTime(true),
-                  child:
-                  Text("Start: ${startTime?.format(context) ?? 'Pick'}"),
+                  child: Text("Start: ${startTime?.format(context) ?? 'Pick'}"),
                 ),
                 ElevatedButton(
                   onPressed: () => _pickTime(false),
-                  child:
-                  Text("End: ${endTime?.format(context) ?? 'Pick'}"),
+                  child: Text("End: ${endTime?.format(context) ?? 'Pick'}"),
                 ),
               ],
             ),
