@@ -16,12 +16,15 @@ import 'package:iitropar/views/faculty/seeSlots.dart';
 class studentsEnrolled extends StatefulWidget {
   final String course;
   const studentsEnrolled({super.key, required this.course});
+
   @override
   State<studentsEnrolled> createState() => _studentsEnrolledState();
 }
 
 class _studentsEnrolledState extends State<studentsEnrolled> {
   late List<List<dynamic>> studentList = [];
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -30,9 +33,10 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
 
   void _getStudents() async {
     List<List<dynamic>> students =
-        await firebaseDatabase.getStudentsWithName(widget.course);
+    await firebaseDatabase.getStudentsWithName(widget.course);
     setState(() {
       studentList = students;
+      isLoading = false;
     });
   }
 
@@ -42,14 +46,25 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
       appBar: AppBar(
         title: const Text("Students Enrolled"),
       ),
-      body: ListView.builder(
-        itemCount: studentList.length,
-        itemBuilder: (context, index) {
-          final student = studentList[index];
-          return ListTile(
-            title: Text('${student[0]} (${student[1]})'),
-          );
-        },
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : studentList.isEmpty
+          ? const Center(child: Text("No students enrolled yet."))
+          : SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          headingRowColor: MaterialStateProperty.all(Colors.grey.shade200),
+          columns: const [
+            DataColumn(label: Text("Roll No.", style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text("Name", style: TextStyle(fontWeight: FontWeight.bold))),
+          ],
+          rows: studentList.map((student) {
+            return DataRow(cells: [
+              DataCell(Text(student[0].toString())), // Roll Number
+              DataCell(Text(student[1].toString())), // Name
+            ]);
+          }).toList(),
+        ),
       ),
     );
   }

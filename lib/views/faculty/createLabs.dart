@@ -13,8 +13,9 @@ class createLabs extends StatefulWidget {
 class _createLabsState extends State<createLabs> {
   List<String> courseList = [];
   List<String> groupList = [];
-  final List<String> days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  List<Map<String, dynamic>> scheduledLabs = [];
 
+  final List<String> days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   String? selectedCourse;
   String? selectedGroup;
   String? selectedDay;
@@ -54,12 +55,35 @@ class _createLabsState extends State<createLabs> {
         setState(() {
           groupList = List<String>.from(data['groups']);
           selectedGroup = null;
+          scheduledLabs = [];
         });
       }
     } else {
       setState(() {
         groupList = [];
         selectedGroup = null;
+        scheduledLabs = [];
+      });
+    }
+  }
+
+  Future<void> _loadScheduledLabs() async {
+    if (selectedCourse == null || selectedGroup == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('coursecode')
+        .doc(selectedCourse)
+        .collection(selectedGroup!)
+        .doc('lab_info')
+        .get();
+
+    if (doc.exists && doc.data() != null) {
+      setState(() {
+        scheduledLabs = [doc.data()!..['id'] = doc.id];
+      });
+    } else {
+      setState(() {
+        scheduledLabs = [];
       });
     }
   }
@@ -116,7 +140,33 @@ class _createLabsState extends State<createLabs> {
       endTime = null;
       venueController.clear();
     });
+
+    _loadScheduledLabs();
   }
+
+  Future<void> _deleteLab() async {
+    if (selectedCourse == null || selectedGroup == null) return;
+
+    final labRef = FirebaseFirestore.instance
+        .collection('coursecode')
+        .doc(selectedCourse)
+        .collection(selectedGroup!)
+        .doc('lab_info');
+
+    await labRef.set({
+      'day': null,
+      'start_time': null,
+      'end_time': null,
+      'venue': null,
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Lab reset successfully")),
+    );
+
+    _loadScheduledLabs();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -124,96 +174,202 @@ class _createLabsState extends State<createLabs> {
       appBar: AppBar(title: const Text("Create Lab")),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DropdownButton<String>(
-              hint: const Text("Select Course"),
-              value: selectedCourse,
-              isExpanded: true,
-              items: courseList.map((course) {
-                return DropdownMenuItem(
-                  value: course,
-                  child: Text(course),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCourse = value;
-                  selectedGroup = null;
-                  groupList = [];
-                });
-                _loadGroupsForCourse(value!);
-              },
-            ),
-            const SizedBox(height: 10),
-            DropdownButton<String>(
-              hint: const Text("Select Group"),
-              value: selectedGroup,
-              isExpanded: true,
-              items: groupList.map((group) {
-                return DropdownMenuItem(
-                  value: group,
-                  child: Text(group),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedGroup = value;
-                });
-              },
-            ),
-            const SizedBox(height: 10),
-            DropdownButton<String>(
-              hint: const Text("Select Day"),
-              value: selectedDay,
-              isExpanded: true,
-              items: days.map((day) {
-                return DropdownMenuItem(
-                  value: day,
-                  child: Text(day),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedDay = value;
-                });
-              },
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _pickTime(true),
-                  child: Text("Start: ${startTime?.format(context) ?? 'Pick'}"),
+          : LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Create New Lab",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+
+                      Card(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              DropdownButtonFormField<String>(
+                                decoration: const InputDecoration(labelText: "Select Course"),
+                                value: selectedCourse,
+                                isExpanded: true,
+                                items: courseList.map((course) {
+                                  return DropdownMenuItem(
+                                    value: course,
+                                    child: Text(course),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedCourse = value;
+                                    selectedGroup = null;
+                                    groupList = [];
+                                    scheduledLabs = [];
+                                  });
+                                  _loadGroupsForCourse(value!);
+                                },
+                              ),
+                              const SizedBox(height: 10),
+
+                              DropdownButtonFormField<String>(
+                                decoration: const InputDecoration(labelText: "Select Group"),
+                                value: selectedGroup,
+                                isExpanded: true,
+                                items: groupList.map((group) {
+                                  return DropdownMenuItem(
+                                    value: group,
+                                    child: Text(group),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedGroup = value;
+                                    scheduledLabs = [];
+                                  });
+                                  _loadScheduledLabs();
+                                },
+                              ),
+                              const SizedBox(height: 10),
+
+                              DropdownButtonFormField<String>(
+                                decoration: const InputDecoration(labelText: "Select Day"),
+                                value: selectedDay,
+                                isExpanded: true,
+                                items: days.map((day) {
+                                  return DropdownMenuItem(
+                                    value: day,
+                                    child: Text(day),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedDay = value;
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 10),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 150,
+                                    child: OutlinedButton.icon(
+                                      icon: const Icon(Icons.access_time, size: 18),
+                                      label: Text(
+                                        startTime != null
+                                            ? "Start: ${startTime!.format(context)}"
+                                            : "Start Time",
+                                        style: const TextStyle(fontSize: 13),
+                                      ),
+                                      onPressed: () => _pickTime(true),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  SizedBox(
+                                    width: 150,
+                                    child: OutlinedButton.icon(
+                                      icon: const Icon(Icons.access_time, size: 18),
+                                      label: Text(
+                                        endTime != null
+                                            ? "End: ${endTime!.format(context)}"
+                                            : "End Time",
+                                        style: const TextStyle(fontSize: 13),
+                                      ),
+                                      onPressed: () => _pickTime(false),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              TextField(
+                                controller: venueController,
+                                decoration: const InputDecoration(
+                                  labelText: "Enter Venue",
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+
+                              ElevatedButton.icon(
+                                icon: const Icon(Icons.check),
+                                onPressed: _submitLab,
+                                label: const Text("Submit Lab"),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(45),
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  foregroundColor: Colors.white,
+                                  textStyle: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+                      const Text(
+                        "Scheduled Lab",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+
+                      if (scheduledLabs.isEmpty)
+                        const Text(
+                          "No lab scheduled for the selected group.",
+                          style: TextStyle(color: Colors.grey),
+                        )
+                      else
+                        ...scheduledLabs.map((lab) {
+                          if (lab['day'] == null &&
+                              lab['start_time'] == null &&
+                              lab['end_time'] == null &&
+                              lab['venue'] == null) {
+                            return const Text(
+                              "No lab scheduled for the selected group.",
+                              style: TextStyle(color: Colors.grey),
+                            );
+                          }
+
+                          return Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            child: ListTile(
+                              leading: const Icon(Icons.schedule),
+                              title: Text(
+                                "${lab['day']} • ${lab['start_time']} - ${lab['end_time']}",
+                              ),
+                              subtitle: Text("Venue: ${lab['venue']}"),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.refresh),
+                                tooltip: "Reset Lab Info",
+                                onPressed: _deleteLab,
+                              ),
+                            ),
+                          );
+                        }),
+
+                    ],
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () => _pickTime(false),
-                  child: Text("End: ${endTime?.format(context) ?? 'Pick'}"),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: venueController,
-              decoration: const InputDecoration(
-                labelText: "Enter Venue",
-                border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitLab,
-                child: const Text("Submit Lab"),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
+
 }

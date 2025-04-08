@@ -97,7 +97,7 @@ class _updateCoursesState extends State<updateEndSemSchedule> {
             textAlign: TextAlign.center,
           ),
           const Text(
-            'Note : Do not include the header files !',
+            'Note : Do not include the headers !',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             textAlign: TextAlign.center,
           ),

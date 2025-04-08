@@ -27,7 +27,6 @@ class CreateGroupScreen extends StatefulWidget {
 
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
   faculty? f;
-  String? selectedCourse;
   bool isLoading = true;
 
   List<Color> colors = [
@@ -70,68 +69,61 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Select Course",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "Select a Course",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: f!.courses.length,
                 itemBuilder: (context, index) {
-                  final course = f!.courses.elementAt(index);
-                  if (course == "None") return Container();
-                  final colorIndex = index % colors.length;
-                  final isSelected = selectedCourse == course;
+                  final courses = f!.courses.toList(); // Convert Set to List
+                  final course = courses[index];       // Now it's indexable
+                  if (course == "None") return const SizedBox.shrink();
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              StudentsList(course: course),
+                  final color = colors[index % colors.length];
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StudentsList(course: course),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: isSelected ? Colors.amber : colors[colorIndex],
-                        border: isSelected
-                            ? Border.all(color: Colors.black, width: 2)
-                            : null,
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          course,
-                          style: const TextStyle(color: Colors.white),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          title: Text(
+                            course,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
                         ),
-                        trailing: isSelected
-                            ? const Icon(Icons.check_circle, color: Colors.white)
-                            : null,
                       ),
                     ),
                   );
                 },
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Current Groups",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: selectedCourse == null
-                  ? null
-                  : () {
-                // TODO: Handle group creation
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Group created for $selectedCourse')),
-                );
-              },
-              child: const Text("Create Group"),
             ),
           ],
         ),
@@ -139,3 +131,4 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     );
   }
 }
+
