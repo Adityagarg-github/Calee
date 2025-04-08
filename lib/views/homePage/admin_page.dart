@@ -21,6 +21,7 @@ import '../admin/update_timetable.dart';
 import '../admin/update_mid_sem_schedule.dart';
 import '../admin/update_end_sem_schedule.dart';
 import '../admin/updateMessMenu.dart';
+import '../admin/updateVenue.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -102,7 +103,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     imagePath: 'assets/admin_update_mid_sem_schedule_icon.png'),
                     AdminCard(context, const updateEndSemSchedule(),
                         "Update End-Sem Schedule",
-                    imagePath: 'assets/admin_update_end_sem_schedule_icon.png')
+                    imagePath: 'assets/admin_update_end_sem_schedule_icon.png'),
+                    AdminCard(context, const updateVenue(),
+                        "Update Venues",
+                        imagePath: 'assets/admin_update_end_sem_schedule_icon.png')
                   ],
                 ),
               ),
