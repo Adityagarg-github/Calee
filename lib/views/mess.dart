@@ -60,19 +60,25 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
         appBar: AppBar(
           toolbarHeight: 50,
           elevation: 0,
-          backgroundColor: widget.appBarBackgroundColor, // ✅ Matches navbar color dynamically
+          backgroundColor: widget.appBarBackgroundColor, // Matches navbar color dynamically
           title: _buildTitleBar("MESS MENU", context),
           bottom: TabBar(
-            labelColor: theme.colorScheme.onSurface, // ✅ Adaptive tab text color
-            unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6), // ✅ Faded text for unselected tabs
+            labelColor: theme.colorScheme.onPrimary, // Adaptive tab text color
+            unselectedLabelColor: theme.colorScheme.onPrimary.withOpacity(0.6),
             labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
             indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: theme.colorScheme.onSurface, width: 1.5),
-              insets: const EdgeInsets.symmetric(horizontal: 48),
+              borderSide: BorderSide(
+                color: theme.colorScheme.onPrimary, // Same as label
+                width: 1.5,
+              ),
+              insets: EdgeInsets.zero, // Full-width underline
             ),
+            indicatorSize: TabBarIndicatorSize.tab, // Makes underline span full tab
             tabs: myTabs,
           ),
+
+
         ),
         body: TabBarView(
           children: _daysOfWeek.map((day) => _buildMenuList(day, modifyDate)).toList(),
@@ -183,18 +189,23 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
                         ),
                       ],
                     ),
-                    child: ExpansionTile(
-                      title: Text(
-                        meal.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: theme.textTheme.bodyLarge!.color, // ✅ Adaptive text color
+                    child: Theme(
+                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                        childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        title: Text(
+                          meal.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: theme.textTheme.bodyLarge!.color,
+                          ),
                         ),
+                        leading: Icon(Icons.food_bank_rounded, color: theme.iconTheme.color),
+                        subtitle: Text(checkTime(meal.name)),
+                        initiallyExpanded: meal.name == mealOpen(),
+                        children: _buildFoodItems(meal.description),
                       ),
-                      leading: Icon(Icons.food_bank_rounded, color: theme.iconTheme.color), // ✅ Adaptive icon
-                      subtitle: Text(checkTime(meal.name)),
-                      initiallyExpanded: meal.name == mealOpen(),
-                      children: _buildFoodItems(meal.description),
                     ),
                   ),
                 ],

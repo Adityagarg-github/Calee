@@ -72,45 +72,6 @@ class _QuickLinksState extends State<QuickLinks> {
         elevation: 0,
         backgroundColor: widget.appBarBackgroundColor,
         title: buildTitleBar("QUICK LINKS", context, theme),
-        actions: [
-          // ✅ Added Dark Mode Toggle Switch in AppBar
-          Switch(
-            value: AdaptiveTheme.of(context).mode.isDark,
-            onChanged: (value) {
-              // Show dialog when toggling theme
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Please restart the app"),
-                    content: Text(
-                        "The theme has been changed. Please restart the app for changes to take effect."),
-                    actions: [
-                      TextButton(
-                        child: Text("Ok"),
-                        onPressed: () {
-                          // Change theme and close the app
-                          if (value) {
-                            AdaptiveTheme.of(context).setDark();
-                          } else {
-                            AdaptiveTheme.of(context).setLight();
-                          }
-
-                          // Close the dialog and app
-                          Navigator.of(context).pop();
-                          Future.delayed(Duration(milliseconds: 200), () {
-                            SystemNavigator.pop(); // Close the app
-                          });
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          )
-
-        ],
       ),
       backgroundColor: Theme.of(context).colorScheme.secondary, // Adaptive Background
       body: ListView.builder(
@@ -120,41 +81,44 @@ class _QuickLinksState extends State<QuickLinks> {
           Map<String, String> links = quickLinks[category]!;
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Card(
-              color: theme.cardColor, // Adaptive Card color
+            child: Material(
               elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ExpansionTile(
-                backgroundColor: theme.cardColor, // Adaptive Background for Tile
-                initiallyExpanded: index == 0,
-                leading: Icon(Icons.link, color: theme.iconTheme.color), // Adaptive Icon color
-                title: Text(
-                  category,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: theme.textTheme.bodyLarge!.color, // Adaptive Text color
-                  ),
-                ),
-                children: [
-                  for (var linkName in links.keys)
-                    ListTile(
-                      title: Text(
-                        linkName,
-                        style: TextStyle(
-                          color: theme.textTheme.bodyLarge!.color,
-                        ),// Adaptive Text color
-                      ),
-                      onTap: () async {
-                        String url = links[linkName]!;
-                        _launchURL(url);
-                      },
+              borderRadius: BorderRadius.circular(10),
+              color: theme.cardColor,
+              child: Theme(
+                data: theme.copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                  childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  initiallyExpanded: index == 0,
+                  leading: Icon(Icons.link, color: theme.iconTheme.color),
+                  title: Text(
+                    category,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: theme.textTheme.bodyLarge!.color,
                     ),
-                ],
+                  ),
+                  children: [
+                    for (var linkName in links.keys)
+                      ListTile(
+                        title: Text(
+                          linkName,
+                          style: TextStyle(
+                            color: theme.textTheme.bodyLarge!.color,
+                          ),
+                        ),
+                        onTap: () async {
+                          String url = links[linkName]!;
+                          _launchURL(url);
+                        },
+                      ),
+                  ],
+                ),
               ),
             ),
           );
+
         },
       ),
     );

@@ -169,97 +169,155 @@ class _CourseScheduleState extends State<CourseSchedule> {
   }
 
   double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
+
+  Widget sectionHeader(IconData icon, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFFAD1457)),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget cardContainer(Widget child) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      elevation: 3,
+      shadowColor: Colors.black26,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: child,
+      ),
+    );
+  }
+
+  Widget customDivider() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: Divider(
+        color: Colors.grey,
+        thickness: 0.5,
+      ),
+    );
+  }
+
+  void showSnack(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Course Schedule'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 16.0),
-              // Courses Dropdown
-              selectCourse(),
-              // Timings (Start time and End Time)
-              selectDate(),
-              selectTime(),
-              const SizedBox(height: 16.0),
-              // Venue
-              selectVenue(),
-              const SizedBox(height: 16.0),
-              // Description
-              selectDescription(),
-              const SizedBox(height: 16.0),
-              // Submit Button
-              ElevatedButton(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            customDivider(),
+            sectionHeader(Icons.book, "Select Course"),
+            cardContainer(selectCourse()),
+
+            customDivider(),
+            sectionHeader(Icons.calendar_today, "Pick Date"),
+            cardContainer(selectDate()),
+
+            const SizedBox(height: 8),
+            sectionHeader(Icons.access_time, "Select Time"),
+            cardContainer(selectTime()),
+
+            customDivider(),
+            sectionHeader(Icons.place, "Venue"),
+            cardContainer(selectVenue()),
+
+            customDivider(),
+            sectionHeader(Icons.description, "Description"),
+            cardContainer(selectDescription()),
+
+            const SizedBox(height: 32),
+            Center(
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.send),
+                label: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFAD1457),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  elevation: 5,
+                ),
                 onPressed: () async {
                   if (selectedCourse == "None") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Please select a course!")),
-                    );
+                    showSnack("Please select a course!");
                     return;
                   }
-                  if (description == "") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Add description.")),
-                    );
+                  if (description.isEmpty) {
+                    showSnack("Add description.");
                     return;
                   }
-                  if (venue == "") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Add venue")),
-                    );
+                  if (venue.isEmpty) {
+                    showSnack("Add venue");
                     return;
                   }
                   if (date.compareTo(getTodayDateTime()) <= 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Previous date event are not allowed")),
-                    );
+                    showSnack("Previous date events are not allowed");
                     return;
                   }
                   if (toDouble(startTime) > toDouble(endTime)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text(
-                              "Invalid Time. End time is before start time.")),
-                    );
+                    showSnack("Invalid Time. End time is before start time.");
                     return;
                   }
 
                   ExtraClass c = ExtraClass(
-                      courseID: selectedCourse,
-                      date: date,
-                      startTime: startTime,
-                      endTime: endTime,
-                      description: description,
-                      venue: venue);
+                    courseID: selectedCourse,
+                    date: date,
+                    startTime: startTime,
+                    endTime: endTime,
+                    description: description,
+                    venue: venue,
+                  );
+
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: const Text("Confirm"),
                         content: Text(
-                            "Do you really want to Scheduled class on ${formatDateWord(c.date)}?"),
+                          "Do you really want to schedule a class on ${formatDateWord(c.date)}?",
+                        ),
                         actions: <Widget>[
                           TextButton(
                             child: const Text("Cancel"),
-                            onPressed: () {
-                              // Close the dialog
-                              Navigator.of(context).pop();
-                            },
+                            onPressed: () => Navigator.of(context).pop(),
                           ),
                           TextButton(
-                            child: const Text("add"),
+                            child: const Text("Add"),
                             onPressed: () async {
-                             bool hasSubmit = await firebaseDatabase.addExtraClass(c);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Event Added Succesfully")),
-                  );
+                              bool hasSubmit = await firebaseDatabase.addExtraClass(c);
+                              if (hasSubmit) {
+                                showSnack("Event added successfully!");
+                              }
                               Navigator.of(context).pop();
                             },
                           ),
@@ -267,15 +325,14 @@ class _CourseScheduleState extends State<CourseSchedule> {
                       );
                     },
                   );
-
-                  
                 },
-                child: const Text('Submit'),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+
 }

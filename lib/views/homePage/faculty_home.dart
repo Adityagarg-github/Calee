@@ -124,215 +124,135 @@ class _FacultyHomeState extends AbstractHomeState {
 
   @override
   List<Widget> buttons() {
-    List<Widget> l = List.empty(growable: true);
+    List<Widget> l = [];
 
     l.add(
       Container(
         width: double.infinity,
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12.0),
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
         decoration: BoxDecoration(
-          //color: Colors.grey[200],
           color: Theme.of(context).colorScheme.background,
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'Semester Start Date',
-            ),
-            SizedBox(height: 4.0),
-            Text(
-              '${sm == null ? '' : formatDateWord(sm!.startDate!)}',
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              'Semester End Date',
-            ),
-            SizedBox(height: 4.0),
-            Text(
-              '${sm == null ? '' : formatDateWord(sm!.endDate!)}',
-            ),
+            Text('Semester Start Date', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4.0),
+            Text('${sm == null ? '' : formatDateWord(sm!.startDate!)}'),
+            const SizedBox(height: 8.0),
+            Text('Semester End Date', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4.0),
+            Text('${sm == null ? '' : formatDateWord(sm!.endDate!)}'),
           ],
         ),
       ),
     );
+
     l.add(allCourses());
+    l.add(const SizedBox(height: 16));
+
     l.add(
-      const SizedBox(
-        height: 10,
-      ),
-    );
-    l.add(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      Wrap(
+        spacing: 16,
+        runSpacing: 16,
         children: [
-          Expanded(
-            child: Card(
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => findSlots(f.courses),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: const [
-                      Icon(Icons.check_circle_outline),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Check Free Slots',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          _buildActionCard(
+            icon: Icons.check_circle_outline,
+            label: 'Check Free Slots',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => findSlots(f.courses)),
+              );
+            },
           ),
-          const SizedBox(width: 16.0),
-          Expanded(
-            child: Card(
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CourseSchedule(courses: f.courses),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: const [
-                      Icon(Icons.calendar_today),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Schedule Extra Class',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          _buildActionCard(
+            icon: Icons.calendar_today,
+            label: 'Schedule Extra Class',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CourseSchedule(courses: f.courses)),
+              );
+            },
+          ),
+          _buildActionCard(
+            icon: Icons.list,
+            label: 'See Added Extra Classes',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyClass(courses: f.courses)),
+              );
+            },
+          ),
+          _buildActionCard(
+            icon: Icons.group_add,
+            label: 'Create Group',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateGroupScreen()),
+              );
+            },
+          ),
+          _buildActionCard(
+            icon: Icons.science,
+            label: 'Manage Labs',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => createLabs()),
+              );
+            },
           ),
         ],
       ),
     );
-    l.add(
-      const SizedBox(
-        height: 5,
-      ),
-    );
-    l.add(
-      Center(
-        child: Card(
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyClass(courses: f.courses),
-                ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.list),
-                  SizedBox(height: 8.0),
-                  Text(
-                    'See added extra classes',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
 
-    l.add(
-      const SizedBox(
-        height: 5,
-      ),
-    );
-
-    l.add(
-      Center(
-        child: Card(
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateGroupScreen(),
-                ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.group_add),
-                  SizedBox(height: 8.0),
-                  Text(
-                    'Create Group',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    l.add(
-      const SizedBox(
-        height: 5,
-      ),
-    );
-
-    l.add(
-      Center(
-        child: Card(
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => createLabs(),
-                ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.science),
-                  SizedBox(height: 8.0),
-                  Text(
-                    'Manage Labs',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
     return l;
   }
+
+  Widget _buildActionCard({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 2 - 24, // Adjust for spacing
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        elevation: 2,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12.0),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 32, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(height: 8.0),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 }

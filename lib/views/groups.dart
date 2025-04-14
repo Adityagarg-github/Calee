@@ -100,48 +100,73 @@ class _GroupsState extends State<Groups> {
         const SizedBox(height: 20),
         Card(
           elevation: 4,
-          //color: Colors.black, // Ensure background is same as theme
-          //border: Border.all(color: Colors.transparent), // Removes border
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: ExpansionTile(
-            initiallyExpanded: category == 'Groups Joined' ? true : false,
-            backgroundColor: Theme.of(context).colorScheme.background,
-            title: Text(category, style: const TextStyle(fontWeight: FontWeight.bold)),
-            collapsedBackgroundColor: Theme.of(context).colorScheme.background, // Remove unwanted background color
-            leading: const Icon(Icons.group),
-            children: groups.map((group) {
-              return InkWell(
-                onTap: () async {
-                  if (category == "Groups Available") {
-                    _showConfirmationDialog(context, group['groupName'] ?? "<Group Name>");
-                  } else {
-                    bool? leftGroup = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GroupScreen(groupName: group['groupName'] ?? "<Group Name>"),
-                      ),
-                    );
-
-                    if (leftGroup == true) {
-                      await refreshGroups(); // Refresh the group list after leaving
-                    }
-                  }
-                },
-                child: ListTile(
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(group['groupName'] ?? "", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
-                      Text(group['associatedClub'] ?? "", style: const TextStyle(color: Colors.grey)),
-                    ],
-                  ),
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              dividerColor: Colors.transparent, // ✅ Removes the bottom black line
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: ExpansionTile(
+              initiallyExpanded: category == 'Groups Joined',
+              backgroundColor: Theme.of(context).colorScheme.surface, // ✅ Adaptive background
+              collapsedBackgroundColor: Theme.of(context).colorScheme.surface,
+              title: Text(
+                category,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color, // ✅ Adaptive text color
                 ),
-              );
-            }).toList(),
+              ),
+              iconColor: Theme.of(context).iconTheme.color, // ✅ Adaptive icon
+              collapsedIconColor: Theme.of(context).iconTheme.color,
+              leading: Icon(Icons.group, color: Theme.of(context).iconTheme.color),
+              children: groups.map((group) {
+                return InkWell(
+                  onTap: () async {
+                    if (category == "Groups Available") {
+                      _showConfirmationDialog(context, group['groupName'] ?? "<Group Name>");
+                    } else {
+                      bool? leftGroup = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GroupScreen(groupName: group['groupName'] ?? "<Group Name>"),
+                        ),
+                      );
+                      if (leftGroup == true) {
+                        await refreshGroups();
+                      }
+                    }
+                  },
+                  child: ListTile(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          group['groupName'] ?? "",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary, // ✅ Adaptive color
+                          ),
+                        ),
+                        Text(
+                          group['associatedClub'] ?? "",
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         ),
+
       ],
     )
         : const SizedBox(); // Return an empty SizedBox if groups list is empty
