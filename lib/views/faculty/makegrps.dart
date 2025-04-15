@@ -95,6 +95,53 @@ class _StudentsListState extends State<StudentsList> {
     _loadGroupsForCourse(widget.course); // Refresh the group list
   }
 
+  void _showStudentsInGroup(String groupName) async {
+    final labInfoDoc = await FirebaseFirestore.instance
+        .collection('coursecode')
+        .doc(widget.course)
+        .collection(groupName)
+        .doc('lab_info')
+        .get();
+
+    if (labInfoDoc.exists) {
+      final data = labInfoDoc.data();
+      final List<dynamic> rolls = data?['students'] ?? [];
+
+      final studentsInGroup = studentList
+          .where((student) => rolls.contains(student[0]))
+          .map((student) => "${student[1]} (${student[0]})")
+          .toList();
+
+      showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Students in $groupName",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Divider(),
+                if (studentsInGroup.isEmpty)
+                  const Text("No students in this group."),
+                ...studentsInGroup.map((s) => ListTile(title: Text(s))).toList(),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,18 +184,20 @@ class _StudentsListState extends State<StudentsList> {
                     spacing: 8,
                     runSpacing: 8,
                     children: groupList.map((group) {
-                      return Chip(
-                        label: Text(group),
-                        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                        labelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      return InkWell(
+                        onTap: () => _showStudentsInGroup(group),
+                        child: Chip(
+                          label: Text(group),
+                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                          labelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
                       );
                     }).toList(),
                   ),
                   const SizedBox(height: 16),
                 ],
               ),
-
 
             // Select All Toggle
             Row(
