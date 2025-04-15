@@ -73,14 +73,16 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface, // Theme-based background
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black54
+                        : Colors.black12,
                     blurRadius: 12,
                     spreadRadius: 4,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -95,7 +97,7 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
                 dataRowColor: MaterialStateProperty.resolveWith<Color?>(
                       (Set<MaterialState> states) {
                     return states.contains(MaterialState.selected)
-                        ? Colors.blue.withOpacity(0.2)
+                        ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
                         : null;
                   },
                 ),
@@ -106,7 +108,6 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: Colors.black87,
                       ),
                     ),
                   ),
@@ -116,7 +117,6 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: Colors.black87,
                       ),
                     ),
                   ),
@@ -127,21 +127,31 @@ class _studentsEnrolledState extends State<studentsEnrolled> {
                   final name = student[1].toString();
                   final isEven = index % 2 == 0;
 
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+
+                  final rowColor = isEven
+                      ? (isDark ? Colors.grey[800] : Colors.grey[100])
+                      : (isDark ? Colors.grey[850] : Colors.grey[200]);
+
                   return DataRow(
-                    color: MaterialStateProperty.all(
-                      isEven ? Colors.grey.shade100 : Colors.grey.shade200,
-                    ),
+                    color: MaterialStateProperty.all(rowColor),
                     cells: [
                       DataCell(
                         Text(
                           roll,
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
                         ),
                       ),
                       DataCell(
                         Text(
                           name,
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
                         ),
                       ),
                     ],
