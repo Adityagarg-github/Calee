@@ -1,5 +1,6 @@
 // ignore_for_file: camel_case_types, non_constant_identifier_names
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iitropar/utilities/colors.dart';
@@ -347,11 +348,7 @@ class faculty {
 }
 
 class Ids {
-  static List<String> admins = [
-    "tempv9999@gmail.com",
-    "adityagarg.07052004@gmail.com",
-    "depiitrpr1@gmail.com"
-  ];
+  static List<String> admins = [];
   static Future<List<dynamic>> fclub = firebaseDatabase.getClubIds();
   static Future<List<dynamic>> faculty = firebaseDatabase.getFacultyIDs();
 
@@ -359,6 +356,25 @@ class Ids {
   static bool assigned = false;
   static String name = ""; //only for faculty
   static String dep = ""; //only for faculty
+
+  // Fetch admins from Firebase only once
+  static Future<void> loadAdminEmails() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('settings')
+          .doc('admins')
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data();
+        if (data != null && data.containsKey('emails')) {
+          admins = List<String>.from(data['emails']);
+        }
+      }
+    } catch (e) {
+      print("Error loading admin emails: $e");
+    }
+  }
 
   static Future<String> resolveUser() async {
     if (assigned == true) return role;
@@ -369,6 +385,7 @@ class Ids {
       assigned = true;
       return role;
     }
+    await loadAdminEmails(); // make sure admins list is up-to-date
     return _emailCheck(FirebaseAuth.instance.currentUser!.email!);
   }
 
