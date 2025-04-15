@@ -353,7 +353,7 @@ class _createLabsState extends State<createLabs> {
                               ),
                               subtitle: Text("Venue: ${lab['venue']}"),
                               trailing: IconButton(
-                                icon: const Icon(Icons.refresh),
+                                icon: const Icon(Icons.delete),
                                 tooltip: "Reset Lab Info",
                                 onPressed: _deleteLab,
                               ),

@@ -188,7 +188,7 @@ class _findSlotsState extends State<findSlots> {
         );
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.redAccent,
       ),
       child: const Text('Upload via CSV'),
     ));
@@ -231,103 +231,189 @@ class _findSlotsState extends State<findSlots> {
   }
 
   Widget getStudents() {
-    return Center(
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 10,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Add Students',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.indigo,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Select Course
+              Text(
+                'Select Course',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blueGrey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              selectCourses(),
+              const SizedBox(height: 16),
+              Divider(thickness: 1, color: Colors.grey.shade300),
+
+              // Add Student
+              const SizedBox(height: 16),
+              Text(
+                'Add Student (Manually)',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blueGrey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              addSingleStudent(),
+              const SizedBox(height: 16),
+              Divider(thickness: 1, color: Colors.grey.shade300),
+
+              // CSV Upload
+              const SizedBox(height: 16),
+              Text(
+                'Upload Students via CSV',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blueGrey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              getCSVscreen(),
+
+              const SizedBox(height: 8),
+              Divider(thickness: 2, color: Colors.indigo.withOpacity(0.2)),
+            ],
           ),
-          const Text(
-            'Select Course',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Colors.blueGrey,
-            ),
-          ),
-          selectCourses(),
-          Divider(
-            thickness: 0.25,
-            color: Color(primaryLight).withOpacity(0.5),
-          ),
-          const Text('Add Student'),
-          addSingleStudent(),
-          // const SizedBox(height: 10),
-          Divider(
-            thickness: 0.25,
-            color: Color(primaryLight).withOpacity(0.5),
-          ),
-          // const SizedBox(height: 10),
-          getCSVscreen(),
-          Divider(
-            thickness: 2,
-            color: Color(primaryLight).withOpacity(0.5),
-          ),
-        ],
+        ),
       ),
     );
   }
 
+
   Widget showSelectedStudents() {
+    final studentList = students.toList(); // Convert Set to List for indexing
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Selected Students',
-          style: TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.w500),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            'Selected Students',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.blueGrey,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.15,
-          child: ListView.builder(
-              itemCount: students.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                    leading: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          students.remove(students.elementAt(index));
-                        });
-                      },
-                    ),
-                    title: entryToName[students.elementAt(index)] == null
-                        ? Text('${students.elementAt(index)})')
-                        : Text(
-                            '${students.elementAt(index)} (${entryToName[students.elementAt(index)]})')); // todo: do via map loaded in frequency used.
-              }),
+        Container(
+          height: MediaQuery.of(context).size.height * 0.2,
+          decoration: BoxDecoration(
+           // color: theme.of(context).,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: studentList.isEmpty
+              ? const Center(
+            child: Text(
+              'No students selected.',
+              style: TextStyle(color: Colors.grey),
+            ),
+          )
+              : ListView.builder(
+            itemCount: studentList.length,
+            itemBuilder: (BuildContext context, int index) {
+              final entry = studentList[index];
+              final name = entryToName[entry];
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blueGrey.shade100,
+                    child: const Icon(Icons.person, color: Colors.black87),
+                  ),
+                  title: Text(
+                    name == null ? entry : '$entry ($name)',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.clear, color: Colors.redAccent),
+                    onPressed: () {
+                      setState(() {
+                        students.remove(entry); // This is valid for a Set
+                      });
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
   }
 
+
   Widget getSlot() {
-    return Center(
-      child: Column(
-        children: [
-          const Text(
-            'Select Slot Lenght (in hours)',
-            style:
-                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.w500),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'Select Slot Length (in hours)',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey.shade100,
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
                 icon: const Icon(Icons.remove),
+                color: Colors.redAccent,
                 onPressed: () {
-                  if (slotLength != 1) {
+                  if (slotLength > 1) {
                     setState(() {
-                      slotLength = slotLength > 0 ? slotLength - 1 : 0;
+                      slotLength--;
                     });
                   }
                 },
               ),
-              Text(
-                '$slotLength',
-                style: const TextStyle(fontSize: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  '$slotLength hr',
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                ),
               ),
               IconButton(
                 icon: const Icon(Icons.add),
+                color: Colors.green,
                 onPressed: () {
-                  if (slotLength != 12) {
+                  if (slotLength < 12) {
                     setState(() {
                       slotLength++;
                     });
@@ -336,40 +422,59 @@ class _findSlotsState extends State<findSlots> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
-        ],
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+
+  Widget getDate() {
+    return Center(
+      child: GestureDetector(
+        onTap: () async {
+          final selected = await showDatePicker(
+            context: context,
+            initialDate: date,
+            firstDate: DateTime(1900),
+            lastDate: DateTime(2100),
+          );
+          if (selected != null && selected != date) {
+            setState(() {
+              date = selected;
+            });
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.blueGrey.shade50,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.blueGrey.shade300),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.calendar_today, color: Colors.blueGrey),
+              const SizedBox(width: 10),
+              Text(
+                date == null
+                    ? 'Pick Event Date'
+                    : formatDateWord(date), // Custom formatting function
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.blueGrey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget getDate() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        ElevatedButton(
-          child: const Text('Pick Event Date'),
-          onPressed: () {
-            showDatePicker(
-                    context: context,
-                    initialDate: date,
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2100))
-                .then((value) {
-              if (value != null && value != date) {
-                setState(() {
-                  date = value;
-                });
-              }
-            });
-          },
-        ),
-        const SizedBox(width: 20),
-        Text("${formatDateWord(date)}",
-            style:
-                const TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
-      ],
-    );
-  }
+
 
   List<int> conflicts = List.empty();
 
