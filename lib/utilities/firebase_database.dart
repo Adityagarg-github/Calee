@@ -775,7 +775,7 @@ class firebaseDatabase {
   }) async {
     final firestore = FirebaseFirestore.instance;
 
-    // 1. Set group for the student in student_courses/{roll}/{courseCode}/group
+    // 1. Set group for the student
     final studentGroupRef = firestore
         .collection('student_courses')
         .doc(roll)
@@ -784,21 +784,31 @@ class firebaseDatabase {
 
     await studentGroupRef.set({'name': groupName});
 
-    // 2. Create lab_info doc if it doesn't exist in coursecode/{courseCode}/{groupName}/lab_info
+    // 2. Add roll to lab_info and create lab_info if it doesn't exist
     final labInfoRef = firestore
         .collection('coursecode')
         .doc(courseCode)
         .collection(groupName)
         .doc('lab_info');
 
-    await labInfoRef.set({
-      'day': null,
-      'start_time': null,
-      'end_time': null,
-      'venue': null,
+    await firestore.runTransaction((transaction) async {
+      final labSnapshot = await transaction.get(labInfoRef);
+      if (!labSnapshot.exists) {
+        transaction.set(labInfoRef, {
+          'day': null,
+          'start_time': null,
+          'end_time': null,
+          'venue': null,
+          'students': [roll],
+        });
+      } else {
+        transaction.update(labInfoRef, {
+          'students': FieldValue.arrayUnion([roll]),
+        });
+      }
     });
 
-    // 3. Update the group metadata list under coursecode/{courseCode}/meta/groups
+    // 3. Update metadata group list
     final metaGroupRef = firestore
         .collection('coursecode')
         .doc(courseCode)
