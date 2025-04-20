@@ -73,16 +73,36 @@ class _CourseScheduleState extends State<CourseSchedule> {
 
   Widget selectCourse() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Select Course',
-            style:
-                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold)),
-        DropdownButton<String>(
+        const Padding(
+          padding: EdgeInsets.only(bottom: 8.0, left: 4.0),
+          child: Text(
+            'Select Course',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey,
+            ),
+          ),
+        ),
+        DropdownButtonFormField<String>(
           value: selectedCourse,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          icon: const Icon(Icons.arrow_drop_down),
+          dropdownColor: Theme.of(context).colorScheme.surface,
           items: allcourses.toList().map((dynamic course) {
             return DropdownMenuItem<String>(
               value: course,
-              child: Text(course),
+              child: Text(course, style: const TextStyle(fontSize: 16)),
             );
           }).toList(),
           onChanged: (newValue) {
@@ -91,10 +111,11 @@ class _CourseScheduleState extends State<CourseSchedule> {
             });
           },
         ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 20),
       ],
     );
   }
+
 
   Widget selectTime() {
     return Row(
@@ -138,16 +159,18 @@ class _CourseScheduleState extends State<CourseSchedule> {
   }
 
   Widget selectDate() {
+    final theme = Theme.of(context);
+    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.blueGrey;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         TextButton(
           child: Center(
             child: Text("Date: ${date.day}/${date.month}/${date.year}",
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.normal,
-                    color: Colors.black)),
+                    color: textColor,)),
           ),
           onPressed: () {
             showDatePicker(

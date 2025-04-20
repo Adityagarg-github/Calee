@@ -54,11 +54,11 @@ class _QuickLinksState extends State<QuickLinks> {
     },
     'Our Team': {
       'Dr Puneet Goyal(Mentor)': 'https://sites.google.com/view/goyalpuneet/',
-      'Aditya Garg': 'https://www.linkedin.com/in/jugal-chapatwala-636143179/',
-      'Aayan Soni': 'https://www.linkedin.com/in/gautamsethia7/',
+      'Aditya Garg': 'https://www.linkedin.com/in/aditya-garg-932914259/',
+      'Aayan Soni': 'https://www.linkedin.com/in/aayan-soni-471379259/',
       'Akash': 'https://www.linkedin.com/in/jatingupta1792/',
       'Aniket Kumar Sahil':
-      'https://www.linkedin.com/in/prakhar-saxena-148a10209/',
+      'https://www.linkedin.com/in/aniket-kumar-sahil-b09427258/',
     },
   };
 

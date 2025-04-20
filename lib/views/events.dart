@@ -431,8 +431,14 @@ class _EventsState extends State<Events> {
     return false;
   }
 
+  String formatDateWord(DateTime date) {
+    return DateFormat('EEE, MMM d, yyyy').format(date); // Example: Tue, Apr 16, 2024
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
@@ -601,41 +607,61 @@ class _EventsState extends State<Events> {
           ],
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        bottomNavigationBar: Row(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 20), // adds space below the button
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateColor.resolveWith(
-                        (states) => Colors.blue),
-              ),
-              onPressed: () async {
-                showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2100))
-                    .then((date) {
-                  if (date == null) return;
-                  setState(() {
-                    _selectedDate = date;
-                  });
-                });
-              },
-              child: const Text("Select Date", style: TextStyle(color: Colors.black),),
-            ),
             IconButton(
               onPressed: () {
                 setState(() {
                   if (_selectedDate != null) {
-                    _selectedDate =
-                        _selectedDate!.subtract(const Duration(days: 1));
+                    _selectedDate = _selectedDate!.subtract(const Duration(days: 1));
                   }
                 });
               },
               icon: const Icon(Icons.arrow_left),
             ),
-            Text(DateFormat('dd-MM-yyyy').format(_selectedDate!)),
+            GestureDetector(
+              onTap: () async {
+                final selected = await showDatePicker(
+                  context: context,
+                  initialDate: _selectedDate ?? DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime(2100),
+                );
+                if (selected != null && selected != _selectedDate) {
+                  setState(() {
+                    _selectedDate = selected;
+                  });
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                decoration: BoxDecoration(
+                  color: widget.appBarBackgroundColor, // match title bar color
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.blueGrey.shade300),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.calendar_today, color: Colors.white),
+                    const SizedBox(width: 10),
+                    Text(
+                      _selectedDate == null
+                          ? 'Pick Event Date'
+                          : formatDateWord(_selectedDate!),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white, // white text for dark background
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             IconButton(
               onPressed: () {
                 setState(() {
@@ -647,7 +673,12 @@ class _EventsState extends State<Events> {
               icon: const Icon(Icons.arrow_right),
             ),
           ],
-        )); // Generated code for this Row Widget...
+        ),
+      ),
+
+    );
+
+ // Generated code for this Row Widget...
   }
   Widget themeButtonWidget() {
     return IconButton(

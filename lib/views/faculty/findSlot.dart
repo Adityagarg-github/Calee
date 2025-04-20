@@ -195,40 +195,40 @@ class _findSlotsState extends State<findSlots> {
   }
 
   Widget selectCourses() {
-    // print(courses);
     List options = courses.toList();
     if (!options.contains("None")) options.add('None');
 
-    return Center(
-      child: DropdownButton<String>(
-        value: current_course, // Initial value
-        hint: const Text('Select an option'), // Hint text
-        items: options.map((dynamic value) {
-          return DropdownMenuItem<String>(
-            value: value.toString(),
-            child: Text(value.toString()),
-          );
-        }).toList(),
-        onChanged: (dynamic newValue) async {
-          // Handle value changes
-          setState(() {
-            current_course = newValue;
-          });
-          if (current_course != 'None') {
-            List<dynamic> studentList =
-                await firebaseDatabase.getStudents(current_course!);
-            setState(() {
-              students = Set.from(studentList);
-            });
-          } else {
-            setState(() {
-              students = Set();
-            });
-          }
-        },
+    return DropdownButtonFormField<String>(
+      value: current_course,
+      decoration: InputDecoration(
+        labelText: 'Choose a Course',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
+      items: options.map((dynamic value) {
+        return DropdownMenuItem<String>(
+          value: value.toString(),
+          child: Text(value.toString()),
+        );
+      }).toList(),
+      onChanged: (dynamic newValue) async {
+        setState(() {
+          current_course = newValue;
+        });
+        if (current_course != 'None') {
+          List<dynamic> studentList = await firebaseDatabase.getStudents(current_course!);
+          setState(() {
+            students = Set.from(studentList);
+          });
+        } else {
+          setState(() {
+            students = {};
+          });
+        }
+      },
     );
   }
+
 
   Widget getStudents() {
     return Padding(
@@ -369,13 +369,19 @@ class _findSlotsState extends State<findSlots> {
 
 
   Widget getSlot() {
+    final theme = Theme.of(context);
+    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.blueGrey;
+    final cardColor = theme.cardColor;
+    final borderColor = theme.dividerColor.withOpacity(0.5);
+    final iconTheme = theme.iconTheme.color;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text(
+        Text(
           'Select Slot Length (in hours)',
           style: TextStyle(
-            color: Colors.blueGrey,
+            color: textColor,
             fontWeight: FontWeight.w600,
             fontSize: 18,
           ),
@@ -385,15 +391,15 @@ class _findSlotsState extends State<findSlots> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: Colors.grey.shade100,
-            border: Border.all(color: Colors.grey.shade300),
+            color: cardColor,
+            border: Border.all(color: borderColor),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
                 icon: const Icon(Icons.remove),
-                color: Colors.redAccent,
+                color: Colors.redAccent, // You can also adapt this if desired
                 onPressed: () {
                   if (slotLength > 1) {
                     setState(() {
@@ -406,12 +412,16 @@ class _findSlotsState extends State<findSlots> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   '$slotLength hr',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                  ),
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                color: Colors.green,
+                color: Colors.green, // Same here, adapt if needed
                 onPressed: () {
                   if (slotLength < 12) {
                     setState(() {
@@ -429,7 +439,14 @@ class _findSlotsState extends State<findSlots> {
   }
 
 
+
   Widget getDate() {
+    final theme = Theme.of(context); // Get the current theme
+    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.blueGrey;
+    final iconColor = theme.iconTheme.color ?? Colors.blueGrey;
+    final borderColor = theme.dividerColor.withOpacity(0.5);
+    final backgroundColor = theme.cardColor;
+
     return Center(
       child: GestureDetector(
         onTap: () async {
@@ -448,22 +465,20 @@ class _findSlotsState extends State<findSlots> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           decoration: BoxDecoration(
-            color: Colors.blueGrey.shade50,
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.blueGrey.shade300),
+            border: Border.all(color: borderColor),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.calendar_today, color: Colors.blueGrey),
+              Icon(Icons.calendar_today, color: iconColor),
               const SizedBox(width: 10),
               Text(
-                date == null
-                    ? 'Pick Event Date'
-                    : formatDateWord(date), // Custom formatting function
-                style: const TextStyle(
+                date == null ? 'Pick Event Date' : formatDateWord(date),
+                style: TextStyle(
                   fontSize: 16,
-                  color: Colors.blueGrey,
+                  color: textColor,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -480,40 +495,60 @@ class _findSlotsState extends State<findSlots> {
 
   Widget submitButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: ElevatedButton(
-        onPressed: () async {
-          // Validating form inputs
-          DateTime currentDate = DateTime(
-              DateTime.now().year, DateTime.now().month, DateTime.now().day);
-          if (date.compareTo(currentDate) < 0) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text("Previous date event are not allowed")),
-            );
-            return;
-          }
-          if (students.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Add atleast one student")),
-            );
-            return;
-          }
-          // List<int> conflicts =
-          // await getConflicts(slotLength, date, students.toList());
+      padding: const EdgeInsets.only(bottom: 40.0, top: 16.0),
+      child: SizedBox(
+        width: 250, // Smaller width
+        height: 50, // Smaller height
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.secondary, // More vibrant color
+            elevation: 8, // Slightly higher elevation for more emphasis
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30), // Slightly more rounded for a modern feel
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+          ),
+          onPressed: () async {
+            DateTime currentDate = DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day);
+            if (date.compareTo(currentDate) < 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Previous date events are not allowed"),
+                ),
+              );
+              return;
+            }
+            if (students.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Add at least one student")),
+              );
+              return;
+            }
 
-          LoadingScreen.setPrompt('Compiling conflicts ...');
-          LoadingScreen.setBuilder((context) =>
-              seeSlots(slotLength: slotLength, conflicts: conflicts));
-          LoadingScreen.setTask(
-              () => getConflicts(slotLength, date, students.toList()));
-          Navigator.push(
-              context, MaterialPageRoute(builder: LoadingScreen.build));
-        },
-        child: const Text('Submit'),
+            LoadingScreen.setPrompt('Compiling conflicts ...');
+            LoadingScreen.setBuilder((context) =>
+                seeSlots(slotLength: slotLength, conflicts: conflicts));
+            LoadingScreen.setTask(
+                    () => getConflicts(slotLength, date, students.toList()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: LoadingScreen.build));
+          },
+          child: const Text(
+            'Submit',
+            style: TextStyle(
+              fontSize: 18, // Slightly smaller text for a better proportion
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }
+
+
 
   Future<bool> getConflicts(
       int slotLength, DateTime date, List<String> students) async {
@@ -643,24 +678,110 @@ class _findSlotsState extends State<findSlots> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Find Slots"),
       ),
-      // drawer: const NavDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
+      body: Container(
+        color: theme.scaffoldBackgroundColor,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: ListView(
           children: [
-            getStudents(),
-            showSelectedStudents(),
-            divider(),
-            getSlot(),
-            getDate(),
-            divider(),
-            submitButton(),
+            // Add Students Section (Select Course + Add Manually + CSV Upload)
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add Students',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Select Course',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    selectCourses(),
+                    const SizedBox(height: 16),
+                    Divider(thickness: 1, color: theme.dividerColor),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Add Student (Manually)',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    addSingleStudent(),
+                    const SizedBox(height: 16),
+                    Divider(thickness: 1, color: theme.dividerColor),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Upload Students via CSV',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    getCSVscreen(),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Selected Students List
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: showSelectedStudents(),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Slot Length and Date Picker in a single card
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    getSlot(),
+                    getDate(),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Submit Button Centered
+            Center(child: submitButton()),
           ],
         ),
       ),
     );
   }
+
 }

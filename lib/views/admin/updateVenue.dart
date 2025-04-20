@@ -107,7 +107,7 @@ class _updateVenueState extends State<updateVenue> {
 
                 File nfile = File(p.join(result, 'VenueSample.csv'));
                 nfile.writeAsString(
-                    await rootBundle.loadString('assets/VenueTable.csv')
+                    await rootBundle.loadString('assets/Venue.csv')
                 );
               },
             ),

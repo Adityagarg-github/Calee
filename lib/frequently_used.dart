@@ -773,7 +773,7 @@ class formChecks {
   static bool email_check(String email) {
     RegExp r = RegExp(r'^[A-Za-z0-9._%+-]+@iitrpr\.ac\.in$');
     //RegExp z = RegExp(r'^[A-Za-z0-9._%+-]+@gmail\.com$');
-    return r.hasMatch(email) || z.hasMatch(email);
+    return r.hasMatch(email);
   }
 }
 
