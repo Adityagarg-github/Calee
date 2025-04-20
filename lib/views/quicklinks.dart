@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/colors.dart';
-import 'package:adaptive_theme/adaptive_theme.dart'; // ✅ Added AdaptiveTheme package
-import 'package:flutter/services.dart';  // Add this import
-
+import 'package:adaptive_theme/adaptive_theme.dart'; // ✅ AdaptiveTheme package
+import 'package:flutter/services.dart'; // ✅ For SystemNavigator.pop()
 
 class QuickLinks extends StatefulWidget {
   final Color appBarBackgroundColor;
@@ -59,13 +58,13 @@ class _QuickLinksState extends State<QuickLinks> {
       'Aayan Soni': 'https://www.linkedin.com/in/gautamsethia7/',
       'Akash': 'https://www.linkedin.com/in/jatingupta1792/',
       'Aniket Kumar Sahil':
-      'https://www.linkedin.com/in/prakhar-saxena-148a10209/'
-    }
+      'https://www.linkedin.com/in/prakhar-saxena-148a10209/',
+    },
   };
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // ✅ Get current theme
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
@@ -73,53 +72,105 @@ class _QuickLinksState extends State<QuickLinks> {
         backgroundColor: widget.appBarBackgroundColor,
         title: buildTitleBar("QUICK LINKS", context, theme),
       ),
-      backgroundColor: Theme.of(context).colorScheme.secondary, // Adaptive Background
-      body: ListView.builder(
-        itemCount: quickLinks.length,
-        itemBuilder: (context, index) {
-          String category = quickLinks.keys.elementAt(index);
-          Map<String, String> links = quickLinks[category]!;
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Material(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      body: ListView(
+        padding: const EdgeInsets.only(top: 10),
+        children: [
+          // 🌙 Dark Mode Toggle Card with matching appBar color
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            child: Card(
               elevation: 4,
-              borderRadius: BorderRadius.circular(10),
-              color: theme.cardColor,
-              child: Theme(
-                data: theme.copyWith(dividerColor: Colors.transparent),
-                child: ExpansionTile(
-                  tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-                  childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  initiallyExpanded: index == 0,
-                  leading: Icon(Icons.link, color: theme.iconTheme.color),
-                  title: Text(
-                    category,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: theme.textTheme.bodyLarge!.color,
-                    ),
-                  ),
-                  children: [
-                    for (var linkName in links.keys)
-                      ListTile(
-                        title: Text(
-                          linkName,
-                          style: TextStyle(
-                            color: theme.textTheme.bodyLarge!.color,
-                          ),
-                        ),
-                        onTap: () async {
-                          String url = links[linkName]!;
-                          _launchURL(url);
-                        },
-                      ),
-                  ],
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: ListTile(
+                leading: Icon(
+                  Icons.brightness_6,
+                  color: widget.appBarBackgroundColor, // 👈 matches AppBar color
+                ),
+                title: const Text("Dark Mode"),
+                trailing: Switch(
+                  activeColor: widget.appBarBackgroundColor, // 👈 matches AppBar color
+                  value: AdaptiveTheme.of(context).mode.isDark,
+                  onChanged: (value) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Please restart the app"),
+                          content: const Text(
+                              "The theme has been changed. Please restart the app for changes to take effect."),
+                          actions: [
+                            TextButton(
+                              child: const Text("Ok"),
+                              onPressed: () {
+                                if (value) {
+                                  AdaptiveTheme.of(context).setDark();
+                                } else {
+                                  AdaptiveTheme.of(context).setLight();
+                                }
+                                Navigator.of(context).pop();
+                                Future.delayed(const Duration(milliseconds: 200), () {
+                                  SystemNavigator.pop();
+                                });
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ),
-          );
+          ),
 
-        },
+          // 🔗 Quick Links Cards
+          ...quickLinks.entries.map((entry) {
+            String category = entry.key;
+            Map<String, String> links = entry.value;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(10),
+                color: theme.cardColor,
+                child: Theme(
+                  data: theme.copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                    childrenPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    initiallyExpanded: quickLinks.keys.first == category,
+                    leading: Icon(Icons.link, color: theme.iconTheme.color),
+                    title: Text(
+                      category,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: theme.textTheme.bodyLarge!.color,
+                      ),
+                    ),
+                    children: [
+                      for (var linkName in links.keys)
+                        ListTile(
+                          title: Text(
+                            linkName,
+                            style: TextStyle(
+                              color: theme.textTheme.bodyLarge!.color,
+                            ),
+                          ),
+                          onTap: () async {
+                            String url = links[linkName]!;
+                            _launchURL(url);
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }
@@ -136,9 +187,9 @@ class _QuickLinksState extends State<QuickLinks> {
         ),
         Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white, // Adaptive Text color
+            color: Colors.white,
             letterSpacing: 1.5,
           ),
         ),

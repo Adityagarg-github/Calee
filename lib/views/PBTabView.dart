@@ -11,7 +11,6 @@ import 'package:iitropar/views/groups.dart';
 //import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'homePage/admin_page.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:iitropar/views/AcknowledgementScreen.dart';
 
 class MainLandingPage extends StatefulWidget {
   const MainLandingPage({super.key});
@@ -58,7 +57,6 @@ class _MainLandingPageState extends State<MainLandingPage> {
         const Events(appBarBackgroundColor: Color(0xFF0D47A1)),
         const MessMenuPage(appBarBackgroundColor: Color(0xFF0D47A1)),
         const QuickLinks(appBarBackgroundColor: Color(0xFF0D47A1)),
-        const AcknowledgementScreen(appBarBackgroundColor: Color(0xFF0D47A1)),
       ];
     } else if (Ids.role == "faculty") {
       return [
@@ -67,7 +65,6 @@ class _MainLandingPageState extends State<MainLandingPage> {
         const Events(appBarBackgroundColor: Color(0xFFAD1457)),
         const MessMenuPage(appBarBackgroundColor: Color(0xFFAD1457)),
         const QuickLinks(appBarBackgroundColor: Color(0xFFAD1457)),
-        const AcknowledgementScreen(appBarBackgroundColor: Color(0xFFAD1457)),
       ];
     } else if (Ids.role == "club") {
       return [
@@ -76,7 +73,6 @@ class _MainLandingPageState extends State<MainLandingPage> {
         const Events(appBarBackgroundColor: Color(0xFF32A83C)),
         const MessMenuPage(appBarBackgroundColor: Color(0xFF32A83C)),
         const QuickLinks(appBarBackgroundColor: Color(0xFF32A83C)),
-        const AcknowledgementScreen(appBarBackgroundColor: Color(0xFF32A83C)),
       ];
     }
     else {
@@ -87,7 +83,6 @@ class _MainLandingPageState extends State<MainLandingPage> {
         const Groups(),
         const MessMenuPage(appBarBackgroundColor: Color(0xFF42A5F5)),
         const QuickLinks(appBarBackgroundColor: Color(0xFF42A5F5)),
-        const AcknowledgementScreen(appBarBackgroundColor: Color(0xFF42A5F5)),
       ];
     }
   }
@@ -118,11 +113,6 @@ class _MainLandingPageState extends State<MainLandingPage> {
       const BottomNavigationBarItem(
         icon: Icon(Icons.link),
         label: 'Quick Links',
-      ),
-
-      const BottomNavigationBarItem(
-      icon: Icon(Icons.emoji_people_rounded),
-      label: 'Credits',
       ),
 
   ];
