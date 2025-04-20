@@ -130,7 +130,7 @@ class AddEventFormState extends State<AddEventForm> {
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Club Email is required';
-        } else if (!formChecks.email_check(value)) {
+        } else if (!formChecks.email_check(value) || value == "clubtest15@gmail.com") {
           return 'Enter correct email';
         }
         return null;

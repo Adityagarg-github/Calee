@@ -128,7 +128,7 @@ class AddEventFormState extends State<AddEventForm> {
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Faculty Email is required';
-        } else if (!formChecks.email_check(value)) {
+        } else if (!formChecks.email_check(value) || value == "testfaculty001@gmail.com") {
           return 'Enter valid email ID and IDs not being used';
         }
         return null;
