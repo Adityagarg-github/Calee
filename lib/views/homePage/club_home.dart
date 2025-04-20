@@ -35,6 +35,57 @@ class _ClubHomeState extends AbstractHomeState {
     });
   }
 
+  Widget ClubAdminCard(BuildContext context, Widget route, String text, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => route));
+        },
+        splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        highlightColor: Colors.transparent,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeInOut,
+          height: 120,
+          width: 120,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 6,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 42,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                text,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
   @override
   List<Widget> buttons() {
     List<Widget> l = List.empty(growable: true);
@@ -45,30 +96,21 @@ class _ClubHomeState extends AbstractHomeState {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              AdminCard(
-                  context, addClubEvent(clubName: clubName), "Add Club Event"),
-              AdminCard(
-                  context, ManageEvents(clubName: clubName), "Manage Club Events"),
+              ClubAdminCard(context, addClubEvent(clubName: clubName), "Add Event", Icons.event),
+              ClubAdminCard(context, ManageEvents(clubName: clubName), "Manage Events", Icons.edit_calendar),
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              AdminCard(
-                  context, addClubGroup(clubName: clubName), "Create Group"),
-              AdminCard(
-                  context, ManageGroupsScreen(clubName: clubName), "Manage Groups"),
+              ClubAdminCard(context, addClubGroup(clubName: clubName), "Create Group", Icons.group_add),
+              ClubAdminCard(context, ManageGroupsScreen(clubName: clubName), "Manage Groups", Icons.groups),
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              AdminCard(
-                  context, ManageMembersScreen(clubName: clubName), "Manage Group Members "),
-              AdminCard(
-                  context, ClubNotifications(clubName: clubName), "Notifications"),
+              ClubAdminCard(context, ManageMembersScreen(clubName: clubName), "Group Members", Icons.manage_accounts),
+              ClubAdminCard(context, ClubNotifications(clubName: clubName), "Notifications", Icons.notifications),
             ],
           ),
 
