@@ -34,7 +34,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '17'  // ✅ Updated to Java 17
+        jvmTarget = '17'  // Updated to Java 17
     }
 
     sourceSets {
@@ -61,7 +61,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
