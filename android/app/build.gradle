@@ -23,7 +23,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace 'com.example.iitropar'
+    namespace 'com.iitropar.calee'
     compileSdkVersion 35  // Set explicit SDK version
     ndkVersion "27.0.12077973"
 
@@ -42,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.iitropar"
+        applicationId "com.iitropar.calee"
         minSdkVersion 22
         multiDexEnabled true
         targetSdkVersion 35  //  Set explicit target SDK version

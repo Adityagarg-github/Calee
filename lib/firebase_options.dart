@@ -44,7 +44,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '945144307616',
     projectId: 'calee-7c212',
     storageBucket: 'calee-7c212.appspot.com',
-    iosBundleId: 'com.example.iitropar',
+    iosBundleId: 'com.iitropar.calee',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -53,6 +53,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '945144307616',
     projectId: 'calee-7c212',
     storageBucket: 'calee-7c212.appspot.com',
-    iosBundleId: 'com.example.iitropar',
+    iosBundleId: 'com.iitropar.calee',
   );
 }
