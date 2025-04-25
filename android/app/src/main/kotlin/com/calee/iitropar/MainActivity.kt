@@ -1,4 +1,4 @@
-package com.example.iitropar
+package com.iitropar.calee
 
 import io.flutter.embedding.android.FlutterActivity
 
