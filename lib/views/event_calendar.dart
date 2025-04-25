@@ -8,7 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:iitropar/database/local_db.dart';
 import 'package:iitropar/frequently_used.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../database/loader.dart';
 import 'package:alarm/alarm.dart';
 
@@ -60,6 +60,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     // setState(() {
     //   // Optionally show a loading indicator
     // });
+    LoadingScreen.setPrompt('Fetching fresh data ...');
 
     // Ensure the function inside setTask returns a boolean
     await LoadingScreen.setTask(() async {
@@ -107,12 +108,25 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       return true; // Successfully completed the task
     });
 
-    LoadingScreen.setPrompt('Fetching fresh data ...');
+    LoadingScreen.setPrompt('Almost done ...');
 
     // Reload event data
     await loadEvents(_selectedDate);
 
     setState(() {}); // Update UI after refreshing
+  }
+
+
+  int getAlarmId(Event event) {
+    return '${event.title}_${_selectedDate}_${event.stime.format(context)}'.hashCode;
+  }
+
+
+  Future<bool> _isAlarmSet(Event event) async {
+    int alarmId = getAlarmId(event);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Check if alarm is set for this event
+    return prefs.getBool('alarm_$alarmId') ?? false; // Default to false if not set
   }
 
 
@@ -426,45 +440,62 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       event.stime.minute,
     );
 
-  DateTime alarmTime = eventDateTime.subtract(Duration(minutes: 1));
-  //DateTime alarmTime = DateTime.now().add(Duration(minutes: 2));
+    DateTime alarmTime = eventDateTime.subtract(Duration(minutes: 10));
 
-  // Prevent setting alarms for past events
-  if (alarmTime.isBefore(DateTime.now())) {
-  ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(content: Text("Cannot set alarm for a past event.")),
-  );
-  return;
-  }
+    // Prevent setting alarms for past events
+    if (alarmTime.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Cannot set alarm for a past event.")),
+      );
+      return;
+    }
 
-  final alarmSettings = AlarmSettings(
-  id: event.id.hashCode, // Unique ID
-  dateTime: alarmTime,
-  assetAudioPath: 'assets/alarm.mp3', // Optional custom sound
-  loopAudio: false,
-  vibrate: true,
-  fadeDuration: 3.0,
-  notificationTitle: "Reminder: ${event.title}",
-  notificationBody: "Your event starts at ${event.stime.format(context)}.",
-  );
+    // Create unique alarm ID based on event details
+    final alarmKey = '${event.title}_${_selectedDate}_${event.stime.format(context)}'.hashCode;
 
-  await Alarm.set(alarmSettings: alarmSettings);
-  String formattedDate = "${alarmTime.day}-${alarmTime.month}-${alarmTime.year}";
+    final alarmSettings = AlarmSettings(
+      id: alarmKey, // Use custom unique ID
+      dateTime: alarmTime,
+      assetAudioPath: 'assets/betteralarm.mp3', // Optional custom sound
+      loopAudio: false,
+      vibrate: true,
+      fadeDuration: 3.0,
+      notificationTitle: "Reminder: ${event.title}",
+      notificationBody: "Your event starts at ${event.stime.format(context)}.",
+    );
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text("Alarm set for ${event.title} on $formattedDate at ${alarmTime.hour}:${alarmTime.minute}")),
-  );
+    // Set the alarm
+    await Alarm.set(alarmSettings: alarmSettings);
+
+    // Save alarm state in SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('alarm_$alarmKey', true); // Use the same key for saving
+
+    setState(() {});
+
+    String formattedDate = "${alarmTime.day}-${alarmTime.month}-${alarmTime.year}";
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Alarm set for ${event.title} on $formattedDate at ${alarmTime.hour}:${alarmTime.minute}")),
+    );
   }
 
   void _cancelAlarm(Event event) async {
-    int alarmId = event.id.hashCode; // Use the same unique ID when setting the alarm
+    // Create unique alarm ID based on event details
+    final alarmKey = '${event.title}_${_selectedDate}_${event.stime.format(context)}'.hashCode;
 
-    bool isDeleted = await Alarm.stop(alarmId); // Stops and deletes the alarm
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (isDeleted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Alarm for '${event.title}' has been canceled.")),
-      );
+    bool hasAlarm = prefs.getBool('alarm_$alarmKey') ?? false; // Use the same key for checking
+    if (hasAlarm) {
+      bool isDeleted = await Alarm.stop(alarmKey); // Stop the alarm using the unique key
+      if (isDeleted) {
+        await prefs.remove('alarm_$alarmKey'); // Remove the alarm from SharedPreferences
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Alarm for '${event.title}' has been canceled.")),
+        );
+        setState(() {}); // Update bell icon
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("No active alarm found for '${event.title}'.")),
@@ -955,9 +986,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   outsideDaysVisible : true,
                   outsideTextStyle: TextStyle(color: Colors.green),
                     selectedDecoration: BoxDecoration(
-                        color: Color.fromARGB(255, 149, 149, 149), shape: BoxShape.circle),
+                        color: Color.fromARGB(255, 56, 56, 56), shape: BoxShape.circle),
                     todayDecoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 56, 56, 56), shape: BoxShape.circle)),
+                        color: Color.fromARGB(255, 149, 149, 149), shape: BoxShape.circle)),
                 calendarBuilders: CalendarBuilders(
                   markerBuilder: (context, day, events) {
                     if (events.isEmpty) {
@@ -1002,6 +1033,26 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                             padding: const EdgeInsets.all(10),
                             child: Row(
                               children: [
+                                // Bell icon
+                                FutureBuilder<bool>(
+                                  future: _isAlarmSet(myEvents), // Check if the alarm is set
+                                  builder: (context, snapshot) {
+                                    Color bellColor = Colors.grey[400]!.withOpacity(0.6); // Default grey color
+                                    if (snapshot.connectionState == ConnectionState.done) {
+                                      // If alarm is set, color the bell green
+                                      if (snapshot.data == true) {
+                                        bellColor = Colors.green;
+                                      }
+                                    }
+                                    return Icon(
+                                      Icons.notifications_active,
+                                      size: 20,
+                                      color: bellColor, // Set bell color dynamically
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 10), // Add some space between the bell and text
+
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1009,14 +1060,16 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                                       Text(
                                         myEvents.title,
                                         style: TextStyle(
-                                           fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.bold,
                                           fontSize: 16,
-                                          color:  Theme.of(context).textTheme.bodyLarge!.color,
+                                          color: Theme.of(context).textTheme.bodyLarge!.color,
                                         ),
                                       ),
                                       Text(
                                         myEvents.startTime() + " - " + myEvents.endTime(),
-                                        style: TextStyle(color: Theme.of(context).colorScheme.primary.withOpacity(0.6)),
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1044,6 +1097,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                   ),
                 ],
               ),
+
             ),
 
           ],
@@ -1092,18 +1146,18 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 //  DateTime currentDate = DateTime.now();
 //   List<Event> events = _listOfDayEvents(whatDatetocall(currentDate));
 
-  Widget themeButtonWidget() {
-    return IconButton(
-      onPressed: () {
-        refreshData();
-      },
-      icon: const Icon(
-        Icons.sync_rounded,
-      ),
-      color: Color(primaryLight),
-      iconSize: 28,
-    );
-  }
+  // Widget themeButtonWidget() {
+  //   return IconButton(
+  //     onPressed: () {
+  //       refreshData();
+  //     },
+  //     icon: const Icon(
+  //       Icons.sync_rounded,
+  //     ),
+  //     color: Color(primaryLight),
+  //     iconSize: 28,
+  //   );
+  // }
 
   TextStyle appbarTitleStyle() {
     return TextStyle(
@@ -1118,9 +1172,27 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () {
-            refreshData();
-          },
+        onPressed: () async {
+      // Show the loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Refreshing data..."),
+            ],
+          ),
+        ),
+      );
+
+      await refreshData(); // Your function to fetch/update data
+
+      // Close the dialog
+      if (context.mounted) Navigator.of(context).pop();
+    },
           icon: const Icon(Icons.sync_rounded),
           color: Colors.white, // Change to your preferred color
           iconSize: 28,

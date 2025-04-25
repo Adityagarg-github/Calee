@@ -51,7 +51,7 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // ✅ Get current theme
+    final theme = Theme.of(context); //  Get current theme
 
     return DefaultTabController(
       initialIndex: initialDay(),
@@ -83,7 +83,7 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
         body: TabBarView(
           children: _daysOfWeek.map((day) => _buildMenuList(day, modifyDate)).toList(),
         ),
-        backgroundColor: Theme.of(context).colorScheme.secondary, // ✅ Adaptive background color
+        backgroundColor: Theme.of(context).colorScheme.secondary, // Adaptive background color
       ),
     );
   }
@@ -92,12 +92,7 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          onPressed: () => loadMenuAndFetchLastModified(),
-          icon: const Icon(Icons.sync_rounded),
-          color: Colors.white,
-          iconSize: 28,
-        ),
+        const SizedBox(width: 48), // To balance spacing if needed
         Text(
           text,
           style: const TextStyle(
@@ -114,6 +109,7 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
                 color: Colors.transparent,
               ),
               onPressed: () {
+                // Optional: Add theme toggle functionality here
               },
             ),
             signoutButtonWidget(context),
@@ -123,17 +119,18 @@ class _MessMenuPageState extends State<MessMenuPage> with SingleTickerProviderSt
     );
   }
 
+
   Widget _buildLastUpdatedWidget(String lastUpdatedDate) {
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
       decoration: BoxDecoration(
-        color: theme.cardColor, // ✅ Adaptive card color
+        color: theme.cardColor, // Adaptive card color
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.3), // ✅ Adaptive shadow color
+            color: theme.shadowColor.withOpacity(0.3), //Adaptive shadow color
             blurRadius: 5,
             spreadRadius: 1,
             offset: const Offset(0, 2),

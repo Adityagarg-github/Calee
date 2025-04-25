@@ -268,9 +268,9 @@ class Loader {
 
           String venue = "";
           if (desc == "Class") {
-            venue = (courseToClassVenue ?? {})[title] ?? "Unknown Venue";
+            venue = (courseToClassVenue ?? {})[title] ?? "No Venue";
           } else if (desc == "Tutorial") {
-            venue = (courseToTutorialVenue ?? {})[title] ?? "Unknown Venue";
+            venue = (courseToTutorialVenue ?? {})[title] ?? "No Venue";
           }
 
           Event e = Event(

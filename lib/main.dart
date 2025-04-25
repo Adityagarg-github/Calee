@@ -9,11 +9,12 @@ import 'package:alarm/alarm.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:iitropar/views/PBTabView.dart';
 import 'package:iitropar/views/signin.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await requestNotificationPermission();
   await Alarm.init();
   await Firebase.initializeApp(
     name: 'calee-app',
@@ -39,6 +40,18 @@ void main() async {
   runApp(App(savedThemeMode: savedThemeMode));
 }
 
+Future<void> requestNotificationPermission() async {
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
+
+  if (await Permission.notification.isGranted) {
+    print("Notification permission granted");
+  } else {
+    print("Notification permission denied");
+  }
+}
+
 // Function to handle alarm triggers
 void _onAlarmTrigger(AlarmSettings alarmSettings) {
   print("Alarm Triggered at: ${alarmSettings.dateTime}");
@@ -58,8 +71,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
-      light: _lightTheme,  // ✅ Updated Light Theme
-      dark: _darkTheme,    // ✅ Updated Dark Theme
+      light: _lightTheme,  // Updated Light Theme
+      dark: _darkTheme,    // Updated Dark Theme
       initial: savedThemeMode ?? AdaptiveThemeMode.light,
       builder: (theme, darkTheme) => MaterialApp(
         key: ValueKey(savedThemeMode),  //  Forces rebuild on theme change

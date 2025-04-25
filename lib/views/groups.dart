@@ -32,7 +32,7 @@ class _GroupsState extends State<Groups> {
         toolbarHeight: 50,
         elevation: 0,
         backgroundColor: Color(0xFF42A5F5), // Change to your preferred color
-        title: buildTitleBar("GROUPS", context),
+        title: buildTitleBar("CLUB GROUPS", context),
       ),
       backgroundColor: Theme.of(context).colorScheme.secondary,
       body: StreamBuilder<QuerySnapshot>(
@@ -106,22 +106,22 @@ class _GroupsState extends State<Groups> {
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: Theme(
             data: Theme.of(context).copyWith(
-              dividerColor: Colors.transparent, // ✅ Removes the bottom black line
+              dividerColor: Colors.transparent, // removes the bottom black line
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
             ),
             child: ExpansionTile(
               initiallyExpanded: category == 'Groups Joined',
-              backgroundColor: Theme.of(context).colorScheme.surface, // ✅ Adaptive background
+              backgroundColor: Theme.of(context).colorScheme.surface, // Adaptive background
               collapsedBackgroundColor: Theme.of(context).colorScheme.surface,
               title: Text(
                 category,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.bodyLarge?.color, // ✅ Adaptive text color
+                  color: Theme.of(context).textTheme.bodyLarge?.color, //  Adaptive text color
                 ),
               ),
-              iconColor: Theme.of(context).iconTheme.color, // ✅ Adaptive icon
+              iconColor: Theme.of(context).iconTheme.color, // Adaptive icon
               collapsedIconColor: Theme.of(context).iconTheme.color,
               leading: Icon(Icons.group, color: Theme.of(context).iconTheme.color),
               children: groups.map((group) {
@@ -149,7 +149,7 @@ class _GroupsState extends State<Groups> {
                           group['groupName'] ?? "",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary, // ✅ Adaptive color
+                            color: Theme.of(context).colorScheme.primary, // Adaptive color
                           ),
                         ),
                         Text(
@@ -168,8 +168,32 @@ class _GroupsState extends State<Groups> {
         ),
 
       ],
-    )
-        : const SizedBox(); // Return an empty SizedBox if groups list is empty
+    ): Column(
+      children: [
+        const SizedBox(height: 20),
+        Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: ListTile(
+            leading: Icon(Icons.group, color: Theme.of(context).iconTheme.color),
+            title: Text(
+              category,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+            subtitle: const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text("No groups to show"),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _showConfirmationDialog(BuildContext context, String groupName) async {

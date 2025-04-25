@@ -568,37 +568,50 @@ class _EventsState extends State<Events> {
                         }
                       });
 
-                      return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: filteredDocs.length,
-                          itemBuilder: (context, index) {
-                            DocumentSnapshot doc = filteredDocs[index];
+                      return filteredDocs.isEmpty
+                          ? Center(
+                        child: Text(
+                          "No events for today",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.6),
+                          ),
+                        ),
+                      )
+                          : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredDocs.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot doc = filteredDocs[index];
 
-                            return FutureBuilder<bool>(
-                              future: checkIfStarred(doc.id),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
-                                } else if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                } else {
-                                  bool isStarred = snapshot.data!;
-                                  return EventCard(
-                                      eventTitle:doc["eventTitle"],
-                                      eventType: doc["eventType"],
-                                      eventDesc:doc["eventDesc"],
-                                      eventVenue:doc["eventVenue"],
-                                      date:doc["eventDate"],
-                                      startTime:doc["startTime"],
-                                      endTime:doc["endTime"],
-                                      img_url:doc["imgURL"],
-                                      isStarred:isStarred,
-                                      eventId: doc.id,
-                                  );
-                                }
-                              },
-                            );
-                          });
+                          return FutureBuilder<bool>(
+                            future: checkIfStarred(doc.id),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                bool isStarred = snapshot.data!;
+                                return EventCard(
+                                  eventTitle: doc["eventTitle"],
+                                  eventType: doc["eventType"],
+                                  eventDesc: doc["eventDesc"],
+                                  eventVenue: doc["eventVenue"],
+                                  date: doc["eventDate"],
+                                  startTime: doc["startTime"],
+                                  endTime: doc["endTime"],
+                                  img_url: doc["imgURL"],
+                                  isStarred: isStarred,
+                                  eventId: doc.id,
+                                );
+                              }
+                            },
+                          );
+                        },
+                      );
+                      ;
                     } else {
                       return Container();
                     }
@@ -680,16 +693,16 @@ class _EventsState extends State<Events> {
 
  // Generated code for this Row Widget...
   }
-  Widget themeButtonWidget() {
-    return IconButton(
-      onPressed: () {},
-      icon: const Icon(
-        Icons.sync_rounded,
-      ),
-      color: Colors.white,
-      iconSize: 28,
-    );
-  }
+  // Widget themeButtonWidget() {
+  //   return IconButton(
+  //     onPressed: () {},
+  //     icon: const Icon(
+  //       Icons.sync_rounded,
+  //     ),
+  //     color: Colors.white,
+  //     iconSize: 28,
+  //   );
+  // }
 
   TextStyle appbarTitleStyle() {
     return TextStyle(
@@ -703,16 +716,11 @@ class _EventsState extends State<Events> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.sync_rounded),
-          color: Colors.white, // Change to your preferred color
-          iconSize: 28,
-        ),
+        const SizedBox(width: 48), // maintain spacing where the icon was
         Text(
           text,
           style: const TextStyle(
-            color: Colors.white, // Change to your preferred color
+            color: Colors.white,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
           ),
@@ -721,4 +729,5 @@ class _EventsState extends State<Events> {
       ],
     );
   }
+
 }

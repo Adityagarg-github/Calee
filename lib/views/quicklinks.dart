@@ -36,8 +36,8 @@ class _QuickLinksState extends State<QuickLinks> {
     },
     'Student Activities': {
       'क्षितिज – The Horizon': 'https://www.iitrpr.ac.in/kshitij/',
-      'TBIF': 'https://www.tbifiitrpr.org/',
-      'BOST': 'https://bost-19.github.io/',
+      'TBIF': 'https://www.iitrpr.ac.in/tbif/',
+      'BOST': 'https://www.iitrpr.ac.in/bost',
     },
     'Departments': {
       'Biomedical': 'http://www.iitrpr.ac.in/cbme',
@@ -56,7 +56,7 @@ class _QuickLinksState extends State<QuickLinks> {
       'Dr Puneet Goyal(Mentor)': 'https://sites.google.com/view/goyalpuneet/',
       'Aditya Garg': 'https://www.linkedin.com/in/aditya-garg-932914259/',
       'Aayan Soni': 'https://www.linkedin.com/in/aayan-soni-471379259/',
-      'Akash': 'https://www.linkedin.com/in/jatingupta1792/',
+      'Akash': 'https://github.com/bInAryY-bArD',
       'Aniket Kumar Sahil':
       'https://www.linkedin.com/in/aniket-kumar-sahil-b09427258/',
     },
@@ -85,11 +85,11 @@ class _QuickLinksState extends State<QuickLinks> {
               child: ListTile(
                 leading: Icon(
                   Icons.brightness_6,
-                  color: widget.appBarBackgroundColor, // 👈 matches AppBar color
+                  color: widget.appBarBackgroundColor, //  matches AppBar color
                 ),
                 title: const Text("Dark Mode"),
                 trailing: Switch(
-                  activeColor: widget.appBarBackgroundColor, // 👈 matches AppBar color
+                  activeColor: widget.appBarBackgroundColor, // matches AppBar color
                   value: AdaptiveTheme.of(context).mode.isDark,
                   onChanged: (value) {
                     showDialog(
@@ -179,12 +179,7 @@ class _QuickLinksState extends State<QuickLinks> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.sync_rounded),
-          color: Colors.white,
-          iconSize: 28,
-        ),
+        const SizedBox(width: 48), // Optional: maintains symmetry
         Text(
           text,
           style: const TextStyle(
@@ -197,6 +192,7 @@ class _QuickLinksState extends State<QuickLinks> {
       ],
     );
   }
+
 
   void _launchURL(String url) async {
     if (await canLaunch(url)) {

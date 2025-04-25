@@ -6,8 +6,14 @@ import 'package:iitropar/views/homePage/club_home.dart';
 import 'package:iitropar/views/homePage/faculty_home.dart';
 import 'package:iitropar/views/homePage/student_home.dart';
 import 'package:iitropar/utilities/firebase_database.dart';
-
+import '../../database/local_db.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 import '../../database/loader.dart';
+//import 'package:iitropar/views/homePage/home_page.dart' show homePageKey;
+
+
+final GlobalKey<_HomePageState> homePageKey = GlobalKey<_HomePageState>();
+
 
 abstract class AbstractHome extends StatefulWidget {
   final Color appBarBackgroundColor;
@@ -171,7 +177,6 @@ abstract class AbstractHomeState<T extends AbstractHome> extends State<T> {
   Widget themeButtonWidget() {
     return IconButton(
       onPressed: () {
-        
       },
       icon: const Icon(
         Icons.home,
@@ -189,18 +194,21 @@ abstract class AbstractHomeState<T extends AbstractHome> extends State<T> {
         letterSpacing: 1.5);
   }
 
+
+  Future<void> refreshData() async {
+    if (homePageKey.currentState != null) {
+      await homePageKey.currentState!.refreshData();
+    }
+  }
+
+
+
+
   Row buildTitleBar(String text, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          onPressed: () {
-            //Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => const HomePage()));
-          },
-          icon: const Icon(Icons.sync_rounded),
-          color: Colors.white, // Change to your preferred color
-          iconSize: 28,
-        ),
+        const SizedBox(width: 48), // Adjusted spacing to keep the layout balanced
         Text(
           text,
           style: const TextStyle(
@@ -209,10 +217,11 @@ abstract class AbstractHomeState<T extends AbstractHome> extends State<T> {
             letterSpacing: 1.5,
           ),
         ),
-        signoutButtonWidget(context),
+        signoutButtonWidget(context), // Only the signout button
       ],
     );
   }
+
 }
 
 class HomePage extends StatefulWidget {
@@ -223,6 +232,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  Future<void> refreshData() async {
+    LoadingScreen.setPrompt("Refreshing Data...");
+    LoadingScreen.setTask(() async {
+      user = await Ids.resolveUser();
+      return true;
+    });
+    LoadingScreen.setBuilder(userScreen);
+
+    if (context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoadingScreen.build(context)),
+      );
+    }
+  }
+
+
+
   static String user = "guest";
   Future<bool> resolveUser() async {
     user = await Ids.resolveUser();
