@@ -321,8 +321,8 @@ class Loader {
         // Decode CSV data into a String
         final String decodedData = utf8.decode(csvData);
         // Parse CSV string into a list of lists
-        List<List<dynamic>> exams = const CsvToListConverter().convert(
-            decodedData);
+        List<List<dynamic>> exams = const CsvToListConverter(
+          eol: '\n',).convert(decodedData);
 
         //print(exams);
 
@@ -384,10 +384,19 @@ class Loader {
       final Uint8List? csvData = await ref.getData();
       if (csvData != null) {
         // Decode CSV data into a String
-        final String decodedData = utf8.decode(csvData);
+        String decodedData = utf8.decode(csvData);
+        // print("========== Raw Decoded Data ==========");
+        // print(decodedData);
+        // print("=======================================");
+
         // Parse CSV string into a list of lists
-        List<List<dynamic>> exams = const CsvToListConverter().convert(
-            decodedData);
+        List<List<dynamic>> exams = const CsvToListConverter(
+          eol: '\n',).convert(decodedData);
+
+
+        print("EndSem data");
+        print(exams.length);
+        print(exams);
 
         Map<String, String> slotToDay = {};
         for (int i = 0; i < exams.length; i++) {
