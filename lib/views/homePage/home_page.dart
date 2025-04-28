@@ -38,7 +38,7 @@ abstract class AbstractHomeState<T extends AbstractHome> extends State<T> {
     final user = FirebaseAuth.instance.currentUser;
     final image = (user?.photoURL != null)
         ? NetworkImage(user!.photoURL!)
-        : const AssetImage('assets/user.png');
+        : const AssetImage('assets/user1.png');
 
     return Container(
       decoration: BoxDecoration(
