@@ -17,7 +17,7 @@ class StudentHome extends AbstractHome {
   const StudentHome({Key? key})
       : super(
     key: key,
-    appBarBackgroundColor: const Color(0xFF42A5F5),
+    appBarBackgroundColor: const Color(0xFF0D47A1),
   );
 
   @override
@@ -371,14 +371,18 @@ class _StudentHomeState extends AbstractHomeState {
         '${myEvents.stime.format(context)} - ${myEvents.etime.format(context)}';
 
     bool isQuizEvent = myEvents.desc.toLowerCase().contains("quiz");
+    bool isExamEvent = titleText.toLowerCase().contains("exam");
+
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Material(
         elevation: 4,
         borderRadius: BorderRadius.circular(12),
-        color: isQuizEvent // Check if the description contains 'quiz'
-            ? Colors.red.withOpacity(0.9) // Light red background for quiz events
+        color: isQuizEvent
+            ? Colors.red.withOpacity(0.9) // Red for quiz
+            : isExamEvent
+            ? Colors.purple.withOpacity(0.9) // Purple for exam
             : Theme.of(context).cardColor, // Default card color
         shadowColor: Theme.of(context).shadowColor,
         child: Theme(
@@ -400,7 +404,7 @@ class _StudentHomeState extends AbstractHomeState {
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 18,
-                          color: isQuizEvent // Set text color based on condition
+                          color: isQuizEvent || isExamEvent // Set text color based on condition
                               ? Colors.white // If description contains 'quiz', text color is white
                               : Theme.of(context).textTheme.bodyLarge!.color,
                         ),
@@ -411,7 +415,7 @@ class _StudentHomeState extends AbstractHomeState {
                         timeText,
                         style: TextStyle(
                           fontSize: 12,
-                          color: isQuizEvent
+                          color: isQuizEvent || isExamEvent
                               ? Colors.white // White text color for 'quiz' events
                               : Colors.grey, // Default grey text color
                         ),
@@ -442,10 +446,10 @@ class _StudentHomeState extends AbstractHomeState {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _eventRow("Description", myEvents.desc, isQuizEvent: isQuizEvent),
-                    _eventRow("Time", timeText, isQuizEvent: isQuizEvent),
-                    _eventRow("Venue", myEvents.venue, isQuizEvent: isQuizEvent),
-                    _eventRow("Host", myEvents.host, isQuizEvent: isQuizEvent),
+                    _eventRow("Description", myEvents.desc, isQuizEvent: isQuizEvent, isExamEvent: isExamEvent),
+                    _eventRow("Time", timeText, isQuizEvent: isQuizEvent, isExamEvent: isExamEvent),
+                    _eventRow("Venue", myEvents.venue, isQuizEvent: isQuizEvent, isExamEvent: isExamEvent),
+                    _eventRow("Host", myEvents.host, isQuizEvent: isQuizEvent, isExamEvent: isExamEvent),
                   ],
                 ),
               ),
@@ -456,8 +460,10 @@ class _StudentHomeState extends AbstractHomeState {
     );
   }
 
-// Helper widget for a clean row
-  Widget _eventRow(String label, String value, {bool isQuizEvent = false}) {
+//HElper Niga
+  Widget _eventRow(String label, String value, {bool isQuizEvent = false, bool isExamEvent = false}) {
+    bool isSpecialEvent = isQuizEvent || isExamEvent;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -466,7 +472,7 @@ class _StudentHomeState extends AbstractHomeState {
           Text(
             "$label: ",
             style: TextStyle(
-              color: isQuizEvent ? Colors.white : Colors.blue,
+              color: isSpecialEvent ? Colors.white : Colors.blue,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -474,7 +480,7 @@ class _StudentHomeState extends AbstractHomeState {
             child: Text(
               value,
               style: TextStyle(
-                color: isQuizEvent ? Colors.white : Colors.grey, // Change value color to white for quiz
+                color: isSpecialEvent ? Colors.white : Colors.grey,
               ),
             ),
           ),
@@ -482,6 +488,7 @@ class _StudentHomeState extends AbstractHomeState {
       ),
     );
   }
+
 
   Widget gettodayEvents() {
     if (todayevents.isEmpty) {

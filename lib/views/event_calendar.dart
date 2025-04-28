@@ -78,8 +78,10 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
           await Loader.loadMidSem(
             const TimeOfDay(hour: 9, minute: 30),
+            const TimeOfDay(hour: 11, minute: 30),
             const TimeOfDay(hour: 12, minute: 30),
             const TimeOfDay(hour: 14, minute: 30),
+            const TimeOfDay(hour: 15, minute: 30),
             const TimeOfDay(hour: 17, minute: 30),
             cl,
           );

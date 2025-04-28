@@ -78,11 +78,11 @@ class _MainLandingPageState extends State<MainLandingPage> {
     else {
       return [
         const HomePage(),
-        const EventCalendarScreen(appBarBackgroundColor: Color(0xFF42A5F5)),
-        const Events(appBarBackgroundColor: Color(0xFF42A5F5)),
+        const EventCalendarScreen(appBarBackgroundColor: Color(0xFF0D47A1)),
+        const Events(appBarBackgroundColor: Color(0xFF0D47A1)),
         const Groups(),
-        const MessMenuPage(appBarBackgroundColor: Color(0xFF42A5F5)),
-        const QuickLinks(appBarBackgroundColor: Color(0xFF42A5F5)),
+        const MessMenuPage(appBarBackgroundColor: Color(0xFF0D47A1)),
+        const QuickLinks(appBarBackgroundColor: Color(0xFF0D47A1)),
       ];
     }
   }

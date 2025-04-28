@@ -125,13 +125,13 @@ class EventDB {
     for(int i=0;i<courses.length;i++){
       await _db!.rawDelete(
         'DELETE FROM events WHERE title = ? AND desc = ?',
-        ['End-Semester Examinations', courses[i]],
+        ['End-Sem Exam', courses[i]],
       );
     }
     for(int i=0;i<courses.length;i++){
       await _db!.rawDelete(
         'DELETE FROM events WHERE title = ? AND desc = ?',
-        ['Mid-Semester Examinations', courses[i]],
+        ['Mid-Sem Exam', courses[i]],
       );
     }
   }

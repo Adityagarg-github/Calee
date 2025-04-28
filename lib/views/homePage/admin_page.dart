@@ -106,7 +106,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     imagePath: 'assets/admin_update_end_sem_schedule_icon.png'),
                     AdminCard(context, const updateVenue(),
                         "Update Venues",
-                        imagePath: 'assets/admin_update_end_sem_schedule_icon.png')
+                        imagePath: 'assets/venue.png')
                   ],
                 ),
               ),
