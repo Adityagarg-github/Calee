@@ -368,29 +368,40 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                 const SizedBox(height: 20),
 
                 // Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Set Alarm
-                    TextButton.icon(
-                      icon: const Icon(Icons.alarm_add, color: Colors.green),
-                      label: const Text("Set Alarm"),
-                      onPressed: () {
-                        _setAlarm(event);
-                        Navigator.pop(context);
-                      },
-                    ),
-                    // Cancel Alarm
-                    TextButton.icon(
-                      icon: const Icon(Icons.alarm_off, color: Colors.red),
-                      label: const Text("Cancel Alarm"),
-                      onPressed: () {
-                        _cancelAlarm(event);
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
+                FutureBuilder<bool>(
+                  future: _checkAlarm(event),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      // While loading, show a placeholder (centered)
+                      return const Center(
+                        child: Text("Checking alarm...", style: TextStyle(color: Colors.grey)),
+                      );
+                    }
+
+                    final hasAlarm = snapshot.data!;
+
+                    return Center(
+                      child: TextButton.icon(
+                        icon: Icon(
+                          hasAlarm ? Icons.alarm_off : Icons.alarm_add,
+                          color: hasAlarm ? Colors.red : Colors.green,
+                        ),
+                        label: Text(hasAlarm ? "Cancel Alarm" : "Set Alarm"),
+                        onPressed: () {
+                          if (hasAlarm) {
+                            _cancelAlarm(event);
+                          } else {
+                            _setAlarm(event);
+                          }
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  },
                 ),
+
+
+
 
                 // Delete Button (Only for creator)
                 if (FirebaseAuth.instance.currentUser != null &&
@@ -481,6 +492,18 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       SnackBar(content: Text("Alarm set for ${event.title} on $formattedDate at ${alarmTime.hour}:${alarmTime.minute}")),
     );
   }
+
+
+Future<bool> _checkAlarm(Event event) async {
+  final alarmKey = '${event.title}_${_selectedDate}_${event.stime.format(context)}'.hashCode;
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  bool hasAlarm = prefs.getBool('alarm_$alarmKey') ?? false;
+
+  return hasAlarm;
+}
+
 
   void _cancelAlarm(Event event) async {
     // Create unique alarm ID based on event details
