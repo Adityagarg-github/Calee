@@ -2,115 +2,76 @@ import os
 import re
 from pathlib import Path
 
-NAMESPACE_SEPARATOR = "::"
+def parse_classes(filepath):
+    content = Path(filepath).read_text()
 
-def parse_dart_file(filepath: Path, lib_root: Path):
-    with open(filepath, 'r', encoding='utf-8') as file:
-        content = file.read()
-
-    relative_path = filepath.relative_to(lib_root).with_suffix('')
-    namespace = NAMESPACE_SEPARATOR.join(relative_path.parts[:-1])  # exclude filename
+    class_pattern = re.compile(r'class\s+(\w+)(?:\s+extends\s+\w+)?\s*{', re.MULTILINE)
+    static_method_pattern = re.compile(r'static\s+([^\s]+)\s+(\w+)\s*\([^\)]*\)\s*{', re.MULTILINE)
+    method_pattern = re.compile(r'(?:Widget|State<.*?>|Color|void|int|List<.*?>|TimeOfDay|Future<.*?>|[A-Z][a-zA-Z0-9_<>?]*)\s+(\w+)\s*\([^\)]*\)\s*{', re.MULTILINE)
+    field_pattern = re.compile(r'(?:final\s+)?(int|List<.*?>|TimeOfDay|Color)\s+(\w+);', re.MULTILINE)
 
     classes = []
-    for match in re.finditer(r'class\s+(\w+)(\s+extends\s+(\w+))?', content):
-        class_name = match.group(1)
-        superclass = match.group(3)
-        body_start = match.end()
-        body = extract_class_body(content[body_start:])
-        fields, methods = extract_members(body)
-        classes.append((class_name, superclass, fields, methods))
+    class_blocks = [(m.start(), m.group(1)) for m in class_pattern.finditer(content)]
 
-    return namespace or "lib", classes
+    for i, (start_idx, class_name) in enumerate(class_blocks):
+        end_idx = class_blocks[i + 1][0] if i + 1 < len(class_blocks) else len(content)
+        class_body = content[start_idx:end_idx]
 
-def extract_class_body(content):
-    brace_count = 0
-    body = ""
-    for i, char in enumerate(content):
-        body += char
-        if char == '{':
-            brace_count += 1
-        elif char == '}':
-            brace_count -= 1
-            if brace_count == 0:
-                break
-    return body
+        fields = field_pattern.findall(class_body)
+        static_methods = static_method_pattern.findall(class_body)
+        methods = method_pattern.findall(class_body)
 
-def extract_members(body):
-    lines = body.splitlines()
-    fields = []
-    methods = []
-    for line in lines:
-        line = line.strip()
-        if not line or line.startswith("//"): continue
+        members = []
 
-        if "(" in line and ")" in line:
-            m = re.match(r'(?:static\s+)?(?:[\w<>]+)?\s*(\w+)\s*\((.*?)\)', line)
-            if m:
-                method_name = m.group(1)
-                visibility = get_visibility(method_name)
-                is_static = "static" in line
-                return_type = extract_return_type(line)
-                methods.append((visibility, method_name, return_type, is_static))
-        else:
-            m = re.match(r'(?:final|var|const)?\s*(?:[\w<>]+)?\s*(\w+);', line)
-            if m:
-                field_name = m.group(1)
-                visibility = get_visibility(field_name)
-                is_static = "static" in line
-                field_type = extract_return_type(line)
-                fields.append((visibility, field_name, field_type, is_static))
+        for field_type, field_name in fields:
+            members.append(f'{field_type} {field_name}')
 
-    return fields, methods
+        for return_type, method_name in static_methods:
+            members.append(f'{{static}} +{return_type} {method_name}()')
 
-def get_visibility(name):
-    return '-' if name.startswith('_') else '+'
+        # Avoid duplicates from static
+        for method_name in methods:
+            if not any(method_name in m for m in members):
+                members.append(f'{method_name}()')
 
-def extract_return_type(line):
-    parts = re.split(r'\s+', line.strip())
-    for i in range(len(parts) - 1):
-        if '(' in parts[i+1]:  # function
-            return parts[i]
-        elif parts[i+1].endswith(";"):  # variable
-            return parts[i]
-    return "void"
+        classes.append({
+            'name': class_name,
+            'members': members
+        })
 
-def generate_puml(namespace, classes, output_file):
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write("@startuml\n\n")
-        f.write(f"package {namespace} {{\n\n")
+    return classes
 
-        for cls, superclass, fields, methods in classes:
-            f.write(f"class {cls} {{\n")
-            for vis, name, typ, is_static in fields:
-                static = "{static} " if is_static else ""
-                f.write(f"  {vis} {static}{name} : {typ}\n")
-            for vis, name, typ, is_static in methods:
-                static = "{static} " if is_static else ""
-                f.write(f"  {vis} {static}{name}() : {typ}\n")
-            f.write("}\n\n")
-            if superclass:
-                f.write(f"{superclass} <|-- {cls}\n\n")
+def get_namespace_from_path(filepath, base_dir):
+    rel_path = os.path.relpath(filepath, base_dir)
+    parts = ['iitropar'] + rel_path.replace(".dart", "").split(os.sep)
+    return "::".join(parts)
 
-        f.write("}\n\n@enduml\n")
+def generate_puml(namespace, classes):
+    lines = ['@startuml', 'set namespaceSeparator ::', '']
+    for cls in classes:
+        lines.append(f'class "{namespace}::{cls["name"]}" {{')
+        for m in cls["members"]:
+            lines.append(f'  {m}')
+        lines.append('}\n')
+    lines.append('@enduml')
+    return '\n'.join(lines)
 
-def scan_lib_and_generate(lib_path: str, output_path: str):
-    lib_root = Path(lib_path).resolve()
-    output_dir = Path(output_path).resolve()
-    output_dir.mkdir(parents=True, exist_ok=True)
+def main(lib_dir, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
 
-    for dart_file in lib_root.rglob("*.dart"):
-        namespace, classes = parse_dart_file(dart_file, lib_root)
-        if not classes:
-            continue
-        output_file = output_dir / dart_file.with_suffix('.puml').name
-        generate_puml(namespace, classes, output_file)
-        print(f"Generated: {output_file}")
+    for root, _, files in os.walk(lib_dir):
+        for file in files:
+            if file.endswith('.dart'):
+                full_path = os.path.join(root, file)
+                classes = parse_classes(full_path)
+                if not classes:
+                    continue
+                namespace = get_namespace_from_path(full_path, lib_dir)
+                puml_content = generate_puml(namespace, classes)
+                out_file = namespace.replace("::", "_") + ".puml"
+                out_path = os.path.join(output_dir, out_file)
+                Path(out_path).write_text(puml_content)
+                print(f"✅ Generated: {out_path}")
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="Generate PUML files for each Dart file in lib.")
-    parser.add_argument("--lib", default="lib", help="Path to lib folder")
-    parser.add_argument("--out", default="puml_output", help="Output folder for .puml files")
-    args = parser.parse_args()
-
-    scan_lib_and_generate(args.lib, args.out)
+    main("lib", "puml_outputs")

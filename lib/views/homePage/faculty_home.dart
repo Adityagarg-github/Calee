@@ -161,91 +161,113 @@ class _FacultyHomeState extends AbstractHomeState {
     l.add(const SizedBox(height: 16));
 
     l.add(
-      Wrap(
-        spacing: 16,
-        runSpacing: 16,
+      Column(
         children: [
-          _buildActionCard(
-            icon: Icons.check_circle_outline,
-            label: 'Check Free Slots',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => findSlots(f.courses)),
-              );
-            },
+          // First Row: 2 wide buttons
+          Row(
+            children: [
+              Expanded(
+                child: _buildStyledActionCard(
+                  context,
+                  icon: Icons.check_circle_outline,
+                  label: 'Check Free Slots',
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => findSlots(f.courses)));
+                  },
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: _buildStyledActionCard(
+                  context,
+                  icon: Icons.calendar_today,
+                  label: 'Create Extra Class',
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CourseSchedule(courses: f.courses)));
+                  },
+                ),
+              ),
+            ],
           ),
-          _buildActionCard(
-            icon: Icons.calendar_today,
-            label: 'Schedule Extra Class',
-            onTap: () {
-              Navigator.push(
+          SizedBox(height: 12), // Increased spacing between rows
+
+          // Second Row: 3 tighter buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildStyledActionCard(
                 context,
-                MaterialPageRoute(builder: (context) => CourseSchedule(courses: f.courses)),
-              );
-            },
-          ),
-          _buildActionCard(
-            icon: Icons.list,
-            label: 'See Added Extra Classes',
-            onTap: () {
-              Navigator.push(
+                icon: Icons.list,
+                label: 'See Extra Classes',
+                compact: true,
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => MyClass(courses: f.courses)));
+                },
+              ),
+              _buildStyledActionCard(
                 context,
-                MaterialPageRoute(builder: (context) => MyClass(courses: f.courses)),
-              );
-            },
-          ),
-          _buildActionCard(
-            icon: Icons.group_add,
-            label: 'Create Group',
-            onTap: () {
-              Navigator.push(
+                icon: Icons.group_add,
+                label: 'Create Group',
+                compact: true,
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => CreateGroupScreen()));
+                },
+              ),
+              _buildStyledActionCard(
                 context,
-                MaterialPageRoute(builder: (context) => CreateGroupScreen()),
-              );
-            },
-          ),
-          _buildActionCard(
-            icon: Icons.science,
-            label: 'Manage Labs',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => createLabs()),
-              );
-            },
+                icon: Icons.science,
+                label: 'Manage Labs',
+                compact: true,
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => createLabs()));
+                },
+              ),
+            ],
           ),
         ],
       ),
     );
 
+
     return l;
   }
 
-  Widget _buildActionCard({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildStyledActionCard(
+      BuildContext context, {
+        required IconData icon,
+        required String label,
+        required VoidCallback onTap,
+        bool compact = false, // Set true for 3-button row
+      }) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width / 2 - 24, // Adjust for spacing
+      width: compact ? MediaQuery.of(context).size.width / 3.5 : double.infinity,
+      height: 90,
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-        elevation: 2,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shadowColor: Colors.grey.withOpacity(0.3),
+        margin: const EdgeInsets.all(4),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(12),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 32, color: Theme.of(context).colorScheme.primary),
-                const SizedBox(height: 8.0),
+                Icon(icon, size: 20, color: Colors.grey),
+                SizedBox(height: 6),
                 Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -254,5 +276,6 @@ class _FacultyHomeState extends AbstractHomeState {
       ),
     );
   }
+
 
 }

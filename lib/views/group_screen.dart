@@ -91,7 +91,7 @@ class _GroupScreenState extends State<GroupScreen> {
                   }).toList();
 
                   return Container(
-                    color: Theme.of(context).colorScheme.surface, // ✅ Set background color here
+                    color: Theme.of(context).colorScheme.surface, // Set background color here
                     child: Column(
                       children: filteredEvents.map((event) {
                         final eventData = event.data() as Map<String, dynamic>;
