@@ -1,9 +1,0 @@
-@startuml
-set namespaceSeparator ::
-
-class "iitropar::views::landing_page::RootPage" {
-  {static} +void signin()
-  build()
-}
-
-@enduml

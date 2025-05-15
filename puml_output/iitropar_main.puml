@@ -1,8 +1,0 @@
-@startuml
-set namespaceSeparator ::
-
-class "iitropar::main::App" {
-  build()
-}
-
-@enduml

@@ -1,7 +1,0 @@
-@startuml
-set namespaceSeparator ::
-
-class "iitropar::utilities::firebase_services::FirebaseServices" {
-}
-
-@enduml
