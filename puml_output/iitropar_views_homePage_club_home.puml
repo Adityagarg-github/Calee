@@ -1,0 +1,14 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::homePage::club_home::ClubHome" {
+}
+
+class "iitropar::views::homePage::club_home::_ClubHomeState" {
+  String clubName
+  List<Widget> l
+  ClubAdminCard()
+  buttons()
+}
+
+@enduml

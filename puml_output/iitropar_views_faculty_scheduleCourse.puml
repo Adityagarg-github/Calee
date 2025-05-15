@@ -1,0 +1,21 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::faculty::scheduleCourse::CourseSchedule" {
+  bool hasSubmit
+  initState()
+  _onVenueChanged()
+  _onDescriptionChanged()
+  selectCourse()
+  selectTime()
+  selectVenue()
+  selectDescription()
+  selectDate()
+  sectionHeader()
+  cardContainer()
+  customDivider()
+  showSnack()
+  build()
+}
+
+@enduml

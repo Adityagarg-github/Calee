@@ -1,0 +1,11 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::homePage::admin_page::AdminHomePage" {
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+@enduml

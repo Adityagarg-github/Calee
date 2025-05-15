@@ -1,0 +1,19 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::mess::MessMenuPage" {
+  List<String> _daysOfWeek
+  Map<String, List<MenuItem>> _menu
+  String modifyDate
+  initState()
+  build()
+  _buildTitleBar()
+  _buildLastUpdatedWidget()
+  _buildMenuList()
+  _buildFoodItems()
+  mealOpen()
+  checkTime()
+  initialDay()
+}
+
+@enduml

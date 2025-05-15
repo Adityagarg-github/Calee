@@ -1,0 +1,15 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::groups::Groups" {
+  List<Map<String, String>> availableGroups
+  List<Map<String, String>> joinedGroups
+  List<DocumentSnapshot> documents
+  build()
+  _buildGroupList()
+  buildTitleBar()
+  themeButtonWidget()
+  appbarTitleStyle()
+}
+
+@enduml

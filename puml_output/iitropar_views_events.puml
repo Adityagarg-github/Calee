@@ -1,0 +1,39 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::events::Events" {
+}
+
+class "iitropar::views::events::EventCard" {
+  String eventId
+  String eventTitle
+  String eventType
+  String eventDesc
+  String eventVenue
+  String date
+  String startTime
+  String endTime
+  bool isStarred
+  bool _showStarredEvents
+  List<QueryDocumentSnapshot> filteredDocs
+  String doc_eventDate0
+  List<String> date_split
+  String doc_eventDate0
+  List<String> date_split
+  String doc_eventDate1
+  String doc_eventDate2
+  List<String> date_split1
+  List<String> date_split2
+  int dateComparison
+  String startTime1
+  String startTime2
+  bool isStarred
+  initState()
+  build()
+  eventWidget()
+  formatDateWord()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+@enduml

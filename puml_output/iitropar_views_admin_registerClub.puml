@@ -1,0 +1,18 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::registerClub::registerClub" {
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+class "iitropar::views::admin::registerClub::AddEventForm" {
+  createState()
+  _buildclubTitle()
+  _buildclubDesc()
+  _buildclubEmail()
+}
+
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::updateMessMenu::UpdateMessMenu" {
+  List<String> days
+  List<String> meals
+  String selectedDay
+  String selectedMeal
+  String currentDate
+  String newMenu
+  build()
+}
+
+@enduml

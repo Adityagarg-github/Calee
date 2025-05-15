@@ -1,0 +1,14 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::faculty::createLabs::createLabs" {
+  List<String> courseList
+  List<String> groupList
+  List<Map<String, dynamic>> scheduledLabs
+  List<String> days
+  bool isLoading
+  initState()
+  build()
+}
+
+@enduml

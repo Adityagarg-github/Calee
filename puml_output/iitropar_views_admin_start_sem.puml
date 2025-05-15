@@ -1,0 +1,14 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::start_sem::NewSemester" {
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+  clear_semester()
+  seeSemesterInfo()
+  _updateSemesterDuration()
+}
+
+@enduml

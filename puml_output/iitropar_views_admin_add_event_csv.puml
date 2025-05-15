@@ -1,0 +1,17 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::add_event_csv::addEventcsv" {
+  List<List<dynamic>> _data
+  int len
+  int len
+  checkData()
+  uploadData()
+  verifyHeader()
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+@enduml

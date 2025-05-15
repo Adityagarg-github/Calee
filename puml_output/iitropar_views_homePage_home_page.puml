@@ -1,0 +1,20 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::homePage::home_page::AbstractHome" {
+  String text
+  getUserImage()
+  getUserName()
+  getText()
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+class "iitropar::views::homePage::home_page::HomePage" {
+  userScreen()
+  build()
+}
+
+@enduml

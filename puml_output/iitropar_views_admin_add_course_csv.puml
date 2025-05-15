@@ -1,0 +1,19 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::add_course_csv::addCoursecsv" {
+  List<List<dynamic>> _data
+  int len
+  int num_of_courses
+  int len
+  List<dynamic> courses
+  int num_of_courses
+  checkData()
+  verifyHeader()
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+@enduml

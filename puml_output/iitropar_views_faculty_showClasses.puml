@@ -1,0 +1,9 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::faculty::showClasses::MyClass" {
+  initState()
+  build()
+}
+
+@enduml

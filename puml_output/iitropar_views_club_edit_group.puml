@@ -1,0 +1,22 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::club::edit_group::editClubGroup" {
+  String groupName
+  String groupDesc
+  String groupType
+  String groupName
+  String groupDesc
+  String groupType
+  build()
+}
+
+class "iitropar::views::club::edit_group::editGroupForm" {
+  String groupName
+  String groupDesc
+  String groupType
+  String dropdownValue
+  _buildGroupDesc()
+}
+
+@enduml

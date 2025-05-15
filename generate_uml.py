@@ -3,12 +3,24 @@ import re
 from pathlib import Path
 
 def parse_classes(filepath):
-    content = Path(filepath).read_text()
+    # Read the Dart file content as UTF-8 and ignore decoding errors
+    raw = Path(filepath).read_bytes()
+    content = raw.decode('utf-8', errors='ignore')
 
+    # Regex patterns
     class_pattern = re.compile(r'class\s+(\w+)(?:\s+extends\s+\w+)?\s*{', re.MULTILINE)
-    static_method_pattern = re.compile(r'static\s+([^\s]+)\s+(\w+)\s*\([^\)]*\)\s*{', re.MULTILINE)
-    method_pattern = re.compile(r'(?:Widget|State<.*?>|Color|void|int|List<.*?>|TimeOfDay|Future<.*?>|[A-Z][a-zA-Z0-9_<>?]*)\s+(\w+)\s*\([^\)]*\)\s*{', re.MULTILINE)
-    field_pattern = re.compile(r'(?:final\s+)?(int|List<.*?>|TimeOfDay|Color)\s+(\w+);', re.MULTILINE)
+    static_method_pattern = re.compile(
+        r'^\s*static\s+(\w[\w<>]*)\s+(\w+)\s*\([^)]*\)\s*{',
+        re.MULTILINE
+    )
+    method_pattern = re.compile(
+        r'^\s*(?:Future<.*?>|void|int|double|String|bool|List<.*?>|Map<.*?>|[A-Z][a-zA-Z0-9_<>?]*)\s+(\w+)\s*\([^)]*\)\s*{',
+        re.MULTILINE
+    )
+    field_pattern = re.compile(
+        r'^\s*(?:final|var)?\s*(int|double|String|bool|List<.*?>|Map<.*?>)?\s+(\w+)\s*(?:=.*)?;',
+        re.MULTILINE
+    )
 
     classes = []
     class_blocks = [(m.start(), m.group(1)) for m in class_pattern.finditer(content)]
@@ -24,12 +36,12 @@ def parse_classes(filepath):
         members = []
 
         for field_type, field_name in fields:
-            members.append(f'{field_type} {field_name}')
+            if field_type:
+                members.append(f'{field_type} {field_name}')
 
         for return_type, method_name in static_methods:
             members.append(f'{{static}} +{return_type} {method_name}()')
 
-        # Avoid duplicates from static
         for method_name in methods:
             if not any(method_name in m for m in members):
                 members.append(f'{method_name}()')
@@ -74,4 +86,4 @@ def main(lib_dir, output_dir):
                 print(f"✅ Generated: {out_path}")
 
 if __name__ == "__main__":
-    main("lib", "puml_outputs")
+    main("lib", "puml_output")

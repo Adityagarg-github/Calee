@@ -1,0 +1,20 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::club::add_members::addMembers" {
+  String groupName
+  bool inputFormat
+  String groupName
+  String header
+  String memberEmail
+  String filePath
+  verifyHeader()
+  addSingleMember()
+  getCSVscreen()
+  getStudents()
+  showSelectedStudents()
+  submitButton()
+  build()
+}
+
+@enduml

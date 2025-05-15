@@ -1,0 +1,63 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::homePage::student_home::StudentHome" {
+  String downloadUrl
+  String imageUrl
+  getDay()
+  buildItems()
+  divider()
+}
+
+class "iitropar::views::homePage::student_home::_StudentHomeState" {
+  List<holidays> listofHolidays
+  Map<String, String> mapofHolidays
+  bool holidaysLoaded
+  List<changedDay> listofCD
+  Map<String, int> mapofCD
+  bool CDLoaded
+  List<Event> tomorrowevents
+  List<Event> todayevents
+  bool showRightArrow
+  bool showLeftArrow
+  int wkday
+  int dtf
+  List<Event> l
+  List<Event> l
+  String todayDate
+  String descPrefix
+  bool isQuizEvent
+  bool isExamEvent
+  bool isSpecialEvent
+  int startComparison
+  int startComparison
+  List<Widget> l
+  initState()
+  whatDatetocall()
+  todayEvents()
+  tomorrowEvents()
+  _sectionHeader()
+  eventWidget()
+  _eventRow()
+  gettodayEvents()
+  gettomorrowEvents()
+  intermediateText()
+  buttons()
+}
+
+class "iitropar::views::homePage::student_home::ArrowListView" {
+  String currentMeal
+  int idx
+  double maxBfTime
+  double maxLunchTime
+  double curTime
+  bool showRightArrow
+  bool showLeftArrow
+  List<String> items
+  initState()
+  initItems()
+  build()
+  handleScrollNotification()
+}
+
+@enduml

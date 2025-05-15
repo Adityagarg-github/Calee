@@ -1,0 +1,24 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::change_time_table::changeTimetable" {
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+class "iitropar::views::admin::change_time_table::AddForm" {
+  String selected_day
+  bool hasUpdated
+  String formattedDate
+  createState()
+  dateWidget()
+  dayWidget()
+  previous()
+  submitWidget()
+  createForm()
+  build()
+}
+
+@enduml

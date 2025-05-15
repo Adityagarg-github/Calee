@@ -1,0 +1,12 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::quicklinks::QuickLinks" {
+  String category
+  Map<String, String> links
+  String url
+  build()
+  buildTitleBar()
+}
+
+@enduml

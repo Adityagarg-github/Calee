@@ -1,0 +1,16 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::faculty::makegrps::StudentsList" {
+  String course
+  List<List<dynamic>> studentList
+  bool selectAll
+  List<String> groupList
+  List<List<dynamic>> students
+  List<dynamic> rolls
+  initState()
+  _toggleSelectAll()
+  build()
+}
+
+@enduml

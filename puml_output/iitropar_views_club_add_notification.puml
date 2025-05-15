@@ -1,0 +1,19 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::club::add_notification::addNotification" {
+  String clubName
+  String clubName
+  build()
+}
+
+class "iitropar::views::club::add_notification::AddNotificationForm" {
+  String clubName
+  String clubName
+  String groupName
+  createState()
+  _messageField()
+  build()
+}
+
+@enduml

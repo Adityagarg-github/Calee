@@ -1,0 +1,19 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::faculty_courses::FacultyList" {
+  List<faculty> faculties
+  bool hasLoad
+  List<TextEditingController> _newCourseController
+  String dep_search
+  _addCourse()
+  _deleteCourse()
+  sendDataToFB()
+  submitButton()
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+@enduml

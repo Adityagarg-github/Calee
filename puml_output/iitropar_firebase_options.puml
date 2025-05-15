@@ -1,0 +1,7 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::firebase_options::DefaultFirebaseOptions" {
+}
+
+@enduml

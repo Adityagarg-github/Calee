@@ -1,0 +1,10 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::faculty::create_group_screen::CreateGroupScreen" {
+  bool isLoading
+  initState()
+  build()
+}
+
+@enduml

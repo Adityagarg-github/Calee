@@ -1,0 +1,30 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::registerFaculty::registerFaculty" {
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+class "iitropar::views::admin::registerFaculty::AddEventForm" {
+  List<List<dynamic>> _data
+  String _courseCode
+  List<String> courses
+  int len
+  String dep
+  int attrs
+  createState()
+  _buildFacultyName()
+  _buildFacultyEmail()
+  _buildFacultyDep()
+  validCourse()
+  validDep()
+  getDep()
+  _buildRemoveCourses()
+  _buildFacultyCourses()
+  verifyHeader()
+}
+
+@enduml

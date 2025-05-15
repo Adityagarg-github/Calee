@@ -1,0 +1,15 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::homePage::faculty_home::FacultyHome" {
+}
+
+class "iitropar::views::homePage::faculty_home::_FacultyHomeState" {
+  List<dynamic> coursesList
+  List<Widget> l
+  allCourses()
+  buttons()
+  _buildStyledActionCard()
+}
+
+@enduml

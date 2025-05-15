@@ -1,0 +1,12 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::updateVenue::updateVenue" {
+  String fileName
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+@enduml

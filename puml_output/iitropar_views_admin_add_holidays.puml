@@ -1,0 +1,31 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::add_holidays::addHoliday" {
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+class "iitropar::views::admin::add_holidays::AddClassForm" {
+  String formattedDate
+  double width
+  String filePath
+  bool date_check
+  List<String> date_split
+  int day
+  int month
+  int year
+  createState()
+  dateWidget()
+  descWidget()
+  submitWidget()
+  createForm()
+  alldeclaredHolidays()
+  verifyHeader()
+  csvOption()
+  build()
+}
+
+@enduml

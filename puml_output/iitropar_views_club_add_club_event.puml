@@ -1,0 +1,24 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::club::add_club_event::addClubEvent" {
+  String clubName
+  String clubName
+  build()
+}
+
+class "iitropar::views::club::add_club_event::AddEventForm" {
+  String clubName
+  String clubName
+  String groupName
+  String filePath
+  createState()
+  _buildEventTitle()
+  _buildEventDesc()
+  _buildEventVenue()
+  _buildEventDate()
+  _buildStartTime()
+  _buildEndTime()
+}
+
+@enduml

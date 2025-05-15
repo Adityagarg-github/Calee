@@ -1,0 +1,12 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::faculty::studentsEnrolled::studentsEnrolled" {
+  String course
+  bool isLoading
+  initState()
+  formatRoll()
+  build()
+}
+
+@enduml

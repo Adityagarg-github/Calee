@@ -1,0 +1,24 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::club::manage_groups::ManageGroupsScreen" {
+  String clubName
+  String clubName
+  build()
+}
+
+class "iitropar::views::club::manage_groups::GroupList" {
+  String clubName
+  String clubName
+  List<DocumentSnapshot> groups
+  String documentId
+  Map<String, dynamic> data
+  build()
+}
+
+class "iitropar::views::club::manage_groups::EditGroupScreen" {
+  String documentId
+  build()
+}
+
+@enduml

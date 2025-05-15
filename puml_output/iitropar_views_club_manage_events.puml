@@ -1,0 +1,20 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::club::manage_events::ManageEvents" {
+  String clubName
+  String clubName
+  build()
+}
+
+class "iitropar::views::club::manage_events::EventList" {
+  String clubName
+  String clubName
+  Map<String, dynamic> eventData
+  List<List<Map<String, dynamic>>> eventsList
+  initState()
+  _fetchEvents()
+  build()
+}
+
+@enduml

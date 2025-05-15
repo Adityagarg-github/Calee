@@ -1,0 +1,42 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::event_calendar::EventCalendarScreen" {
+  Map<String, List<Event>> mySelectedEvents
+  Map<String, List> weeklyEvents
+  List<holidays> listofHolidays
+  Map<String, String> mapofHolidays
+  bool holidaysLoaded
+  List<changedDay> listofCD
+  Map<String, int> mapofCD
+  bool CDLoaded
+  List<String> cl
+  int alarmId
+  List<Event> l
+  String dateKey
+  String formattedDate
+  bool hasAlarm
+  bool hasAlarm
+  bool isDeleted
+  String cmp
+  String dateKey
+  List<Event> l
+  String newdate
+  List<Event> l2
+  int wkday
+  int dtf
+  initState()
+  getAlarmId()
+  getDeleteButton()
+  _showEventDetailsDialog()
+  formatTimeOfDay()
+  isHoliday()
+  _listOfDayEvents()
+  whatDatetocall()
+  holidayScript()
+  build()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+@enduml

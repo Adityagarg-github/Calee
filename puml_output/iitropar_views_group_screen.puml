@@ -1,0 +1,35 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::group_screen::GroupScreen" {
+  String groupName
+  String _searchQuery
+  List<QueryDocumentSnapshot> events
+  List<QueryDocumentSnapshot> notifications
+  initState()
+  dispose()
+  build()
+}
+
+class "iitropar::views::group_screen::EventCard" {
+  String eventName
+  String eventDate
+  String eventVenue
+  String startTime
+  String endTime
+  String eventDesc
+  String groupName
+  build()
+}
+
+class "iitropar::views::group_screen::NotificationCard" {
+  String notificationType
+  String timeSent
+  List<String> parts
+  int day
+  int month
+  int year
+  build()
+}
+
+@enduml

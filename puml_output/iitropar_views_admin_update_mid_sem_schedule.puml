@@ -1,0 +1,12 @@
+@startuml
+set namespaceSeparator ::
+
+class "iitropar::views::admin::update_mid_sem_schedule::updateMidSemSchedule" {
+  String fileName
+  build()
+  themeButtonWidget()
+  appbarTitleStyle()
+  buildTitleBar()
+}
+
+@enduml
