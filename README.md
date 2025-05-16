@@ -60,9 +60,11 @@ for four different types of users - admin, faculty, students and clubs
 
 6)  If using a connected phone, select the connected device from the device list.
 
-7)  Run the command 'flutter pub get' to download all the project dependencies.
+7)  Add the 'google-services.json' file downloaded from firebase in android/app directory.
 
-8)  Run App Using command 'flutter run'.
+8)  Run the command 'flutter pub get' to download all the project dependencies.
+
+9)  Run App Using command 'flutter run'.
 
 **User Guide\...**
 
