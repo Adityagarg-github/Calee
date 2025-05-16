@@ -2,7 +2,7 @@
 
 The Calee app is a calendar and events management app designed
 specifically for IIT Ropar. It is a mobile app that provides a platform
-for three different types of users - admin, faculty, and student.
+for four different types of users - admin, faculty, students and clubs
 
 **Tech Stack**
 
@@ -52,46 +52,36 @@ for three different types of users - admin, faculty, and student.
 
 2)  Set up Android Emulator or iOS Simulator Or
 
-3)  You can connect an Android or iOS phone to your computer using a USB
-    > cable.
+3)  You can connect an Android or iOS phone to your computer using a USB cable.
 
-4)  Enable USB debugging on the phone by going to the developer options
-    > settings.
+4)  Enable USB debugging on the phone by going to the developer options settings.
 
 5)  If using an emulator or simulator, ensure it is running.
 
-6)  If using a connected phone, select the connected device from the
-    > device list.
+6)  If using a connected phone, select the connected device from the device list.
 
-7)  Run the command 'flutter pub get' to download all the project
-    > dependencies.
+7)  Run the command 'flutter pub get' to download all the project dependencies.
 
 8)  Run App Using command 'flutter run'.
 
 **User Guide\...**
 
-1.  Download the [[Calee
-    > app]{.underline}](https://play.google.com/store/apps/details?id=com.calee.iitropar)
-    > from the Play Store.
+1.  Download the [Calee app](https://play.google.com/store/apps/details?id=com.iitropar.calee) from the Play Store.
 
-2.  Login using google account as either a student, faculty member, or
-    > admin.
+2.  Login using google account as either a student, faculty member, or admin.
 
-3.  Based on Your College account you will be logged on into respective
-    > homepage.
+3.  Based on Your College account you will be logged on into respective homepage.
 
-4.  Students can view their class schedules, add personal events to
-    > their calendars, view mess menus, and access college links.
+4.  Students can view their class schedules, add personal events to their calendars, view mess menus, and access college links.
 
-5.  Faculty can view their course schedules, schedule extra classes for
-    > selected students, check for conflicts in student schedules, and
-    > view their own calendars.
+5.  Faculty can view their course schedules, schedule extra classes for selected students, check for conflicts in student schedules, and view their own calendars.
 
-6.  Admins can add or delete courses for faculty members, manage student
-    > course information, declare holidays, and add college-wide events.
+6.  Admins can add or delete courses for faculty members, manage student course information, declare holidays, and add college-wide events.
 
-7.  Explore the app\'s features and use it to manage your college
-    > schedules and events easily.
+7. Clubs can create/manage groups, add events, and send notifications.
+
+8. Explore the app\'s features and use it to manage your college schedules and events easily.
 
 **More Details :**
-[[DEP.T05.Calee_ppt3_Documentation2022]{.underline}](https://docs.google.com/presentation/d/1eZIDpbemzWo93SkmN79nIsC7fwTeIO3_zcEaPDjzUg8/edit?usp=sharing)
+[DEP25.G04.Calee_ppt3_Documentation](https://docs.google.com/presentation/d/1rmjhpw4NFtFqu2eAX1lO0rGg_M3twdwv2P4l4VTgjKE/edit?usp=sharing)
+
